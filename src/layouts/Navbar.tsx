@@ -6,7 +6,7 @@ import { HeaderSimple } from './Header';
 
 export function NavbarSimple() {
   return (
-    <Navbar width={{ base: 400, maximum: 1100 }} p="xs">
+    <Navbar width={{ base: 250, maximum: 1100 }} p="xs">
       <Navbar.Section>
         <HeaderSimple />
       </Navbar.Section>

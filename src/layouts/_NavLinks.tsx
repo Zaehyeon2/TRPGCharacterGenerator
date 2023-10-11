@@ -47,7 +47,7 @@ const data = [
   {
     icon: <img src={dungeonGate} alt="sun" />,
     color: '#000000',
-    label: 'Dungeons World',
+    label: 'Dungeon World',
     link: '/dw',
   },
 ];
