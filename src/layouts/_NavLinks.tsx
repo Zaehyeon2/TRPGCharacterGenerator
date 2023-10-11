@@ -1,8 +1,8 @@
 import { UnstyledButton, Group, Text, ThemeIcon } from '@mantine/core';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import circleoff from '../assets/circleoff.svg';
-import sun from '../assets/sun.svg';
+import cthulhu from '../assets/cthulhu.svg';
+import dungeonGate from '../assets/dungeon-gate.svg';
 
 interface MainLinkProps {
   icon: React.ReactNode;
@@ -39,13 +39,13 @@ function MainLink({ icon, color, label, link }: MainLinkProps) {
 }
 const data = [
   {
-    icon: <img src={sun} alt="sun" />,
+    icon: <img src={cthulhu} alt="cthulhu" />,
     color: '#000000',
     label: 'Call of Cthulhu',
     link: '/coc',
   },
   {
-    icon: <img src={sun} alt="sun" />,
+    icon: <img src={dungeonGate} alt="sun" />,
     color: '#000000',
     label: 'Dungeons World',
     link: '/dw',
