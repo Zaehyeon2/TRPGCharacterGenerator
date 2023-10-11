@@ -12,8 +12,8 @@
     "build-stage": "tsc && vite build --mode stage",
     "build": "tsc && vite build --mode production",
     "preview": "vite preview --mode development",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build"
+    "predeploy": "yarn build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@mantine/core": "^5.10.2",
