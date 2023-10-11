@@ -20,8 +20,9 @@
   </head>
 
   <body>
-    <div id="hello-world">
-      <h1>Hello, world!</h1>
+    <div>
+      <h1 id="hello-world"></h1>
+      <button onclick="setRandomIntById('hello-world', 100)">randomInt</button>
     </div>
 
     <script
@@ -29,5 +30,19 @@
       integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
       crossorigin="anonymous"
     ></script>
+    <script src="js/utills.js"></script>
+    <script>
+      /**
+       * Set random int to element by id
+       * @param {string} id - id of element
+       * @param {number} max - max number
+       * @returns {void} - void
+       */
+      function setRandomIntById(id, max) {
+        var random = getRandomInt(max);
+        var element = document.getElementById(id);
+        element.innerText = "Hello, world! " + random.toString();
+      }
+    </script>
   </body>
 </html>
