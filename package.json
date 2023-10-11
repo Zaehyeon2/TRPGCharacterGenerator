@@ -1,30 +1,40 @@
 {
-  "homepage": "https://zaehyeon2.github.io/TRPGCharaterGenerator",
-  "name": "trpgcharactergenerator",
-  "version": "0.1.0",
+  "name": "deployment-web-tool",
   "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite --mode development",
+    "prod": "vite --mode production",
+    "stage": "vite --mode stage",
+    "lint": "eslint . --fix",
+    "build-dev": "tsc && vite build --mode development",
+    "build-stage": "tsc && vite build --mode stage",
+    "build": "tsc && vite build --mode production",
+    "preview": "vite preview --mode development",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d build"
+  },
   "dependencies": {
     "@mantine/core": "^5.10.2",
     "@mantine/hooks": "^5.10.2",
-    "@testing-library/jest-dom": "^5.14.1",
-    "@testing-library/react": "^13.0.0",
-    "@testing-library/user-event": "^13.2.1",
-    "@types/jest": "^27.0.1",
-    "@types/node": "^16.7.13",
     "gh-pages": "^6.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1",
-    "typescript": "^4.4.2",
-    "web-vitals": "^2.1.0"
+    "react-query": "^3.39.3",
+    "react-router-dom": "^6.8.0"
   },
   "devDependencies": {
+    "@emotion/react": "^11.10.5",
     "@esbuild-plugins/node-globals-polyfill": "^0.2.1",
     "@esbuild-plugins/node-modules-polyfill": "^0.2.0",
-    "@types/react": "^18.0.0",
-    "@types/react-dom": "^18.0.0",
+    "@typechain/ethers-v5": "^10.2.0",
+    "@types/react": "^18.0.27",
+    "@types/react-dom": "^18.0.10",
     "@typescript-eslint/eslint-plugin": "^5.51.0",
     "@typescript-eslint/parser": "^5.51.0",
+    "@vitejs/plugin-react": "^3.0.1",
+    "buffer": "^6.0.3",
     "eslint": "^8.32.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-config-airbnb-typescript": "^17.0.0",
@@ -37,33 +47,12 @@
     "eslint-plugin-promise": "^6.1.1",
     "eslint-plugin-react": "^7.32.2",
     "events": "^3.3.0",
-    "prettier": "^2.8.3"
-  },
-  "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
-    "eject": "react-scripts eject",
-    "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "lint": "eslint . --fix"
-  },
-  "eslintConfig": {
-    "extends": [
-      "react-app",
-      "react-app/jest"
-    ]
-  },
-  "browserslist": {
-    "production": [
-      ">0.2%",
-      "not dead",
-      "not op_mini all"
-    ],
-    "development": [
-      "last 1 chrome version",
-      "last 1 firefox version",
-      "last 1 safari version"
-    ]
+    "prettier": "^2.8.3",
+    "process": "^0.11.10",
+    "rimraf": "^4.1.2",
+    "typescript": "^4.9.4",
+    "util": "^0.12.5",
+    "vite": "4.0.4",
+    "vite-plugin-node-polyfills": "0.7.0"
   }
 }

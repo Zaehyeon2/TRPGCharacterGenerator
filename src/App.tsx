@@ -1,25 +1,19 @@
+import { AppShell, MantineProvider } from '@mantine/core';
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { Routes, Route } from 'react-router-dom';
+import { NavbarSimple } from './layouts/Navbar';
+import { HelloGenerator } from './pages/Hello-Generator';
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
+      <AppShell padding="md" navbar={<NavbarSimple />}>
+        <Routes>
+          <Route path="/" element={<HelloGenerator />} />
+        </Routes>
+      </AppShell>
+    </MantineProvider>
   );
 }
 
