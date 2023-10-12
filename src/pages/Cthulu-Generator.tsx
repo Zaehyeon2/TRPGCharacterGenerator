@@ -2,7 +2,7 @@ import { Card, Grid } from '@mantine/core';
 import React from 'react';
 import { Stats } from '../components/stats';
 
-export function HelloGenerator() {
+export function CthulhuGenerator() {
   return (
     <Card withBorder radius="md">
       <Grid justify="center" align="center">
