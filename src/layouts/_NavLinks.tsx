@@ -116,7 +116,7 @@ const data = [
       {
         icon: <img src={character} alt="character" />,
         label: 'Character Generator',
-        link: '/coc/generator',
+        link: '/TRPGCharacterGenerator/coc/generator',
       },
     ],
   },
@@ -128,7 +128,7 @@ const data = [
       {
         icon: <img src={character} alt="character" />,
         label: 'Character Generator',
-        link: '/dw/generator',
+        link: '/TRPGCharacterGenerator/dw/generator',
       },
     ],
   },
