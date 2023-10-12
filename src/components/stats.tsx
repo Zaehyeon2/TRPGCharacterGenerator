@@ -44,8 +44,10 @@ export function Stats({ label, value, nDices, nSides, baseValue = 0, maxValue }:
   }
 
   return (
-    <Stack align="center" spacing={0} sx={{ border: '2px solid', borderRadius: '1em' }}>
-      <Text align="center">{label}</Text>
+    <Stack align="center" spacing={0} sx={{ border: '1px solid', borderRadius: '0.5em' }}>
+      <Text align="center" fz="sm">
+        {label}
+      </Text>
       <Grid justify="center" align="center" sx={{ padding: '5px' }}>
         <Grid.Col span={5}>
           <TextInput
@@ -60,12 +62,12 @@ export function Stats({ label, value, nDices, nSides, baseValue = 0, maxValue }:
         <Grid.Col span={4}>
           <Grid justify="center" align="center">
             <Grid.Col span={6}>
-              <Text>{statValues.valueAddedBaseValue}</Text>
+              <Text fz="xl">{statValues.valueAddedBaseValue}</Text>
             </Grid.Col>
             <Grid.Col span={6}>
               <Stack spacing={0} align="center">
-                <Text>{statValues.valueDividedBy2}</Text>
-                <Text>{statValues.valueDividedBy5}</Text>
+                <Text fz="xs">{statValues.valueDividedBy2}</Text>
+                <Text fz="xs">{statValues.valueDividedBy5}</Text>
               </Stack>
             </Grid.Col>
           </Grid>
