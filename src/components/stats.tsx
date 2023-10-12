@@ -2,6 +2,7 @@
 import { Text, Stack, Grid, TextInput, UnstyledButton, Checkbox, Container } from '@mantine/core';
 import React, { useState } from 'react';
 import { rollDice } from '../services/dice.service';
+import { isNumber } from '../services/utils.service';
 
 interface StatsProps {
   value: number;
@@ -12,6 +13,7 @@ interface StatsProps {
 }
 
 interface StatsParams {
+  statKey: string;
   label?: string;
   value: number;
   nDices?: number;
@@ -20,9 +22,11 @@ interface StatsParams {
   multiplyValue?: number;
   maxValue: number;
   isClass?: boolean;
+  getAndSetFunction: (key: string, value: number) => void;
 }
 
 export function Stats({
+  statKey,
   label,
   value,
   nDices,
@@ -31,9 +35,10 @@ export function Stats({
   maxValue,
   isClass = false,
   multiplyValue = 1,
+  getAndSetFunction,
 }: StatsParams) {
   const [statValues, setStatValues] = useState<StatsProps>({
-    value,
+    value: Math.min(maxValue, value + baseValue) * multiplyValue,
     valueAddedBaseValue: Math.min(maxValue, value + baseValue) * multiplyValue,
     valueDividedBy2: Math.floor((Math.min(maxValue, value + baseValue) * multiplyValue) / 2),
     valueDividedBy5: Math.floor((Math.min(maxValue, value + baseValue) * multiplyValue) / 5),
@@ -53,8 +58,12 @@ export function Stats({
   function rollStat() {
     if (!nDices || !nSides) return;
     const roll = rollDice(nDices, nSides);
-    console.log(roll);
     setStats((roll + baseValue) * multiplyValue);
+    innerAfterHook((roll + baseValue) * multiplyValue)
+  }
+
+  function innerAfterHook(value: number) {
+    getAndSetFunction(statKey, value);
   }
 
   return (
@@ -80,9 +89,9 @@ export function Stats({
               autoComplete="off"
               value={statValues.value}
               onChange={(event) => {
-                const numberedValue = Number(event.currentTarget.value);
-                if (Number.isNaN(numberedValue) || numberedValue < 0) return;
-                setStats(numberedValue);
+                if (!isNumber(event.currentTarget.value)) return;
+                setStats(+event.currentTarget.value);
+                innerAfterHook(+event.currentTarget.value)
               }}
             />
           </Grid.Col>
