@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 import { Text, Stack, Grid, TextInput, UnstyledButton, Checkbox, Container } from '@mantine/core';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { rollDice } from '../services/dice.service';
 import { isNumber } from '../services/utils.service';
 import dice20 from '../assets/dice20.png';
@@ -39,10 +39,10 @@ export function Stats({
   getAndSetFunction,
 }: StatsParams) {
   const [statValues, setStatValues] = useState<StatsProps>({
-    value: Math.min(maxValue, value + baseValue) * multiplyValue,
-    valueAddedBaseValue: Math.min(maxValue, value + baseValue) * multiplyValue,
-    valueDividedBy2: Math.floor((Math.min(maxValue, value + baseValue) * multiplyValue) / 2),
-    valueDividedBy5: Math.floor((Math.min(maxValue, value + baseValue) * multiplyValue) / 5),
+    value: 0,
+    valueAddedBaseValue: 0,
+    valueDividedBy2: 0,
+    valueDividedBy5: 0,
     isClassTraits: false,
   });
 
@@ -60,18 +60,17 @@ export function Stats({
     if (!nDices || !nSides) return;
     const roll = rollDice(nDices, nSides);
     setStats((roll + baseValue) * multiplyValue);
-    innerAfterHook((roll + baseValue) * multiplyValue)
   }
 
-  function innerAfterHook(value: number) {
-    getAndSetFunction(statKey, value);
-  }
+  useEffect(() => {
+    getAndSetFunction(statKey, statValues.value);
+  }, [statValues.value]);
 
   return (
     <Container>
       <Stack align="center" spacing={0} sx={{ border: '1px solid', borderRadius: '0.5em' }}>
         <Text align="center" fz="sm">
-          {label}
+          {label}{` (${nDices}D${nSides}+${baseValue})*${multiplyValue}`}
         </Text>
         <Grid justify="center" align="center" sx={{ paddingTop: '5px', paddingBottom: '5px' }}>
           {isClass && (
@@ -92,7 +91,6 @@ export function Stats({
               onChange={(event) => {
                 if (!isNumber(event.currentTarget.value)) return;
                 setStats(+event.currentTarget.value);
-                innerAfterHook(+event.currentTarget.value)
               }}
             />
           </Grid.Col>

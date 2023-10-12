@@ -1,8 +1,9 @@
-import { Card, Container, Grid, Group, Stack, Text, TextInput } from '@mantine/core';
+import { Card, Center, Container, Grid, Group, Stack, Text, TextInput } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
 import { Stats } from '../components/stats';
 import { explorerStyles } from '../styles/styles';
 import { isNumber } from '../services/utils.service';
+import logo from '../assets/coc-logo.png';
 
 interface Stats {
   job: string;
@@ -61,8 +62,15 @@ export function CthulhuGenerator() {
 
   return (
     <Card withBorder radius="md">
+
+      {/* Logo */}
+      <Center>
+        <img src={logo} alt="logo" width="30%"></img>
+      </Center>
       <Grid justify="center" align="center">
         <Grid.Col span={4}>
+
+          {/* 탐사자 정보 */}
           <Stack spacing='xs' sx={{ border: "solid", paddingBottom: '10px', height: "330px" }}>
             <Text sx={{ backgroundColor: "black", width: '100%' }}>현대 탐사자</Text>
             <Group sx={{ margin: 'auto' }}>
@@ -101,6 +109,8 @@ export function CthulhuGenerator() {
           </Stack>
         </Grid.Col>
         <Grid.Col span={8}>
+
+          {/* 특성치 */}
           <Stack justify="space-between" spacing='xs' sx={{ paddingBottom: '10px', border: "solid", height: "330px" }}>
             <Text sx={{ backgroundColor: "brown" }}>특성치</Text>
             <Grid justify="center" align="center">
@@ -210,8 +220,8 @@ export function CthulhuGenerator() {
               </Grid.Col>
               <Grid.Col span={4} >
                 <Container>
-                  <Stack sx={{ border: '1px solid', borderRadius: '0.5em' }} justify="center">
-                    <Text>이동력</Text>
+                  <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+                    <Text fz="sm">이동력</Text>
                     <Text>{statValues.mobility}</Text>
                   </Stack>
                 </Container>
@@ -220,12 +230,15 @@ export function CthulhuGenerator() {
           </Stack>
         </Grid.Col>
       </Grid>
-      <Stack justify="space-between" spacing='xs' sx={{ paddingBottom: '10px', paddingTop: '10px', border: "solid", marginTop: "16px" }}>
+      
+      {/* 특성치2 */}
+      <Stack justify="space-between" spacing='xs' sx={{ paddingBottom: '10px', border: "solid", marginTop: "16px" }}>
+        <Text sx={{ backgroundColor: "brown" }}>특성치2</Text>
         <Grid justify="center" align="center">
           <Grid.Col span={3}>
             <Container>
-              <Stack sx={{ border: '1px solid', borderRadius: '0.5em' }} justify="center">
-                <Text>체력</Text>
+              <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+                <Text fz="sm">체력</Text>
                 <Text>{Math.floor((statValues.size + statValues.health) / 10)}</Text>
               </Stack>
             </Container>
@@ -244,16 +257,16 @@ export function CthulhuGenerator() {
           </Grid.Col>
           <Grid.Col span={3}>
             <Container>
-              <Stack sx={{ border: '1px solid', borderRadius: '0.5em' }} justify="center">
-                <Text>이성</Text>
+              <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+                <Text fz="sm">이성</Text>
                 <Text>{statValues.mentality}</Text>
               </Stack>
             </Container>
           </Grid.Col>
           <Grid.Col span={3}>
             <Container>
-              <Stack sx={{ border: '1px solid', borderRadius: '0.5em' }} justify="center">
-                <Text>마력</Text>
+              <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+                <Text fz="sm">마력</Text>
                 <Text>{Math.floor(statValues.mentality / 5)}</Text>
               </Stack>
             </Container>
