@@ -12,8 +12,8 @@ function App() {
     <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
       <AppShell padding="md" navbar={<NavbarSimple />} header={<HeaderSimple />}>
         <Routes>
-          <Route path="/TRPGCharacterGenerator" element={<Main />} />
-          <Route path="/TRPGCharacterGenerator/coc/generator" element={<CthulhuGenerator />} />
+          <Route path="/" element={<Main />} />
+          <Route path="/coc/generator" element={<CthulhuGenerator />} />
         </Routes>
       </AppShell>
     </MantineProvider>
