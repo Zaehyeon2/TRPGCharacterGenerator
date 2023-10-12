@@ -3,6 +3,7 @@ import { Text, Stack, Grid, TextInput, UnstyledButton, Checkbox, Container } fro
 import React, { useState } from 'react';
 import { rollDice } from '../services/dice.service';
 import { isNumber } from '../services/utils.service';
+import dice20 from '../assets/dice20.png';
 
 interface StatsProps {
   value: number;
@@ -111,7 +112,7 @@ export function Stats({
           {nDices && nSides && (
             <Grid.Col span="content">
               <UnstyledButton onClick={() => rollStat()}>
-                <img src="/src/assets/dice20.png" alt="roll" width="20px" />
+                <img src={dice20} alt="roll" width="20px" />
               </UnstyledButton>
             </Grid.Col>
           )}
