@@ -14,3 +14,9 @@ export const useStyles = createStyles(() => ({
     fontFamily: 'Greycliff CF, sans-serif',
   },
 }));
+
+export const explorerStyles = createStyles(() => ({
+  label: {
+    width: '70px',
+  }
+}))
