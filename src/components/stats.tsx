@@ -75,6 +75,7 @@ export function Stats({
           )}
           <Grid.Col span={5}>
             <TextInput
+              autoComplete="off"
               value={statValues.value}
               onChange={(event) => {
                 const numberedValue = Number(event.currentTarget.value);
