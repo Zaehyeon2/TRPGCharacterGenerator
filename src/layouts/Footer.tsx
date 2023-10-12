@@ -1,30 +1,16 @@
-import { Group, Button, Footer } from '@mantine/core';
+import { Group, Text, Footer } from '@mantine/core';
 import React from 'react';
-
-// localstorage clear 버튼
-function clearLocalStorage() {
-  // eslint-disable-next-line no-alert
-  if (window.confirm('삭제 하시겠습니까?')) {
-    localStorage.clear();
-    window.location.reload();
-  }
-}
 
 export function FooterSimple() {
   return (
     <Footer height={{ base: 20, md: 40 }} p="md">
       <Group position="left">
-        <Button
-          compact
-          variant="light"
-          size="xs"
-          color="gray"
-          onClick={() => {
-            clearLocalStorage();
-          }}
-        >
-          Clear LocalStorage
-        </Button>
+        <Text>
+          <a href="https://www.freepik.com/free-vector/medieval-knight-with-weapon_30162714.htm#query=warrior%20svg&position=10&from_view=keyword&track=ais">
+            Image by brgfx
+          </a>{' '}
+          on Freepik
+        </Text>
       </Group>
     </Footer>
   );
