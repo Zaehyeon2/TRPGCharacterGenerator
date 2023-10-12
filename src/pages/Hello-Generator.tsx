@@ -1,12 +1,24 @@
-import { Card, Group } from '@mantine/core';
+import { Card, Grid } from '@mantine/core';
 import React from 'react';
+import { Stats } from '../components/stats';
 
 export function HelloGenerator() {
   return (
     <Card withBorder radius="md">
-      <Group position="left">
-        <h3> Hello, Generator </h3>
-      </Group>
+      <Grid justify="center" align="center">
+        <Grid.Col span={3}>
+          <Stats value={10} label="건강" nDices={1} nSides={100} />
+        </Grid.Col>
+        <Grid.Col span={3}>
+          <Stats value={10} label="건강" nDices={1} nSides={100} />
+        </Grid.Col>
+        <Grid.Col span={3}>
+          <Stats value={10} label="건강" nDices={1} nSides={100} />
+        </Grid.Col>
+        <Grid.Col span={3}>
+          <Stats value={10} label="건강" nDices={1} nSides={100} />
+        </Grid.Col>
+      </Grid>
     </Card>
   );
 }
