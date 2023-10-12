@@ -17,6 +17,7 @@ interface StatsParams {
   nDices?: number;
   nSides?: number;
   baseValue?: number;
+  multiplyValue?: number;
   maxValue: number;
   isClass?: boolean;
 }
@@ -29,22 +30,22 @@ export function Stats({
   baseValue = 0,
   maxValue,
   isClass = false,
+  multiplyValue = 1,
 }: StatsParams) {
   const [statValues, setStatValues] = useState<StatsProps>({
     value,
-    valueAddedBaseValue: Math.min(maxValue, value + baseValue),
-    valueDividedBy2: Math.floor(Math.min(maxValue, value + baseValue) / 2),
-    valueDividedBy5: Math.floor(Math.min(maxValue, value + baseValue) / 5),
+    valueAddedBaseValue: Math.min(maxValue, value + baseValue) * multiplyValue,
+    valueDividedBy2: Math.floor((Math.min(maxValue, value + baseValue) * multiplyValue) / 2),
+    valueDividedBy5: Math.floor((Math.min(maxValue, value + baseValue) * multiplyValue) / 5),
     isClassTraits: false,
   });
 
   function setStats(stat: number) {
-    const valueAddedBaseValue = Math.min(maxValue, stat + baseValue);
     setStatValues({
       value: stat,
-      valueAddedBaseValue,
-      valueDividedBy2: Math.floor(valueAddedBaseValue / 2),
-      valueDividedBy5: Math.floor(valueAddedBaseValue / 5),
+      valueAddedBaseValue: stat,
+      valueDividedBy2: Math.floor(stat / 2),
+      valueDividedBy5: Math.floor(stat / 5),
       isClassTraits: statValues.isClassTraits,
     });
   }
@@ -52,7 +53,8 @@ export function Stats({
   function rollStat() {
     if (!nDices || !nSides) return;
     const roll = rollDice(nDices, nSides);
-    setStats(roll);
+    console.log(roll);
+    setStats((roll + baseValue) * multiplyValue);
   }
 
   return (
