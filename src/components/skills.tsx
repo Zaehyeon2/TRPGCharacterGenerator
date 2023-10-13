@@ -457,6 +457,8 @@ export function Skills({
   ];
 
   function setInnerDetailedKey(detailedKey: DetailedSkillProps) {
+    if (getAndSetFunction === undefined) return;
+    getAndSetFunction(skillValues.detailedKey, undefined);
     setSkillValues({
       ...skillValues,
       value: 0,
@@ -475,7 +477,6 @@ export function Skills({
         return science.label === key;
       });
       if (detailedKey === undefined) return;
-      getAndSetFunction(skillValues.detailedKey, undefined);
       setInnerDetailedKey(detailedKey);
     } else if (skillKey === 'fighting') {
       const detailedKey = detailedFighting.find((fighting) => {
