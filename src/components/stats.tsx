@@ -12,7 +12,7 @@ interface StatsProps {
   isClassTraits: boolean;
 }
 
-interface StatsParams {
+export interface StatsParams {
   statKey: string;
   label?: string;
   nDices?: number;
