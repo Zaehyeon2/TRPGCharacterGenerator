@@ -63,8 +63,11 @@ export function Stats({
     <Container>
       <Stack align="center" spacing={0} sx={{ border: '1px solid', borderRadius: '0.5em' }}>
         <Text align="center" fz="sm">
-          {label}
-          {` (${nDices}D${nSides}+${baseValue})*${multiplyValue}`}
+          {label} {multiplyValue !== 1 && '('}
+          {nDices && nSides && `${nDices}D${nSides}`}
+          {baseValue !== 0 && `+${baseValue}`}
+          {multiplyValue !== 1 && ')'}
+          {multiplyValue !== 1 && `*${multiplyValue}`}
         </Text>
         <Grid justify="center" align="center" sx={{ padding: '5px' }} grow>
           {isClass && (
