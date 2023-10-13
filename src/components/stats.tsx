@@ -1,13 +1,12 @@
 /* eslint-disable react/require-default-props */
 import { Text, Stack, Grid, TextInput, UnstyledButton, Checkbox, Container } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
+import dice20 from '../assets/dice20.png';
 import { rollDice } from '../services/dice.service';
 import { isNumber } from '../services/utils.service';
-import dice20 from '../assets/dice20.png';
 
 interface StatsProps {
   value: number;
-  valueAddedBaseValue: number;
   valueDividedBy2: number;
   valueDividedBy5: number;
   isClassTraits: boolean;
@@ -16,12 +15,10 @@ interface StatsProps {
 interface StatsParams {
   statKey: string;
   label?: string;
-  value: number;
   nDices?: number;
   nSides?: number;
   baseValue?: number;
   multiplyValue?: number;
-  maxValue: number;
   isClass?: boolean;
   getAndSetFunction: (key: string, value: number) => void;
 }
@@ -29,18 +26,15 @@ interface StatsParams {
 export function Stats({
   statKey,
   label,
-  value,
   nDices,
   nSides,
   baseValue = 0,
-  maxValue,
   isClass = false,
   multiplyValue = 1,
   getAndSetFunction,
 }: StatsParams) {
   const [statValues, setStatValues] = useState<StatsProps>({
     value: 0,
-    valueAddedBaseValue: 0,
     valueDividedBy2: 0,
     valueDividedBy5: 0,
     isClassTraits: false,
@@ -49,7 +43,6 @@ export function Stats({
   function setStats(stat: number) {
     setStatValues({
       value: stat,
-      valueAddedBaseValue: stat,
       valueDividedBy2: Math.floor(stat / 2),
       valueDividedBy5: Math.floor(stat / 5),
       isClassTraits: statValues.isClassTraits,
@@ -70,9 +63,10 @@ export function Stats({
     <Container>
       <Stack align="center" spacing={0} sx={{ border: '1px solid', borderRadius: '0.5em' }}>
         <Text align="center" fz="sm">
-          {label}{` (${nDices}D${nSides}+${baseValue})*${multiplyValue}`}
+          {label}
+          {` (${nDices}D${nSides}+${baseValue})*${multiplyValue}`}
         </Text>
-        <Grid justify="center" align="center" sx={{ paddingTop: '5px', paddingBottom: '5px' }}>
+        <Grid justify="center" align="center" sx={{ padding: '5px' }} grow>
           {isClass && (
             <Grid.Col span="content">
               <Checkbox
@@ -97,9 +91,9 @@ export function Stats({
           <Grid.Col span={4}>
             <Grid justify="center" align="center">
               <Grid.Col span={6}>
-                <Text fz="xl">{statValues.valueAddedBaseValue}</Text>
+                <Text fz="xl">{statValues.value}</Text>
               </Grid.Col>
-              <Grid.Col span={5}>
+              <Grid.Col span={6}>
                 <Stack spacing={0} align="center">
                   <Text fz="xs">{statValues.valueDividedBy2}</Text>
                   <Text fz="xs">{statValues.valueDividedBy5}</Text>
@@ -110,7 +104,7 @@ export function Stats({
           {nDices && nSides && (
             <Grid.Col span="content">
               <UnstyledButton onClick={() => rollStat()}>
-                <img src={dice20} alt="roll" width="20px" />
+                <img src={dice20} alt="roll" width="15px" />
               </UnstyledButton>
             </Grid.Col>
           )}

@@ -1,11 +1,11 @@
 import { Card, Center, Container, Grid, Group, Stack, Text, TextInput } from '@mantine/core';
 import React, { useEffect, useState } from 'react';
-import { Stats } from '../components/stats';
-import { explorerStyles } from '../styles/styles';
-import { isNumber } from '../services/utils.service';
 import logo from '../assets/coc-logo.png';
+import { Stats } from '../components/stats';
+import { isNumber } from '../services/utils.service';
+import { explorerStyles } from '../styles/styles';
 
-interface Stats {
+interface IStats {
   job: string;
   age: number;
   str: number;
@@ -34,11 +34,11 @@ export function CthulhuGenerator() {
     education: 0,
     mobility: 0,
     luck: 0,
-  } as Stats)
+  } as IStats);
 
-  function getAndSetValue(key: string, value: number) {
+  const getAndSetValue = (key: string, value: number) => {
     setStatsValue({ ...statValues, [key]: value });
-  }
+  };
 
   function getMobility() {
     const { str, dex, size, age } = statValues;
@@ -62,17 +62,15 @@ export function CthulhuGenerator() {
 
   return (
     <Card withBorder radius="md">
-
       {/* Logo */}
       <Center>
-        <img src={logo} alt="logo" width="30%"></img>
+        <img src={logo} alt="logo" width="30%" />
       </Center>
       <Grid justify="center" align="center">
         <Grid.Col span={4}>
-
           {/* 탐사자 정보 */}
-          <Stack spacing='xs' sx={{ border: "solid", paddingBottom: '10px', height: "330px" }}>
-            <Text sx={{ backgroundColor: "black", width: '100%' }}>현대 탐사자</Text>
+          <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
+            <Text sx={{ backgroundColor: 'black', width: '100%' }}>현대 탐사자</Text>
             <Group sx={{ margin: 'auto' }}>
               <Text className={classes.label}>이름</Text>
               <TextInput size="xs" />
@@ -83,16 +81,24 @@ export function CthulhuGenerator() {
             </Group>
             <Group sx={{ margin: 'auto' }}>
               <Text className={classes.label}>직업</Text>
-              <TextInput value={statValues.job} size="xs" onChange={(event) => {
-                setStatsValue({ ...statValues, job: event.currentTarget.value })
-              }} />
+              <TextInput
+                value={statValues.job}
+                size="xs"
+                onChange={(event) => {
+                  setStatsValue({ ...statValues, job: event.currentTarget.value });
+                }}
+              />
             </Group>
             <Group sx={{ margin: 'auto' }}>
               <Text className={classes.label}>나이</Text>
-              <TextInput value={statValues.age} size="xs" onChange={(event) => {
-                if (!isNumber(event.currentTarget.value)) return;
-                setStatsValue({ ...statValues, age: +event.currentTarget.value })
-              }} />
+              <TextInput
+                value={statValues.age}
+                size="xs"
+                onChange={(event) => {
+                  if (!isNumber(event.currentTarget.value)) return;
+                  setStatsValue({ ...statValues, age: +event.currentTarget.value });
+                }}
+              />
             </Group>
             <Group sx={{ margin: 'auto' }}>
               <Text className={classes.label}>성별</Text>
@@ -109,45 +115,42 @@ export function CthulhuGenerator() {
           </Stack>
         </Grid.Col>
         <Grid.Col span={8}>
-
           {/* 특성치 */}
-          <Stack justify="space-between" spacing='xs' sx={{ paddingBottom: '10px', border: "solid", height: "330px" }}>
-            <Text sx={{ backgroundColor: "brown" }}>특성치</Text>
+          <Stack
+            justify="space-between"
+            spacing="xs"
+            sx={{ paddingBottom: '10px', border: 'solid', height: '330px' }}
+          >
+            <Text sx={{ backgroundColor: 'brown' }}>특성치</Text>
             <Grid justify="center" align="center">
               <Grid.Col span={4}>
                 <Stats
                   statKey="str"
-                  value={statValues.str}
                   label="근력"
                   nDices={3}
                   nSides={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
               <Grid.Col span={4}>
                 <Stats
                   statKey="dex"
-                  value={statValues.dex}
                   label="민첩성"
                   nDices={3}
                   nSides={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
               <Grid.Col span={4}>
                 <Stats
                   statKey="int"
-                  value={statValues.int}
                   label="지능"
                   nDices={2}
                   nSides={6}
                   baseValue={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
@@ -156,37 +159,31 @@ export function CthulhuGenerator() {
               <Grid.Col span={4}>
                 <Stats
                   statKey="health"
-                  value={statValues.health}
                   label="건강"
                   nDices={3}
                   nSides={6}
                   baseValue={0}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
               <Grid.Col span={4}>
                 <Stats
                   statKey="appeareance"
-                  value={statValues.appeareance}
                   label="외모"
                   nDices={3}
                   nSides={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
               <Grid.Col span={4}>
                 <Stats
                   statKey="mentality"
-                  value={statValues.mentality}
                   label="정신력"
                   nDices={3}
                   nSides={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
@@ -195,32 +192,37 @@ export function CthulhuGenerator() {
               <Grid.Col span={4}>
                 <Stats
                   statKey="size"
-                  value={statValues.size}
                   label="크기"
                   nDices={2}
                   nSides={6}
                   baseValue={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
               <Grid.Col span={4}>
                 <Stats
                   statKey="education"
-                  value={statValues.education}
                   label="교육"
                   nDices={2}
                   nSides={6}
                   baseValue={6}
                   multiplyValue={5}
-                  maxValue={99}
                   getAndSetFunction={getAndSetValue}
                 />
               </Grid.Col>
-              <Grid.Col span={4} >
+              <Grid.Col span={4}>
                 <Container>
-                  <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+                  <Stack
+                    sx={{
+                      border: '1px solid',
+                      borderRadius: '0.5em',
+                      paddingTop: '11.15px',
+                      paddingBottom: '11.25px',
+                    }}
+                    justify="center"
+                    spacing={0}
+                  >
                     <Text fz="sm">이동력</Text>
                     <Text>{statValues.mobility}</Text>
                   </Stack>
@@ -230,14 +232,27 @@ export function CthulhuGenerator() {
           </Stack>
         </Grid.Col>
       </Grid>
-      
+
       {/* 특성치2 */}
-      <Stack justify="space-between" spacing='xs' sx={{ paddingBottom: '10px', border: "solid", marginTop: "16px" }}>
-        <Text sx={{ backgroundColor: "brown" }}>특성치2</Text>
+      <Stack
+        justify="space-between"
+        spacing="xs"
+        sx={{ paddingBottom: '10px', border: 'solid', marginTop: '16px' }}
+      >
+        <Text sx={{ backgroundColor: 'brown' }}>특성치2</Text>
         <Grid justify="center" align="center">
           <Grid.Col span={3}>
             <Container>
-              <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+              <Stack
+                sx={{
+                  border: '1px solid',
+                  borderRadius: '0.5em',
+                  paddingTop: '11.15px',
+                  paddingBottom: '11.25px',
+                }}
+                justify="center"
+                spacing={0}
+              >
                 <Text fz="sm">체력</Text>
                 <Text>{Math.floor((statValues.size + statValues.health) / 10)}</Text>
               </Stack>
@@ -246,18 +261,25 @@ export function CthulhuGenerator() {
           <Grid.Col span={3}>
             <Stats
               statKey="luck"
-              value={statValues.luck}
               label="운"
               nDices={3}
               nSides={6}
               multiplyValue={5}
-              maxValue={99}
               getAndSetFunction={getAndSetValue}
             />
           </Grid.Col>
           <Grid.Col span={3}>
             <Container>
-              <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+              <Stack
+                sx={{
+                  border: '1px solid',
+                  borderRadius: '0.5em',
+                  paddingTop: '11.15px',
+                  paddingBottom: '11.25px',
+                }}
+                justify="center"
+                spacing={0}
+              >
                 <Text fz="sm">이성</Text>
                 <Text>{statValues.mentality}</Text>
               </Stack>
@@ -265,7 +287,16 @@ export function CthulhuGenerator() {
           </Grid.Col>
           <Grid.Col span={3}>
             <Container>
-              <Stack sx={{ border: '1px solid', borderRadius: '0.5em', paddingTop: "11.15px", paddingBottom: "11.25px" }} justify="center" spacing={0}>
+              <Stack
+                sx={{
+                  border: '1px solid',
+                  borderRadius: '0.5em',
+                  paddingTop: '11.15px',
+                  paddingBottom: '11.25px',
+                }}
+                justify="center"
+                spacing={0}
+              >
                 <Text fz="sm">마력</Text>
                 <Text>{Math.floor(statValues.mentality / 5)}</Text>
               </Stack>
@@ -273,6 +304,6 @@ export function CthulhuGenerator() {
           </Grid.Col>
         </Grid>
       </Stack>
-    </Card >
+    </Card>
   );
 }

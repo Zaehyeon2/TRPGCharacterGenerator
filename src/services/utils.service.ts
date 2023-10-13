@@ -1,4 +1,4 @@
 export function isNumber(value: string) {
-    const numberedValue = Number(value);
-    return !Number.isNaN(numberedValue) || numberedValue >= 0;
+  const numberedValue = Number(value);
+  return !Number.isNaN(numberedValue) || numberedValue >= 0;
 }

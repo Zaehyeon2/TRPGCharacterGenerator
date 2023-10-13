@@ -31,7 +31,7 @@ export default defineConfig(({ command, mode }) => {
   };
   console.log(command, mode);
   if (command === 'build' || mode !== 'development') {
-    config.base = '/TRPGCharacterGenerator/'
+    config.base = '/TRPGCharacterGenerator/';
   }
   return config;
 });

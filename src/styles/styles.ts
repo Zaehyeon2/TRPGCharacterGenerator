@@ -18,5 +18,5 @@ export const useStyles = createStyles(() => ({
 export const explorerStyles = createStyles(() => ({
   label: {
     width: '70px',
-  }
-}))
+  },
+}));
