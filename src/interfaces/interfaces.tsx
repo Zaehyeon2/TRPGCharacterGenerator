@@ -1,3 +1,5 @@
+import { ForwardedRef, MutableRefObject, RefObject } from "react";
+
 export interface IStats {
   job: string;
   age: number;
@@ -258,6 +260,7 @@ export interface DetailedSkillProps {
 }
 
 export interface SkillParams {
+  value: number;
   skillKey: string;
   label: string;
   baseValue: number;

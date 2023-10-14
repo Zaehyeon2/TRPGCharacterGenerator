@@ -7,6 +7,7 @@ import { Stats } from '../components/stats';
 import { defalutSkills } from '../consts/defaultValues';
 import { skillsParamsFunction } from '../consts/skills';
 import { IInnerSkills, ISkills, IStats } from '../interfaces/interfaces';
+import { rollDice } from '../services/dice.service';
 import { isNumber } from '../services/utils.service';
 import { explorerStyles } from '../styles/styles';
 
@@ -30,16 +31,6 @@ export function CthulhuGenerator() {
     defalutSkills(statValues.dex, statValues.education) as ISkills,
   );
 
-  const [isDetailedSkillsExperted, setIsDetailedSkillsExperted] = useState({
-    science: false,
-    fighting: false,
-    firearms: false,
-    languageOther: false,
-    artcraft: false,
-    pilot: false,
-    survival: false,
-  });
-
   const [skillPoints, setSkillPoints] = useState({
     baseJob: 0,
     job: 0,
@@ -56,49 +47,26 @@ export function CthulhuGenerator() {
 
   const getAndSetSkills = (key: string, value: IInnerSkills | undefined) => {
     if (!value) {
-      console.log(key);
-
       const keys = Object.keys(skillValues);
-      for (let i = 0; i < keys.length; i += 1) {
-        if (keys[i] === key) {
-          setSkillValues({
-            ...skillValues,
-            [key]: {
-              value: 0,
-              valueAddedByBaseValue: skillValues[key].valueAddedByBaseValue,
-              isChecked: skillValues[key].isChecked,
-            },
-          });
+      const updatedSkillValues: ISkills = { ...skillValues };
+      const updatedKeys: string[] = [];
+      keys.map((skillKey) => {
+        if (skillKey.startsWith(key)) {
+          updatedSkillValues[skillKey] = {
+            value: 0,
+            valueAddedByBaseValue: skillValues[skillKey].valueAddedByBaseValue,
+            isChecked: false,
+          };
+          updatedKeys.push(skillKey);
         }
-      }
-      return;
+        return 0;
+      });
+      setSkillValues(updatedSkillValues);
+      // setInnerSkillPoints(updatedKeys, { value: 0, valueAddedByBaseValue: 0, isChecked: false });
+    } else {
+      setSkillValues({ ...skillValues, [key]: value });
+      // setInnerSkillPoints([key], value);
     }
-    setSkillValues({ ...skillValues, [key]: value });
-
-    const skillValueKeys = Object.keys(skillValues);
-    let job = 0;
-    let interest = 0;
-    skillValueKeys.forEach((skillKey) => {
-      let skillValue: IInnerSkills;
-      if (skillKey === key) {
-        skillValue = value;
-        console.log(skillKey, skillValue);
-      } else {
-        skillValue = skillValues[skillKey];
-      }
-
-      if (skillValue.isChecked) {
-        job += skillValue.value;
-      } else {
-        interest += skillValue.value;
-      }
-    });
-    if (job > skillPoints.baseJob) {
-      interest += job - skillPoints.baseJob;
-      job = skillPoints.baseJob;
-    }
-
-    setSkillPoints({ ...skillPoints, job, interest });
   };
 
   function getMobility() {
@@ -116,6 +84,68 @@ export function CthulhuGenerator() {
 
     setStatsValue({ ...statValues, mobility });
   }
+
+  function getCombatStats(): { damageBonus: number; build: number } {
+    if (statValues.str + statValues.size <= 64) return { damageBonus: -2, build: -2 };
+    if (statValues.str + statValues.size <= 84) return { damageBonus: -1, build: -1 };
+    if (statValues.str + statValues.size <= 124) return { damageBonus: 0, build: 0 };
+    if (statValues.str + statValues.size <= 164) return { damageBonus: rollDice(1, 4), build: 1 };
+    return { damageBonus: rollDice(1, 6), build: 2 };
+  }
+
+  function getCredit(): { cash: string; assets: string; spendingLevel: string } {
+    if (skillValues.credit.valueAddedByBaseValue === 0)
+      return { cash: '0.5', assets: '0', spendingLevel: '0.5' };
+    if (skillValues.credit.valueAddedByBaseValue <= 9)
+      return {
+        cash: skillValues.credit.valueAddedByBaseValue.toString(),
+        assets: (skillValues.credit.valueAddedByBaseValue * 10).toString(),
+        spendingLevel: '2',
+      };
+    if (skillValues.credit.valueAddedByBaseValue <= 49)
+      return {
+        cash: (skillValues.credit.valueAddedByBaseValue * 2).toString(),
+        assets: (skillValues.credit.valueAddedByBaseValue * 50).toString(),
+        spendingLevel: '10',
+      };
+    if (skillValues.credit.valueAddedByBaseValue <= 89)
+      return {
+        cash: (skillValues.credit.valueAddedByBaseValue * 5).toString(),
+        assets: (skillValues.credit.valueAddedByBaseValue * 500).toString(),
+        spendingLevel: '50',
+      };
+    if (skillValues.credit.valueAddedByBaseValue <= 98)
+      return {
+        cash: (skillValues.credit.valueAddedByBaseValue * 20).toString(),
+        assets: (skillValues.credit.valueAddedByBaseValue * 2000).toString(),
+        spendingLevel: '250',
+      };
+    return {
+      cash: '50000',
+      assets: '5000000+',
+      spendingLevel: '5000',
+    };
+  }
+
+  useEffect(() => {
+    const skillValueKeys = Object.keys(skillValues);
+    const updatedSkillPoints = { ...skillPoints, job: 0, interest: 0 };
+    skillValueKeys.forEach((skillKey) => {
+      const skillValue = skillValues[skillKey];
+      if (skillValue.isChecked) {
+        updatedSkillPoints.job += skillValue.value;
+      } else {
+        updatedSkillPoints.interest += skillValue.value;
+      }
+    });
+
+    if (updatedSkillPoints.job > skillPoints.baseJob) {
+      updatedSkillPoints.interest += updatedSkillPoints.job - skillPoints.baseJob;
+      updatedSkillPoints.job = skillPoints.baseJob;
+    }
+
+    setSkillPoints(updatedSkillPoints);
+  }, [skillValues, skillPoints.baseJob]);
 
   useEffect(() => {
     getMobility();
@@ -367,11 +397,157 @@ export function CthulhuGenerator() {
     </Stack>
   );
 
+  const explorerCombat = (
+    <Stack
+      justify="space-between"
+      spacing="xs"
+      sx={{ paddingBottom: '10px', border: 'solid', marginTop: '16px' }}
+    >
+      <Text sx={{ backgroundColor: 'teal' }}>전투</Text>
+      <Grid justify="center" align="center" columns={1}>
+        <Grid.Col span={1}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Text fz="sm">피해 보너스</Text>
+              <Text>{getCombatStats().damageBonus}</Text>
+            </Stack>
+          </Container>
+        </Grid.Col>
+        <Grid.Col span={1}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Text fz="sm">체구</Text>
+              <Text>{getCombatStats().build}</Text>
+            </Stack>
+          </Container>
+        </Grid.Col>
+        <Grid.Col span={1}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+                height: '70.88px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Text fz="sm">회피</Text>
+              <Grid justify="center" align="center">
+                <Grid.Col span={1}>
+                  <Text fz="xl">{skillValues.dodge.valueAddedByBaseValue}</Text>
+                </Grid.Col>
+                <Grid.Col span={1}>
+                  <Stack spacing={0} align="center">
+                    <Text fz="xs">{Math.floor(skillValues.dodge.valueAddedByBaseValue / 2)}</Text>
+                    <Text fz="xs">{Math.floor(skillValues.dodge.valueAddedByBaseValue / 5)}</Text>
+                  </Stack>
+                </Grid.Col>
+              </Grid>
+            </Stack>
+          </Container>
+        </Grid.Col>
+      </Grid>
+    </Stack>
+  );
+
+  const explorerCredit = (
+    <Stack
+      justify="space-between"
+      spacing="xs"
+      sx={{ paddingBottom: '10px', border: 'solid', marginTop: '16px' }}
+    >
+      <Text sx={{ backgroundColor: 'gold', color: 'black' }}>현금과 자산</Text>
+      <Grid justify="center" align="center" columns={1}>
+        <Grid.Col span={1}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Text fz="sm">소비 수준</Text>
+              <Text>💲{getCredit().spendingLevel}</Text>
+            </Stack>
+          </Container>
+        </Grid.Col>
+        <Grid.Col span={1}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Text fz="sm">현금</Text>
+              <Text>💲{getCredit().cash}</Text>
+            </Stack>
+          </Container>
+        </Grid.Col>
+        <Grid.Col span={1}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Text fz="sm">자산</Text>
+              <Text>💲{getCredit().assets}</Text>
+            </Stack>
+          </Container>
+        </Grid.Col>
+      </Grid>
+    </Stack>
+  );
+
   const explorerSkills = (
     <Container sx={{ padding: '0', paddingBottom: '10px', border: 'solid', marginTop: '16px' }}>
-      <Text sx={{ backgroundColor: 'brown', color: 'black' }}>기능</Text>
+      <Text sx={{ backgroundColor: 'purple' }}>기능</Text>
       <Text sx={{ backgroundColor: 'lightgray', color: 'black' }}>
-        ⚠ 직업 기능에 체크표시 하세요
+        ✔ 직업 기능에 체크표시 하세요.
+        <br />✔ 직업 기능 점수는 탐사자 핸드북 또는 수호자 룰북을 참고해주세요.
+        <br />✔ 전문 분야중 하나가 최초로 50% 이상이 될 경우 넘을 경우 다른 관련 전문 분야도 10%씩
+        높아집니다 (최대 50%).
+        <br />✔ 전문 분야중 하나가 최초로 90% 이상이 될 경우 넘을 경우 다른 관련 전문 분야도 10%씩
+        높아집니다 (최대 90%).
+      </Text>
+      <Text sx={{ backgroundColor: 'yellow', color: 'black' }}>
+        ⚠ 전문 분야를 모두 고르고 스탯 배분을 시작해주세요.
+        <br />⚠ 중간에 전문 분야를 바꿀시 다른 관련 전문 분야 스탯도 다시 적어주세요.
       </Text>
       <Grid justify="center" align="center" sx={{ marginTop: '5px' }} columns={12}>
         <Grid.Col span={4}>
@@ -454,6 +630,7 @@ export function CthulhuGenerator() {
             <Flex direction="column" gap="md" justify="center" align="center">
               {skillParams.map((skill) => (
                 <Skills
+                  value={skill.value}
                   key={skill.label}
                   skillKey={skill.skillKey}
                   label={skill.label}
@@ -471,7 +648,6 @@ export function CthulhuGenerator() {
 
   return (
     <Card withBorder radius="md">
-      <Button onClick={() => console.log(skillValues)} />
       {/* Logo */}
       <Logo image={logo} />
       <Grid justify="center" align="center">
@@ -488,6 +664,16 @@ export function CthulhuGenerator() {
       {explorerTraits2}
       {/* 기술 */}
       {explorerSkills}
+      <Grid justify="center" align="center">
+        <Grid.Col span={6}>
+          {/* 탐사자 정보 */}
+          {explorerCombat}
+        </Grid.Col>
+        <Grid.Col span={6}>
+          {/* 특성치 */}
+          {explorerCredit}
+        </Grid.Col>
+      </Grid>
     </Card>
   );
 }

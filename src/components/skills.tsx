@@ -74,10 +74,9 @@ export function Skills({
     });
   }, [skillValues.valueAddedByBaseValue, skillValues.isClassTraits]);
 
-
   function setInnerDetailedKey(detailedKey: DetailedSkillProps) {
     if (getAndSetFunction === undefined) return;
-    getAndSetFunction(skillValues.detailedKey, undefined);
+    getAndSetFunction(skillKey, undefined);
     setSkillValues({
       ...skillValues,
       value: 0,
@@ -245,8 +244,8 @@ export function Skills({
           return rare.label;
         })}
         size="xs"
-        onChange={(value) => {
-          setDetailedKey(value as string);
+        onChange={(values) => {
+          setDetailedKey(values as string);
         }}
       />
     );
@@ -276,7 +275,7 @@ export function Skills({
           <Grid.Col span={5}>
             <TextInput
               autoComplete="off"
-              disabled={isCheckboxDisabled(skillValues.detailedKey)}
+              disabled={skillKey !== 'credit' && isCheckboxDisabled(skillValues.detailedKey)}
               value={skillValues.value}
               onChange={(event) => {
                 if (!isNumber(event.currentTarget.value)) return;
