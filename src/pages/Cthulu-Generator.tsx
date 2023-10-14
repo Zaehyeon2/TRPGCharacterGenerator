@@ -4,7 +4,9 @@ import logo from '../assets/coc-logo.png';
 import { Logo } from '../components/logo';
 import { Skills } from '../components/skills';
 import { Stats } from '../components/stats';
-import { IInnerSkills, ISkills, IStats, SkillParams } from '../interfaces/interfaces';
+import { defalutSkills } from '../consts/defaultValues';
+import { skillsParamsFunction } from '../consts/skills';
+import { IInnerSkills, ISkills, IStats } from '../interfaces/interfaces';
 import { isNumber } from '../services/utils.service';
 import { explorerStyles } from '../styles/styles';
 
@@ -24,223 +26,33 @@ export function CthulhuGenerator() {
     luck: 0,
   } as IStats);
 
-  const [skillValues, setSkillValues] = useState({
-    appraise: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    archaeology: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    spotHidden: {
-      value: 0,
-      valueAddedByBaseValue: 25,
-      isChecked: false,
-    },
-    mechanicalRepair: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    jump: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    listen: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    fastTalk: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    charm: {
-      value: 0,
-      valueAddedByBaseValue: 15,
-      isChecked: false,
-    },
-    law: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    disguise: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    persuade: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    sleightOfHand: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    swim: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    psychology: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    languageOwn: {
-      value: 0,
-      valueAddedByBaseValue: statValues.education,
-      isChecked: false,
-    },
-    history: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    locksmith: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    climb: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    occult: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    intimidate: {
-      value: 0,
-      valueAddedByBaseValue: 15,
-      isChecked: false,
-    },
-    stealth: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    firstAid: {
-      value: 0,
-      valueAddedByBaseValue: 30,
-      isChecked: false,
-    },
-    medicine: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    anthropology: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    driveAuto: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    libraryUse: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    naturalWorld: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    electricalRepair: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    operateElectronics: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    psychoanalysis: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    operateHeavyMachine: {
-      value: 0,
-      valueAddedByBaseValue: 1,
-      isChecked: false,
-    },
-    track: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    operateComputer: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    cthulhuMythos: {
-      value: 0,
-      valueAddedByBaseValue: 0,
-      isChecked: false,
-    },
-    throw: {
-      value: 0,
-      valueAddedByBaseValue: 20,
-      isChecked: false,
-    },
-    navigate: {
-      value: 0,
-      valueAddedByBaseValue: 10,
-      isChecked: false,
-    },
-    accounting: {
-      value: 0,
-      valueAddedByBaseValue: 5,
-      isChecked: false,
-    },
-    dodge: {
-      value: 0,
-      valueAddedByBaseValue: Math.floor(statValues.dex / 2),
-      isChecked: false,
-    },
-    credit: {
-      value: 0,
-      valueAddedByBaseValue: 0,
-      isChecked: false,
-    },
-  } as ISkills);
+  const [skillValues, setSkillValues] = useState(
+    defalutSkills(statValues.dex, statValues.education) as ISkills,
+  );
+
+  const [isDetailedSkillsExperted, setIsDetailedSkillsExperted] = useState({
+    science: false,
+    fighting: false,
+    firearms: false,
+    languageOther: false,
+    artcraft: false,
+    pilot: false,
+    survival: false,
+  });
+
+  const [skillPoints, setSkillPoints] = useState({
+    baseJob: 0,
+    job: 0,
+    baseInterest: 0,
+    interest: 0,
+  });
 
   const getAndSetStats = (key: string, value: number) => {
     setStatsValue({ ...statValues, [key]: value });
+    if (key === 'int') {
+      setSkillPoints({ ...skillPoints, baseInterest: value * 2 });
+    }
   };
-
-  function getMobility() {
-    const { str, dex, size, age } = statValues;
-
-    let mobility: number;
-    if (str < size && dex < size) mobility = 7;
-    else if (str > size && dex > size) mobility = 9;
-    else mobility = 8;
-    if (age >= 80) mobility -= 5;
-    else if (age >= 70) mobility -= 4;
-    else if (age >= 60) mobility -= 3;
-    else if (age >= 50) mobility -= 2;
-    else if (age >= 40) mobility -= 1;
-
-    setStatsValue({ ...statValues, mobility });
-  }
 
   const getAndSetSkills = (key: string, value: IInnerSkills | undefined) => {
     if (!value) {
@@ -262,11 +74,61 @@ export function CthulhuGenerator() {
       return;
     }
     setSkillValues({ ...skillValues, [key]: value });
+
+    const skillValueKeys = Object.keys(skillValues);
+    let job = 0;
+    let interest = 0;
+    skillValueKeys.forEach((skillKey) => {
+      let skillValue: IInnerSkills;
+      if (skillKey === key) {
+        skillValue = value;
+        console.log(skillKey, skillValue);
+      } else {
+        skillValue = skillValues[skillKey];
+      }
+
+      if (skillValue.isChecked) {
+        job += skillValue.value;
+      } else {
+        interest += skillValue.value;
+      }
+    });
+    if (job > skillPoints.baseJob) {
+      interest += job - skillPoints.baseJob;
+      job = skillPoints.baseJob;
+    }
+
+    setSkillPoints({ ...skillPoints, job, interest });
   };
+
+  function getMobility() {
+    const { str, dex, size, age } = statValues;
+
+    let mobility: number;
+    if (str < size && dex < size) mobility = 7;
+    else if (str > size && dex > size) mobility = 9;
+    else mobility = 8;
+    if (age >= 80) mobility -= 5;
+    else if (age >= 70) mobility -= 4;
+    else if (age >= 60) mobility -= 3;
+    else if (age >= 50) mobility -= 2;
+    else if (age >= 40) mobility -= 1;
+
+    setStatsValue({ ...statValues, mobility });
+  }
 
   useEffect(() => {
     getMobility();
   }, [statValues.str, statValues.dex, statValues.size, statValues.age]);
+
+  useEffect(() => {
+    setSkillPoints({
+      ...skillPoints,
+      baseInterest: statValues.int * 2,
+    });
+  }, [statValues.int]);
+
+  const skillsParams = skillsParamsFunction(statValues.dex, statValues.education);
 
   const explorerInfos = (
     <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
@@ -505,326 +367,87 @@ export function CthulhuGenerator() {
     </Stack>
   );
 
-  const skillsParams: SkillParams[][] = [
-    // first row
-    [
-      {
-        label: '감정',
-        skillKey: 'appraise',
-        baseValue: 5,
-      },
-      {
-        label: '고고학',
-        skillKey: 'archaeology',
-        baseValue: 1,
-      },
-      {
-        label: '과학 (1)',
-        skillKey: 'science',
-        baseValue: 1,
-      },
-      {
-        label: '과학 (2)',
-        skillKey: 'science',
-        baseValue: 1,
-      },
-      {
-        label: '과학 (3)',
-        skillKey: 'science',
-        baseValue: 1,
-      },
-      {
-        label: '관찰력',
-        skillKey: 'spotHidden',
-        baseValue: 25,
-      },
-      {
-        label: '근접전 (1)',
-        skillKey: 'fighting',
-        baseValue: 25,
-      },
-      {
-        label: '근접전 (2)',
-        skillKey: 'fighting',
-        baseValue: 25,
-      },
-      {
-        label: '근접전 (3)',
-        skillKey: 'fighting',
-        baseValue: 25,
-      },
-      {
-        label: '기계수리',
-        skillKey: 'mechanicalRepair',
-        baseValue: 10,
-      },
-      {
-        label: '도약',
-        skillKey: 'jump',
-        baseValue: 20,
-      },
-      {
-        label: '듣기',
-        skillKey: 'listen',
-        baseValue: 20,
-      },
-      {
-        label: '말재주',
-        skillKey: 'fastTalk',
-        baseValue: 5,
-      },
-      {
-        label: '매혹',
-        skillKey: 'charm',
-        baseValue: 15,
-      },
-      {
-        label: '법률',
-        skillKey: 'law',
-        baseValue: 5,
-      },
-    ],
-    // second row
-    [
-      {
-        label: '변장',
-        skillKey: 'disguise',
-        baseValue: 5,
-      },
-      {
-        label: '사격 (1)',
-        skillKey: 'firearms',
-        baseValue: 20,
-      },
-      {
-        label: '사격 (2)',
-        skillKey: 'firearms',
-        baseValue: 25,
-      },
-      {
-        label: '사격 (3)',
-        skillKey: 'firearms',
-        baseValue: 1,
-      },
-      {
-        label: '생존술 (??)',
-        skillKey: 'survival',
-        baseValue: 10,
-      },
-      {
-        label: '설득',
-        skillKey: 'persuade',
-        baseValue: 10,
-      },
-      {
-        label: '손놀림',
-        skillKey: 'sleightOfHand',
-        baseValue: 10,
-      },
-      {
-        label: '수영',
-        skillKey: 'swim',
-        baseValue: 20,
-      },
-      {
-        label: '심리학',
-        skillKey: 'psychology',
-        baseValue: 10,
-      },
-      {
-        label: '언어 (모국어)',
-        skillKey: 'languageOwn',
-        baseValue: statValues.education,
-      },
-      {
-        label: '언어 (외국어1)',
-        skillKey: 'languageOther1',
-        baseValue: 1,
-      },
-      {
-        label: '언어 (외국어2)',
-        skillKey: 'languageOther2',
-        baseValue: 1,
-      },
-      {
-        label: '언어 (외국어3)',
-        skillKey: 'languageOther3',
-        baseValue: 1,
-      },
-      {
-        label: '역사',
-        skillKey: 'history',
-        baseValue: 5,
-      },
-      {
-        label: '열쇠공',
-        skillKey: 'locksmith',
-        baseValue: 1,
-      },
-    ],
-    // third row
-    [
-      {
-        label: '예술/공예 (1)',
-        skillKey: 'artcraft',
-        baseValue: 5,
-      },
-      {
-        label: '예술/공예 (2)',
-        skillKey: 'artcraft',
-        baseValue: 5,
-      },
-      {
-        label: '예술/공예 (3)',
-        skillKey: 'artcraft',
-        baseValue: 5,
-      },
-      {
-        label: '오르기',
-        skillKey: 'climb',
-        baseValue: 20,
-      },
-      {
-        label: '오컽트',
-        skillKey: 'occult',
-        baseValue: 5,
-      },
-      {
-        label: '위협',
-        skillKey: 'intimidate',
-        baseValue: 15,
-      },
-      {
-        label: '은밀행동',
-        skillKey: 'stealth',
-        baseValue: 20,
-      },
-      {
-        label: '응급처치',
-        skillKey: 'firstAid',
-        baseValue: 30,
-      },
-      {
-        label: '의료',
-        skillKey: 'medicine',
-        baseValue: 1,
-      },
-      {
-        label: '인류학',
-        skillKey: 'anthropology',
-        baseValue: 1,
-      },
-      {
-        label: '자동차운전',
-        skillKey: 'driveAuto',
-        baseValue: 20,
-      },
-      {
-        label: '자료조사',
-        skillKey: 'libraryUse',
-        baseValue: 20,
-      },
-      {
-        label: '자연',
-        skillKey: 'naturalWorld',
-        baseValue: 10,
-      },
-      {
-        label: '재력',
-        skillKey: 'credit',
-        baseValue: 0,
-        checkboxDisabled: true,
-      },
-      {
-        label: '전기수리',
-        skillKey: 'electricalRepair',
-        baseValue: 10,
-      },
-    ],
-    // fourth row
-    [
-      {
-        label: '전자기기',
-        skillKey: 'operateElectronics',
-        baseValue: 1,
-      },
-      {
-        label: '정신분석',
-        skillKey: 'psychoanalysis',
-        baseValue: 1,
-      },
-      {
-        label: '조종 (1)',
-        skillKey: 'pilot',
-        baseValue: 1,
-      },
-      {
-        label: '중장비조작',
-        skillKey: 'operateHeavyMachine',
-        baseValue: 1,
-      },
-      {
-        label: '추적',
-        skillKey: 'track',
-        baseValue: 10,
-      },
-      {
-        label: '컴퓨터사용',
-        skillKey: 'operateComputer',
-        baseValue: 5,
-      },
-      {
-        label: '크툴루신화',
-        skillKey: 'cthulhuMythos',
-        baseValue: 0,
-        checkboxDisabled: true,
-      },
-      {
-        label: '투척',
-        skillKey: 'throw',
-        baseValue: 20,
-      },
-      {
-        label: '항법',
-        skillKey: 'navigate',
-        baseValue: 10,
-      },
-      {
-        label: '회계',
-        skillKey: 'accounting',
-        baseValue: 5,
-      },
-      {
-        label: '회피',
-        skillKey: 'dodge',
-        baseValue: Math.floor(statValues.dex / 2),
-      },
-      {
-        label: 'something1',
-        skillKey: 'rare',
-        baseValue: 20,
-      },
-      {
-        label: 'something2',
-        skillKey: 'rare',
-        baseValue: 20,
-      },
-      {
-        label: 'something3',
-        skillKey: 'rare',
-        baseValue: 20,
-      },
-      {
-        label: 'something4',
-        skillKey: 'rare',
-        baseValue: 20,
-      },
-    ],
-  ];
-
   const explorerSkills = (
     <Container sx={{ padding: '0', paddingBottom: '10px', border: 'solid', marginTop: '16px' }}>
-      <Text sx={{ backgroundColor: 'brown' }}>기능</Text>
+      <Text sx={{ backgroundColor: 'brown', color: 'black' }}>기능</Text>
+      <Text sx={{ backgroundColor: 'lightgray', color: 'black' }}>
+        ⚠ 직업 기능에 체크표시 하세요
+      </Text>
+      <Grid justify="center" align="center" sx={{ marginTop: '5px' }} columns={12}>
+        <Grid.Col span={4}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Grid>
+                <Grid.Col span={6}>
+                  <Text fz="sm">직업 기능 점수</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text fz="sm">남은 점수</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <TextInput
+                    value={skillPoints.baseJob}
+                    sx={{ marginLeft: '5px', marginRight: '5px' }}
+                    onChange={(event) => {
+                      if (!isNumber(event.currentTarget.value)) return;
+                      setSkillPoints({ ...skillPoints, baseJob: +event.currentTarget.value });
+                    }}
+                  />
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text sx={{ marginLeft: '5px', marginRight: '5px' }}>
+                    {skillPoints.baseJob - skillPoints.job}
+                  </Text>
+                </Grid.Col>
+              </Grid>
+            </Stack>
+          </Container>
+        </Grid.Col>
+        <Grid.Col span={2} />
+        <Grid.Col span={4}>
+          <Container>
+            <Stack
+              sx={{
+                border: '1px solid',
+                borderRadius: '0.5em',
+                paddingTop: '11.15px',
+                paddingBottom: '11.25px',
+                height: '98.08px',
+              }}
+              justify="center"
+              spacing={0}
+            >
+              <Grid>
+                <Grid.Col span={6}>
+                  <Text fz="sm">관심 기능 점수</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text fz="sm">남은 점수</Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text sx={{ marginLeft: '5px', marginRight: '5px' }}>
+                    {skillPoints.baseInterest}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text sx={{ marginLeft: '5px', marginRight: '5px' }}>
+                    {skillPoints.baseInterest - skillPoints.interest}
+                  </Text>
+                </Grid.Col>
+              </Grid>
+            </Stack>
+          </Container>
+        </Grid.Col>
+      </Grid>
       <Grid justify="center" align="center" sx={{ marginTop: '5px' }}>
         {skillsParams.map((skillParams) => (
           <Grid.Col span={3}>
