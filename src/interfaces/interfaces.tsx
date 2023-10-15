@@ -277,7 +277,7 @@ export interface SkillParams {
   getAndSetFunction?: (key: string, value: IInnerSkills | undefined) => void;
   bonus50?: boolean;
   bonus90?: boolean;
-  reloadState: ReloadStateParams;
+  reloadState?: ReloadStateParams;
 }
 
 export interface Weapons {

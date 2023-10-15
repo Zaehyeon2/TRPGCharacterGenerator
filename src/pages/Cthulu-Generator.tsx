@@ -854,8 +854,6 @@ export function CthulhuGenerator() {
                       label={skill.label}
                       baseValue={skill.baseValue}
                       getAndSetFunction={getAndSetSkills}
-                      state={skillValues}
-                      setStateFunction={setSkillValues}
                       checkboxDisabled={skill.checkboxDisabled}
                       bonus50={getBonus(skill.skillKey, '50')}
                       bonus90={getBonus(skill.skillKey, '90')}
