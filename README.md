@@ -7,4 +7,10 @@
 ## 지원하는 게임
 
 - Call of Cthulhu 7th Edition
-- Dungeon World
+- Dungeon World (TBD)
+
+## Development
+```sh
+$ yarn install    # install dependencies
+$ yarn dev        # run vite locally
+```
