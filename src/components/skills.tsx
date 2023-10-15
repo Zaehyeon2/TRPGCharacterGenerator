@@ -10,12 +10,18 @@ import {
   detailedPilot,
   rareSkills,
 } from '../consts/skills';
-import { DetailedSkillProps, SkillParams, SkillProps } from '../interfaces/interfaces';
+import {
+  DetailedSkillProps,
+  ReloadStateParams,
+  SkillParams,
+  SkillProps,
+} from '../interfaces/interfaces';
 import { isNumber } from '../services/utils.service';
 
 export function Skills({
   skillKey,
   label,
+  reloadState = {} as ReloadStateParams,
   baseValue,
   checkboxDisabled = false,
   getAndSetFunction,
@@ -84,6 +90,20 @@ export function Skills({
       baseValue: skillValues.baseValue,
     });
   }
+
+  useEffect(() => {
+    const valueAddedByBaseValue = getValuesByAddedBonus(skillValues.baseValue + 0);
+
+    setSkillValues({
+      value: 0,
+      valueAddedByBaseValue,
+      valueDividedBy2: Math.floor(valueAddedByBaseValue / 2),
+      valueDividedBy5: Math.floor(valueAddedByBaseValue / 5),
+      isClassTraits: false,
+      detailedKey: skillValues.detailedKey,
+      baseValue: skillValues.baseValue,
+    });
+  }, [reloadState[skillKey]]);
 
   useEffect(() => {
     setStats(skillValues.value);

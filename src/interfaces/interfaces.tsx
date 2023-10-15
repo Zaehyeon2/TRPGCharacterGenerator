@@ -1,3 +1,5 @@
+import { Dispatch, SetStateAction } from 'react';
+
 export interface IStats {
   job: string;
   age: number;
@@ -257,6 +259,17 @@ export interface DetailedSkillProps {
   baseValue: number;
 }
 
+export interface ReloadStateParams {
+  [index: string]: boolean;
+  science: boolean;
+  fighting: boolean;
+  firearms: boolean;
+  language: boolean;
+  artcraft: boolean;
+  pilot: boolean;
+  survival: boolean;
+}
+
 export interface SkillParams {
   value: number;
   skillKey: string;
@@ -266,6 +279,7 @@ export interface SkillParams {
   getAndSetFunction?: (key: string, value: IInnerSkills | undefined) => void;
   bonus50?: boolean;
   bonus90?: boolean;
+  reloadState: ReloadStateParams;
 }
 
 export interface Weapons {

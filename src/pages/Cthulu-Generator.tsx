@@ -17,7 +17,13 @@ import { Skills } from '../components/skills';
 import { Stats } from '../components/stats';
 import { defalutSkills } from '../consts/defaultValues';
 import { skillsParamsFunction } from '../consts/skills';
-import { IInnerSkills, ISkills, IStats, IExpcetedSkills } from '../interfaces/interfaces';
+import {
+  IInnerSkills,
+  ISkills,
+  IStats,
+  IExpcetedSkills,
+  ReloadStateParams,
+} from '../interfaces/interfaces';
 import { rollDice } from '../services/dice.service';
 import { isNumber } from '../services/utils.service';
 import { explorerStyles } from '../styles/styles';
@@ -65,6 +71,16 @@ export function CthulhuGenerator() {
     baseInterest: 0,
     interest: 0,
   });
+
+  const [reloadState, setReloadState] = useState({
+    science: false,
+    fighting: false,
+    firearms: false,
+    language: false,
+    artcraft: false,
+    pilot: false,
+    survival: false,
+  } as ReloadStateParams);
 
   const getBonus = useCallback(
     (key: string, num: string) => {
@@ -115,6 +131,7 @@ export function CthulhuGenerator() {
           return 0;
         });
         setSkillValues(updatedSkillValues);
+        setReloadState({ ...reloadState, [key]: !reloadState[key] });
         // setInnerSkillPoints(updatedKeys, { value: 0, valueAddedByBaseValue: 0, isChecked: false });
       } else {
         setSkillValues({ ...skillValues, [key]: value });
@@ -837,12 +854,15 @@ export function CthulhuGenerator() {
                       label={skill.label}
                       baseValue={skill.baseValue}
                       getAndSetFunction={getAndSetSkills}
+                      state={skillValues}
+                      setStateFunction={setSkillValues}
                       checkboxDisabled={skill.checkboxDisabled}
                       bonus50={getBonus(skill.skillKey, '50')}
                       bonus90={getBonus(skill.skillKey, '90')}
+                      reloadState={reloadState}
                     />
                   ));
-                }, [skillParams, expectedSkills])}
+                }, [skillParams, expectedSkills, skillValues])}
               </Flex>
             </Grid.Col>
           ))}

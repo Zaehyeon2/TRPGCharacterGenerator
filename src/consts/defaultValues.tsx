@@ -153,6 +153,21 @@ export const defalutSkills = (dex: number, education: number) => {
       valueAddedByBaseValue: education,
       isChecked: false,
     },
+    languageOther1: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    languageOther2: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    languageOther3: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
     history: {
       value: 0,
       valueAddedByBaseValue: 5,
