@@ -5,7 +5,7 @@ import { FooterSimple } from './Footer';
 
 export function NavbarSimple() {
   return (
-    <Navbar width={{ base: 300 }} p="xs">
+    <Navbar width={{ base: 250 }} p="xs">
       <Navbar.Section grow mt="md" component={ScrollArea}>
         <MainLinks />
       </Navbar.Section>

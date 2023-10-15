@@ -1,4 +1,16 @@
-import { Card, Text, Title, List, Space, Anchor, Image, Group, Center, Grid, Divider } from '@mantine/core';
+import {
+  Card,
+  Text,
+  Title,
+  List,
+  Space,
+  Anchor,
+  Image,
+  Group,
+  Center,
+  Grid,
+  Divider,
+} from '@mantine/core';
 import React from 'react';
 import gitIcon from '../assets/github-mark-white.svg';
 import mail from '../assets/mail.svg';

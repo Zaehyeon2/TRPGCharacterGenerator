@@ -1,5 +1,3 @@
-import { ForwardedRef, MutableRefObject, RefObject } from "react";
-
 export interface IStats {
   job: string;
   age: number;
@@ -266,4 +264,37 @@ export interface SkillParams {
   baseValue: number;
   checkboxDisabled?: boolean;
   getAndSetFunction?: (key: string, value: IInnerSkills | undefined) => void;
+  bonus50?: boolean;
+  bonus90?: boolean;
+}
+
+export interface Weapons {
+  name: string;
+  function: string;
+  damage: string;
+  range: string;
+  usePerRound: string;
+  ammo: string;
+  price1920: number;
+  priceModern: number;
+  breakDown: string;
+  age: string;
+}
+
+export interface IExpcetedSkills {
+  [index: string]: boolean;
+  science50: boolean;
+  science90: boolean;
+  fighting50: boolean;
+  fighting90: boolean;
+  firearms50: boolean;
+  firearms90: boolean;
+  language50: boolean;
+  language90: boolean;
+  artcraft50: boolean;
+  artcraft90: boolean;
+  pilot50: boolean;
+  pilot90: boolean;
+  survival50: boolean;
+  survival90: boolean;
 }

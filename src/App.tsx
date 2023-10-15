@@ -4,7 +4,7 @@ import './App.css';
 import { Routes, Route } from 'react-router-dom';
 import { HeaderSimple } from './layouts/Header';
 import { NavbarSimple } from './layouts/Navbar';
-import { CthulhuGenerator } from './pages/Cthulu-Generator';
+import { Cthulhu } from './pages/Cthulu';
 import { Main } from './pages/Main';
 
 function App() {
@@ -13,7 +13,7 @@ function App() {
       <AppShell padding="md" navbar={<NavbarSimple />} header={<HeaderSimple />}>
         <Routes>
           <Route path="/" element={<Main />} />
-          <Route path="/coc/generator" element={<CthulhuGenerator />} />
+          <Route path="/coc" element={<Cthulhu />} />
         </Routes>
       </AppShell>
     </MantineProvider>

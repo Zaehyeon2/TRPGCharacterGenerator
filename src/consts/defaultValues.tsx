@@ -5,6 +5,84 @@ export const defalutSkills = (dex: number, education: number) => {
       valueAddedByBaseValue: 5,
       isChecked: false,
     },
+    // 과학 (공학)
+    scienceEngineering: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (기상학)
+    scienceMeteorology: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (동물학)
+    scienceZoology: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (물리학)
+    sciencePhysics: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (생물학)
+    scienceBiology: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (수사과학)
+    scienceForensicScience: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (수학)
+    scienceMathematics: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (식물학)
+    scienceBotany: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (암호학)
+    scienceCryptology: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (약학)
+    sciencePharmacy: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (지질학)
+    scienceGeology: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (천문학)
+    scienceAstronomy: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
+    // 과학 (화학)
+    scienceChemistry: {
+      value: 0,
+      valueAddedByBaseValue: 1,
+      isChecked: false,
+    },
     archaeology: {
       value: 0,
       valueAddedByBaseValue: 1,

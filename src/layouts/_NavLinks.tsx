@@ -6,33 +6,24 @@ import chevron from '../assets/chevron.svg';
 import cthulhu from '../assets/cthulhu.svg';
 import dungeonGate from '../assets/dungeon-gate.svg';
 
-interface LinksGroupProps {
+interface MainLinkProps {
   icon: React.ReactNode;
   color: string;
   label: string;
-  links: { icon: React.ReactNode; label: string; link: string }[];
+  link: string;
 }
 
-export function LinksGroup({ icon, color, label, links }: LinksGroupProps) {
-  const [opened, setOpened] = useState(false);
-  const items = links.map((inlink) => (
-    <Text
-      size="sm"
+function MainLink({ icon, color, label, link }: MainLinkProps) {
+  return (
+    <UnstyledButton
       component={Link}
-      to={inlink.link}
-      key={inlink.label}
-      align="left"
+      to={link}
       sx={(theme) => ({
-        paddingLeft: 31,
-        marginLeft: 30,
-        borderLeft: `1px solid ${
-          theme.colorScheme === 'dark' ? theme.colors.dark[4] : theme.colors.gray[3]
-        }`,
         display: 'block',
+        width: '100%',
         padding: theme.spacing.xs,
         borderRadius: theme.radius.sm,
         color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
         '&:hover': {
           backgroundColor:
             theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
@@ -41,69 +32,11 @@ export function LinksGroup({ icon, color, label, links }: LinksGroupProps) {
     >
       <Group>
         <ThemeIcon color={color} variant="light">
-          {inlink.icon}
+          {icon}
         </ThemeIcon>
-        {inlink.label}{' '}
+        <Text size="sm">{label}</Text>
       </Group>
-    </Text>
-  ));
-
-  return (
-    <>
-      <UnstyledButton
-        component={Link}
-        to="#"
-        onClick={() => setOpened((o) => !o)}
-        sx={(theme) => ({
-          display: 'block',
-          width: '100%',
-          padding: theme.spacing.xs,
-          borderRadius: theme.radius.sm,
-          color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-          '&:hover': {
-            backgroundColor:
-              theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-          },
-        })}
-      >
-        <Group position="left" spacing={0}>
-          <Box
-            sx={(theme) => ({
-              display: 'block',
-              padding: theme.spacing.xs,
-              borderRadius: theme.radius.sm,
-              color: theme.colorScheme === 'dark' ? theme.colors.dark[0] : theme.black,
-
-              '&:hover': {
-                backgroundColor:
-                  theme.colorScheme === 'dark' ? theme.colors.dark[6] : theme.colors.gray[0],
-              },
-            })}
-          >
-            <Group>
-              <ThemeIcon color={color} variant="light">
-                {icon}
-              </ThemeIcon>
-              <Text size="sm">{label}</Text>
-            </Group>
-          </Box>
-
-          <ThemeIcon
-            color={color}
-            variant="light"
-            sx={(theme) => ({
-              marginLeft: 'auto',
-              transform: opened ? `rotate(${theme.dir === 'rtl' ? -90 : 90}deg)` : 'none',
-              transition: 'transform 200ms ease',
-            })}
-          >
-            <img src={chevron} alt="chevron" />
-          </ThemeIcon>
-        </Group>
-      </UnstyledButton>
-      <Collapse in={opened}>{items}</Collapse>
-    </>
+    </UnstyledButton>
   );
 }
 
@@ -112,30 +45,18 @@ const data = [
     icon: <img src={cthulhu} alt="cthulhu" />,
     color: '#000000',
     label: 'Call of Cthulhu',
-    links: [
-      {
-        icon: <img src={character} alt="character" />,
-        label: 'Character Generator',
-        link: '/coc/generator',
-      },
-    ],
+    link: '/coc',
   },
   {
     icon: <img src={dungeonGate} alt="dungeonGate" />,
     color: '#000000',
     label: 'Dungeon World',
-    links: [
-      {
-        icon: <img src={character} alt="character" />,
-        label: 'Character Generator',
-        link: '/dw/generator',
-      },
-    ],
+    link: '/dw',
   },
 ];
 
 export function MainLinks() {
   // eslint-disable-next-line react/jsx-props-no-spreading
-  const links = data.map((item) => <LinksGroup {...item} key={item.label} />);
+  const links = data.map((link) => <MainLink {...link} key={link.label} />);
   return <div>{links}</div>;
 }

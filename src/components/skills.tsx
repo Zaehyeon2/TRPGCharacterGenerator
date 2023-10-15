@@ -19,24 +19,22 @@ export function Skills({
   baseValue,
   checkboxDisabled = false,
   getAndSetFunction,
+  bonus50,
+  bonus90,
 }: SkillParams) {
+  let innerBonus = 0;
+  if (bonus50) innerBonus += 10;
+  if (bonus90) innerBonus += 10;
+
   const [skillValues, setSkillValues] = useState<SkillProps>({
     value: 0,
-    valueAddedByBaseValue: baseValue,
-    valueDividedBy2: Math.floor(baseValue / 2),
-    valueDividedBy5: Math.floor(baseValue / 5),
+    valueAddedByBaseValue: baseValue + innerBonus,
+    valueDividedBy2: Math.floor((baseValue + innerBonus) / 2),
+    valueDividedBy5: Math.floor((baseValue + innerBonus) / 5),
     isClassTraits: false,
     detailedKey: skillKey,
     baseValue,
   });
-
-  useEffect(() => {
-    setSkillValues({
-      ...skillValues,
-      valueAddedByBaseValue: skillValues.value + baseValue,
-      baseValue,
-    });
-  }, [baseValue]);
 
   function isDetailedSkill(key: string) {
     return (
@@ -51,8 +49,31 @@ export function Skills({
     );
   }
 
+  function getValuesByAddedBonus(value: number) {
+    let values = value;
+    if (bonus50) {
+      if (values <= 50) {
+        if (values <= 40) {
+          values += 10;
+        } else {
+          values = 50;
+        }
+      }
+    }
+    if (bonus90) {
+      if (values <= 90) {
+        if (values <= 80) {
+          values += 10;
+        } else {
+          values = 90;
+        }
+      }
+    }
+    return values;
+  }
+
   function setStats(stat: number) {
-    const valueAddedByBaseValue = stat + skillValues.baseValue;
+    const valueAddedByBaseValue = getValuesByAddedBonus(skillValues.baseValue + stat);
     setSkillValues({
       value: stat,
       valueAddedByBaseValue,
@@ -65,11 +86,17 @@ export function Skills({
   }
 
   useEffect(() => {
+    setStats(skillValues.value);
+  }, [bonus50, bonus90]);
+
+  useEffect(() => {
     if (getAndSetFunction === undefined) return;
     if (isDetailedSkill(skillValues.detailedKey)) return;
     getAndSetFunction(skillValues.detailedKey, {
       value: skillValues.value,
-      valueAddedByBaseValue: skillValues.valueAddedByBaseValue,
+      valueAddedByBaseValue: getValuesByAddedBonus(
+        skillValues.valueAddedByBaseValue + skillValues.value,
+      ),
       isChecked: skillValues.isClassTraits,
     });
   }, [skillValues.valueAddedByBaseValue, skillValues.isClassTraits]);
@@ -81,9 +108,9 @@ export function Skills({
       ...skillValues,
       value: 0,
       detailedKey: detailedKey.key,
-      valueAddedByBaseValue: detailedKey.baseValue,
-      valueDividedBy2: Math.floor(detailedKey.baseValue / 2),
-      valueDividedBy5: Math.floor(detailedKey.baseValue / 5),
+      valueAddedByBaseValue: getValuesByAddedBonus(detailedKey.baseValue),
+      valueDividedBy2: Math.floor(getValuesByAddedBonus(detailedKey.baseValue) / 2),
+      valueDividedBy5: Math.floor(getValuesByAddedBonus(detailedKey.baseValue) / 5),
       baseValue: detailedKey.baseValue,
       isClassTraits: false,
     });
