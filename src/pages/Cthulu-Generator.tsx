@@ -860,7 +860,9 @@ export function CthulhuGenerator() {
 
   return (
     <Card>
-      <Button onClick={() => console.log(skillValues, skillPoints)} />
+      {import.meta.env.BASE_URL === '/' && (
+        <Button onClick={() => console.log(skillValues, skillPoints)} />
+      )}
       {/* Logo */}
       <Logo image={logo} />
       <Grid justify="center" align="center">
