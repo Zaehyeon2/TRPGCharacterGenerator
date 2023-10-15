@@ -1,8 +1,6 @@
-import { UnstyledButton, Group, Text, ThemeIcon, Box, Collapse } from '@mantine/core';
-import React, { useState } from 'react';
+import { UnstyledButton, Group, Text, ThemeIcon } from '@mantine/core';
+import React from 'react';
 import { Link } from 'react-router-dom';
-import character from '../assets/character.svg';
-import chevron from '../assets/chevron.svg';
 import cthulhu from '../assets/cthulhu.svg';
 import dungeonGate from '../assets/dungeon-gate.svg';
 
