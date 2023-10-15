@@ -14,7 +14,7 @@ import {
 
 export function CthulhuWeapons() {
   return (
-    <Tabs defaultValue="generator">
+    <Tabs defaultValue="melee">
       <Tabs.List>
         <Tabs.Tab value="melee" icon={<IconSword size={14} />}>
           근거리
