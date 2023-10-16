@@ -82,6 +82,14 @@ export function CthulhuGenerator() {
     survival: false,
   } as ReloadStateParams);
 
+  const defaultSkillParams = skillsParamsFunction(0, 0);
+
+  const [skillsParams, setSkillsParams] = useState(defaultSkillParams);
+
+  // useMemo(() => {
+  //   return skillsParamsFunction(statValues.dex, statValues.education);
+  // }, [statValues.dex, statValues.education]);
+
   const getBonus = useCallback(
     (key: string, num: string) => {
       let skillKey = key;
@@ -101,16 +109,6 @@ export function CthulhuGenerator() {
       setExpectedSkills({ ...expectedSkills, [key]: value });
     },
     [expectedSkills],
-  );
-
-  const getAndSetStats = useCallback(
-    (key: string, value: number) => {
-      setStatsValue({ ...statValues, [key]: value });
-      if (key === 'int') {
-        setSkillPoints({ ...skillPoints, baseInterest: value * 2 });
-      }
-    },
-    [skillPoints],
   );
 
   const getAndSetSkills = useCallback(
@@ -138,7 +136,26 @@ export function CthulhuGenerator() {
         // setInnerSkillPoints([key], value);
       }
     },
-    [skillValues],
+    [skillValues, reloadState, statValues.dex, statValues.education],
+  );
+
+  const getAndSetStats = useCallback(
+    (key: string, value: number) => {
+      setStatsValue({ ...statValues, [key]: value });
+      if (key === 'int') {
+        setSkillPoints({ ...skillPoints, baseInterest: value * 2 });
+      }
+      if (key === 'dex') {
+        getAndSetSkills('dodge', {
+          ...skillValues.dodge,
+          valueAddedByBaseValue: skillValues.dodge.value + Math.floor(value / 2),
+        });
+        const updatedSkillParams = [...skillsParams];
+        updatedSkillParams[3][10].baseValue = Math.floor(value / 2);
+        setSkillsParams(updatedSkillParams);
+      }
+    },
+    [skillPoints, statValues],
   );
 
   const getMobility = useCallback(() => {
@@ -155,7 +172,7 @@ export function CthulhuGenerator() {
     else if (age >= 40) mobility -= 1;
 
     setStatsValue({ ...statValues, mobility });
-  }, [statValues.str, statValues.dex, statValues.size, statValues.age]);
+  }, [statValues.str, statValues.dex, statValues.size, statValues.age, statValues.mobility]);
 
   const getCombatStats = useCallback(() => {
     if (statValues.str + statValues.size <= 64) return { damageBonus: -2, build: -2 };
@@ -230,10 +247,6 @@ export function CthulhuGenerator() {
     });
   }, [statValues.int]);
 
-  const skillsParams = useMemo(() => {
-    return skillsParamsFunction(statValues.dex, statValues.education);
-  }, [statValues.dex, statValues.education]);
-
   const explorerInfos = useMemo(() => {
     return (
       <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
@@ -283,7 +296,7 @@ export function CthulhuGenerator() {
         </Group>
       </Stack>
     );
-  }, [statValues.job, statValues.age]);
+  }, [statValues.job, statValues.age, statValues.mobility, statValues.luck]);
 
   const explorerTraits = useMemo(() => {
     return (
@@ -477,7 +490,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Stack>
     );
-  }, [statValues.size, statValues.health, statValues.mentality]);
+  }, [statValues]);
 
   const explorerCombat = useMemo(() => {
     return (
@@ -553,7 +566,13 @@ export function CthulhuGenerator() {
         </Grid>
       </Stack>
     );
-  }, [skillValues.dodge.valueAddedByBaseValue, getCombatStats]);
+  }, [
+    skillValues.dodge.valueAddedByBaseValue,
+    getCombatStats,
+    statValues.dex,
+    statValues.size,
+    statValues.str,
+  ]);
 
   const explorerCredit = useMemo(() => {
     return (
@@ -860,7 +879,7 @@ export function CthulhuGenerator() {
                       reloadState={reloadState}
                     />
                   ));
-                }, [skillParams, expectedSkills, skillValues])}
+                }, [skillsParams, skillParams, expectedSkills, skillValues])}
               </Flex>
             </Grid.Col>
           ))}
@@ -873,13 +892,17 @@ export function CthulhuGenerator() {
     getAndSetSkills,
     getBonus,
     onChangeExpectedSkills,
-    skillValues.value,
+    expectedSkills,
+    skillValues,
+    statValues,
   ]);
 
   return (
     <Card>
       {import.meta.env.BASE_URL === '/' && (
-        <Button onClick={() => console.log(skillValues, skillPoints)} />
+        <Button
+          onClick={() => console.log({ skillValues, skillPoints, statValues, skillsParams })}
+        />
       )}
       {/* Logo */}
       <Logo image={logo} />

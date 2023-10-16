@@ -80,6 +80,8 @@ export function Skills({
 
   function setStats(stat: number) {
     const valueAddedByBaseValue = getValuesByAddedBonus(skillValues.baseValue + stat);
+    console.log(stat, skillValues.baseValue, valueAddedByBaseValue);
+
     setSkillValues({
       value: stat,
       valueAddedByBaseValue,
@@ -92,7 +94,7 @@ export function Skills({
   }
 
   useEffect(() => {
-    const valueAddedByBaseValue = getValuesByAddedBonus(skillValues.baseValue + 0);
+    const valueAddedByBaseValue = getValuesByAddedBonus(skillValues.baseValue);
 
     setSkillValues({
       value: 0,
@@ -110,16 +112,26 @@ export function Skills({
   }, [bonus50, bonus90]);
 
   useEffect(() => {
+    const valueAddedByBaseValue = getValuesByAddedBonus(baseValue + skillValues.value);
+
+    setSkillValues({
+      ...skillValues,
+      valueAddedByBaseValue,
+      valueDividedBy2: Math.floor(valueAddedByBaseValue / 2),
+      valueDividedBy5: Math.floor(valueAddedByBaseValue / 5),
+      baseValue,
+    });
+  }, [baseValue]);
+
+  useEffect(() => {
     if (getAndSetFunction === undefined) return;
     if (isDetailedSkill(skillValues.detailedKey)) return;
     getAndSetFunction(skillValues.detailedKey, {
       value: skillValues.value,
-      valueAddedByBaseValue: getValuesByAddedBonus(
-        skillValues.valueAddedByBaseValue + skillValues.value,
-      ),
+      valueAddedByBaseValue: skillValues.valueAddedByBaseValue,
       isChecked: skillValues.isClassTraits,
     });
-  }, [skillValues.valueAddedByBaseValue, skillValues.isClassTraits]);
+  }, [skillValues]);
 
   function setInnerDetailedKey(detailedKey: DetailedSkillProps) {
     if (getAndSetFunction === undefined) return;
