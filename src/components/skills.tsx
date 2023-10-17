@@ -16,7 +16,7 @@ import {
   SkillParams,
   SkillProps,
 } from '../interfaces/interfaces';
-import { isNumber } from '../services/utils.service';
+import { formStat, isNumber } from '../services/utils.service';
 
 export function Skills({
   skillKey,
@@ -80,7 +80,6 @@ export function Skills({
 
   function setStats(stat: number) {
     const valueAddedByBaseValue = getValuesByAddedBonus(skillValues.baseValue + stat);
-    console.log(stat, skillValues.baseValue, valueAddedByBaseValue);
 
     setSkillValues({
       value: stat,
@@ -345,12 +344,12 @@ export function Skills({
           <Grid.Col span={4}>
             <Grid justify="center" align="center">
               <Grid.Col span={6}>
-                <Text fz="xl">{skillValues.valueAddedByBaseValue}</Text>
+                <Text fz="xl">{formStat(skillValues.valueAddedByBaseValue, 1)}</Text>
               </Grid.Col>
               <Grid.Col span={6}>
                 <Stack spacing={0} align="center">
-                  <Text fz="xs">{skillValues.valueDividedBy2}</Text>
-                  <Text fz="xs">{skillValues.valueDividedBy5}</Text>
+                  <Text fz="xs">{formStat(skillValues.valueDividedBy2, 2)}</Text>
+                  <Text fz="xs">{formStat(skillValues.valueDividedBy5, 5)}</Text>
                 </Stack>
               </Grid.Col>
             </Grid>

@@ -1,16 +1,21 @@
 export interface IStats {
   job: string;
   age: number;
-  str: number;
-  dex: number;
-  int: number;
-  health: number;
-  appeareance: number;
-  mentality: number;
-  size: number;
-  education: number;
+  str: IInnerStats;
+  dex: IInnerStats;
+  int: IInnerStats;
+  health: IInnerStats;
+  appeareance: IInnerStats;
+  mentality: IInnerStats;
+  size: IInnerStats;
+  education: IInnerStats;
   mobility: number;
   luck: number;
+}
+
+export interface IInnerStats {
+  value: number;
+  value2: number;
 }
 
 export interface IInnerSkills {

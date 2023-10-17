@@ -9,13 +9,16 @@ import {
   Stack,
   Text,
   TextInput,
+  UnstyledButton,
 } from '@mantine/core';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import logo from '../assets/coc-logo.png';
+import dice20 from '../assets/dice20.png';
 import { Logo } from '../components/logo';
 import { Skills } from '../components/skills';
 import { Stats } from '../components/stats';
 import { defalutSkills } from '../consts/defaultValues';
+import { paneltyText } from '../consts/panelyByAge';
 import { skillsParamsFunction } from '../consts/skills';
 import {
   IInnerSkills,
@@ -25,28 +28,41 @@ import {
   ReloadStateParams,
 } from '../interfaces/interfaces';
 import { rollDice } from '../services/dice.service';
-import { isNumber } from '../services/utils.service';
+import { formHp, formStat, isNumber } from '../services/utils.service';
 import { explorerStyles } from '../styles/styles';
 
 export function CthulhuGenerator() {
   const { classes } = explorerStyles();
   const [statValues, setStatsValue] = useState({
+    job: '',
     age: 0,
-    str: 0,
-    dex: 0,
-    int: 0,
-    health: 0,
-    appeareance: 0,
-    mentality: 0,
-    size: 0,
-    education: 0,
+    str: { value: 0, value2: 0 },
+    dex: { value: 0, value2: 0 },
+    int: { value: 0, value2: 0 },
+    health: { value: 0, value2: 0 },
+    appeareance: { value: 0, value2: 0 },
+    mentality: { value: 0, value2: 0 },
+    size: { value: 0, value2: 0 },
+    education: { value: 0, value2: 0 },
     mobility: 0,
     luck: 0,
   } as IStats);
 
+  const [statPaneltyValues, setStatPaneltyValues] = useState({
+    str: 0,
+    dex: 0,
+    health: 0,
+    size: 0,
+    education: 0,
+    appeareance: 0,
+    total: 0,
+  });
+
   const [skillValues, setSkillValues] = useState(
-    defalutSkills(statValues.dex, statValues.education) as ISkills,
+    defalutSkills(statValues.dex.value2, statValues.education.value2) as ISkills,
   );
+
+  const [educationBonusText, setEducationBonusText] = useState('');
 
   const [expectedSkills, setExpectedSkills] = useState({
     science50: false,
@@ -81,6 +97,8 @@ export function CthulhuGenerator() {
     pilot: false,
     survival: false,
   } as ReloadStateParams);
+
+  const [realoadStatBool, setRealoadStatBool] = useState(false);
 
   const defaultSkillParams = skillsParamsFunction(0, 0);
 
@@ -136,33 +154,45 @@ export function CthulhuGenerator() {
         // setInnerSkillPoints([key], value);
       }
     },
-    [skillValues, reloadState, statValues.dex, statValues.education],
+    [
+      skillValues,
+      reloadState,
+      statValues.dex,
+      statValues.education,
+      statPaneltyValues.dex,
+      statPaneltyValues.education,
+    ],
   );
 
   const getAndSetStats = useCallback(
-    (key: string, value: number) => {
+    (key: string, value: { value: number; value2: number }) => {
       setStatsValue({ ...statValues, [key]: value });
       if (key === 'int') {
-        setSkillPoints({ ...skillPoints, baseInterest: value * 2 });
+        setSkillPoints({ ...skillPoints, baseInterest: value.value2 * 2 });
       }
       if (key === 'dex') {
         getAndSetSkills('dodge', {
           ...skillValues.dodge,
-          valueAddedByBaseValue: skillValues.dodge.value + Math.floor(value / 2),
+          valueAddedByBaseValue: skillValues.dodge.value + Math.floor(value.value2 / 2),
         });
         const updatedSkillParams = [...skillsParams];
-        updatedSkillParams[3][10].baseValue = Math.floor(value / 2);
+        updatedSkillParams[3][10].baseValue = Math.floor(value.value2 / 2);
+        setSkillsParams(updatedSkillParams);
+      }
+      if (key === 'education') {
+        const updatedSkillParams = [...skillsParams];
+        updatedSkillParams[1][9].baseValue = value.value2;
         setSkillsParams(updatedSkillParams);
       }
     },
-    [skillPoints, statValues],
+    [skillPoints, statValues, statPaneltyValues],
   );
 
   const getMobility = useCallback(() => {
     const { str, dex, size, age } = statValues;
 
     let mobility: number;
-    if (str < size && dex < size) mobility = 7;
+    if (str.value2 < size.value2 && dex.value2 < size.value2) mobility = 7;
     else if (str > size && dex > size) mobility = 9;
     else mobility = 8;
     if (age >= 80) mobility -= 5;
@@ -172,15 +202,25 @@ export function CthulhuGenerator() {
     else if (age >= 40) mobility -= 1;
 
     setStatsValue({ ...statValues, mobility });
-  }, [statValues.str, statValues.dex, statValues.size, statValues.age, statValues.mobility]);
+  }, [
+    statValues.str,
+    statValues.dex,
+    statValues.size,
+    statValues.age,
+    statValues.mobility,
+    statPaneltyValues.str,
+    statPaneltyValues.dex,
+    statPaneltyValues.size,
+  ]);
 
   const getCombatStats = useCallback(() => {
-    if (statValues.str + statValues.size <= 64) return { damageBonus: -2, build: -2 };
-    if (statValues.str + statValues.size <= 84) return { damageBonus: -1, build: -1 };
-    if (statValues.str + statValues.size <= 124) return { damageBonus: 0, build: 0 };
-    if (statValues.str + statValues.size <= 164) return { damageBonus: rollDice(1, 4), build: 1 };
+    if (statValues.str.value2 + statValues.size.value2 <= 64) return { damageBonus: -2, build: -2 };
+    if (statValues.str.value2 + statValues.size.value2 <= 84) return { damageBonus: -1, build: -1 };
+    if (statValues.str.value2 + statValues.size.value2 <= 124) return { damageBonus: 0, build: 0 };
+    if (statValues.str.value2 + statValues.size.value2 <= 164)
+      return { damageBonus: rollDice(1, 4), build: 1 };
     return { damageBonus: rollDice(1, 6), build: 2 };
-  }, [statValues.str, statValues.size]);
+  }, [statValues.str, statValues.size, statPaneltyValues.str, statPaneltyValues.size]);
 
   const getCredit = useCallback(() => {
     if (skillValues.credit.valueAddedByBaseValue === 0)
@@ -238,12 +278,20 @@ export function CthulhuGenerator() {
 
   useEffect(() => {
     getMobility();
-  }, [statValues.str, statValues.dex, statValues.size, statValues.age]);
+  }, [
+    statValues.str,
+    statValues.dex,
+    statValues.size,
+    statValues.age,
+    statPaneltyValues.str,
+    statPaneltyValues.dex,
+    statPaneltyValues.size,
+  ]);
 
   useEffect(() => {
     setSkillPoints({
       ...skillPoints,
-      baseInterest: statValues.int * 2,
+      baseInterest: statValues.int.value2 * 2,
     });
   }, [statValues.int]);
 
@@ -251,16 +299,22 @@ export function CthulhuGenerator() {
     return (
       <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
         <Text sx={{ backgroundColor: 'black', width: '100%' }}>현대 탐사자</Text>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>이름</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            이름
+          </Text>
           <TextInput size="xs" sx={{ width: '60%' }} />
         </Group>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>플레이어</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            플레이어
+          </Text>
           <TextInput size="xs" sx={{ width: '60%' }} />
         </Group>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>직업</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            직업
+          </Text>
           <TextInput
             value={statValues.job}
             size="xs"
@@ -270,8 +324,10 @@ export function CthulhuGenerator() {
             }}
           />
         </Group>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>나이</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            나이
+          </Text>
           <TextInput
             value={statValues.age}
             size="xs"
@@ -282,16 +338,22 @@ export function CthulhuGenerator() {
             }}
           />
         </Group>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>성별</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            성별
+          </Text>
           <TextInput size="xs" sx={{ width: '60%' }} />
         </Group>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>거주지</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            거주지
+          </Text>
           <TextInput size="xs" sx={{ width: '60%' }} />
         </Group>
-        <Group sx={{ margin: 'auto' }}>
-          <Text className={classes.label}>출생지</Text>
+        <Group sx={{ margin: 'auto' }} spacing="xs">
+          <Text className={classes.label} fz="xs">
+            출생지
+          </Text>
           <TextInput size="xs" sx={{ width: '60%' }} />
         </Group>
       </Stack>
@@ -313,8 +375,10 @@ export function CthulhuGenerator() {
               label="근력"
               nDices={3}
               nSides={6}
+              paneltyByAge={statPaneltyValues.str}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -323,8 +387,10 @@ export function CthulhuGenerator() {
               label="민첩성"
               nDices={3}
               nSides={6}
+              paneltyByAge={statPaneltyValues.dex}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -336,6 +402,7 @@ export function CthulhuGenerator() {
               baseValue={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
         </Grid>
@@ -346,9 +413,11 @@ export function CthulhuGenerator() {
               label="건강"
               nDices={3}
               nSides={6}
+              paneltyByAge={statPaneltyValues.health}
               baseValue={0}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -357,8 +426,10 @@ export function CthulhuGenerator() {
               label="외모"
               nDices={3}
               nSides={6}
+              paneltyByAge={statPaneltyValues.appeareance}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -369,6 +440,7 @@ export function CthulhuGenerator() {
               nSides={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
         </Grid>
@@ -379,9 +451,11 @@ export function CthulhuGenerator() {
               label="크기"
               nDices={2}
               nSides={6}
+              paneltyByAge={statPaneltyValues.size}
               baseValue={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -390,9 +464,11 @@ export function CthulhuGenerator() {
               label="교육"
               nDices={2}
               nSides={6}
+              paneltyByAge={statPaneltyValues.education}
               baseValue={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={realoadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -415,7 +491,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Stack>
     );
-  }, [statValues, getAndSetStats, getMobility]);
+  }, [statValues, getAndSetStats, getMobility, statPaneltyValues]);
 
   const explorerTraits2 = useMemo(() => {
     return (
@@ -439,7 +515,7 @@ export function CthulhuGenerator() {
                 spacing={0}
               >
                 <Text fz="sm">체력</Text>
-                <Text>{Math.floor((statValues.size + statValues.health) / 10)}</Text>
+                <Text>{formHp(statValues.size.value2, statValues.health.value2)}</Text>
               </Stack>
             </Container>
           </Grid.Col>
@@ -451,6 +527,7 @@ export function CthulhuGenerator() {
               nSides={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
+              reloadStat={false}
             />
           </Grid.Col>
           <Grid.Col span={3}>
@@ -466,7 +543,7 @@ export function CthulhuGenerator() {
                 spacing={0}
               >
                 <Text fz="sm">이성</Text>
-                <Text>{statValues.mentality}</Text>
+                <Text>{formStat(statValues.mentality.value2, 1)}</Text>
               </Stack>
             </Container>
           </Grid.Col>
@@ -483,14 +560,14 @@ export function CthulhuGenerator() {
                 spacing={0}
               >
                 <Text fz="sm">마력</Text>
-                <Text>{Math.floor(statValues.mentality / 5)}</Text>
+                <Text>{formStat(Math.floor(statValues.mentality.value2 / 5), 5)}</Text>
               </Stack>
             </Container>
           </Grid.Col>
         </Grid>
       </Stack>
     );
-  }, [statValues]);
+  }, [statValues, statPaneltyValues]);
 
   const explorerCombat = useMemo(() => {
     return (
@@ -551,12 +628,16 @@ export function CthulhuGenerator() {
                 <Text fz="sm">회피</Text>
                 <Grid justify="center" align="center">
                   <Grid.Col span={1}>
-                    <Text fz="xl">{skillValues.dodge.valueAddedByBaseValue}</Text>
+                    <Text fz="xl">{formStat(skillValues.dodge.valueAddedByBaseValue, 1)}</Text>
                   </Grid.Col>
                   <Grid.Col span={1}>
                     <Stack spacing={0} align="center">
-                      <Text fz="xs">{Math.floor(skillValues.dodge.valueAddedByBaseValue / 2)}</Text>
-                      <Text fz="xs">{Math.floor(skillValues.dodge.valueAddedByBaseValue / 5)}</Text>
+                      <Text fz="xs">
+                        {formStat(Math.floor(skillValues.dodge.valueAddedByBaseValue / 2), 2)}
+                      </Text>
+                      <Text fz="xs">
+                        {formStat(Math.floor(skillValues.dodge.valueAddedByBaseValue / 5), 5)}
+                      </Text>
                     </Stack>
                   </Grid.Col>
                 </Grid>
@@ -572,6 +653,9 @@ export function CthulhuGenerator() {
     statValues.dex,
     statValues.size,
     statValues.str,
+    statPaneltyValues.dex,
+    statPaneltyValues.size,
+    statPaneltyValues.str,
   ]);
 
   const explorerCredit = useMemo(() => {
@@ -895,27 +979,309 @@ export function CthulhuGenerator() {
     expectedSkills,
     skillValues,
     statValues,
+    statPaneltyValues,
   ]);
+
+  function getEducationBonus(num: number) {
+    const { education: educatioN } = statValues;
+    let education = educatioN.value;
+    education += statPaneltyValues.education;
+    education = Math.max(0, education);
+    console.log('???', education);
+    let bonus = 0;
+    let result = '';
+    for (let i = 0; i < num; i += 1) {
+      const roll = rollDice(1, 100);
+      if (roll > education) {
+        bonus += rollDice(1, 10);
+        education += bonus;
+        result += '🏆';
+      } else {
+        result += '❌';
+      }
+      console.log(education, roll, bonus);
+    }
+    setEducationBonusText(result);
+    setStatPaneltyValues({ ...statPaneltyValues, education: -bonus });
+  }
+
+  const paneltyByAge = useMemo(() => {
+    let text = '';
+    let panelyAppearance = 0;
+    let educationBonusNum = 0;
+    if (statValues.age <= 19) {
+      [text] = paneltyText;
+    } else if (statValues.age <= 39) {
+      [, text] = paneltyText;
+      educationBonusNum = 1;
+    } else if (statValues.age <= 49) {
+      [, , text] = paneltyText;
+      panelyAppearance = 5;
+      educationBonusNum = 2;
+    } else if (statValues.age <= 59) {
+      [, , , text] = paneltyText;
+      panelyAppearance = 10;
+      educationBonusNum = 3;
+    } else if (statValues.age <= 69) {
+      [, , , , text] = paneltyText;
+      panelyAppearance = 20;
+      educationBonusNum = 4;
+    } else if (statValues.age <= 79) {
+      [, , , , , text] = paneltyText;
+      panelyAppearance = 20;
+      educationBonusNum = 4;
+    } else {
+      [, , , , , , text] = paneltyText;
+      panelyAppearance = 25;
+      educationBonusNum = 4;
+    }
+    return (
+      <Container sx={{ padding: '0', paddingBottom: '10px', border: 'solid', marginTop: '16px' }}>
+        <Text sx={{ backgroundColor: 'red', color: 'white' }}>나이에 따른 조정 사항</Text>
+        <Text sx={{ backgroundColor: 'lightgray', color: 'black' }}>{text}</Text>
+        <Grid justify="center" align="center" sx={{ marginTop: '5px' }}>
+          <Grid.Col span={12}>
+            <Text fz="sm">
+              뺴야하는 스탯 -{' '}
+              {statPaneltyValues.total -
+                statPaneltyValues.str -
+                statPaneltyValues.dex -
+                statPaneltyValues.health -
+                statPaneltyValues.size}
+            </Text>
+          </Grid.Col>
+          {!(statValues.age >= 20 && statValues.age <= 39) && (
+            <Grid.Col span={3}>
+              <Container>
+                <Stack
+                  sx={{
+                    border: '1px solid',
+                    borderRadius: '0.5em',
+                    paddingTop: '11.15px',
+                    paddingBottom: '11.25px',
+                  }}
+                  justify="center"
+                  spacing={0}
+                >
+                  <Text fz="sm">근력</Text>
+                  <TextInput
+                    sx={{ marginLeft: '5px', marginRight: '5px' }}
+                    value={statPaneltyValues.str}
+                    onChange={(event) => {
+                      if (!isNumber(event.currentTarget.value)) return;
+                      setStatPaneltyValues({
+                        ...statPaneltyValues,
+                        str: +event.currentTarget.value,
+                        appeareance: panelyAppearance,
+                      });
+                      setRealoadStatBool(!realoadStatBool);
+                    }}
+                  />
+                </Stack>
+              </Container>
+            </Grid.Col>
+          )}
+          {!(statValues.age > 19) && (
+            <Grid.Col span={3}>
+              <Container>
+                <Stack
+                  sx={{
+                    border: '1px solid',
+                    borderRadius: '0.5em',
+                    paddingTop: '11.15px',
+                    paddingBottom: '11.25px',
+                  }}
+                  justify="center"
+                  spacing={0}
+                >
+                  <Text fz="sm">크기</Text>
+                  <TextInput
+                    sx={{ marginLeft: '5px', marginRight: '5px' }}
+                    value={statPaneltyValues.size}
+                    disabled={statValues.age > 19}
+                    onChange={(event) => {
+                      if (!isNumber(event.currentTarget.value)) return;
+                      setStatPaneltyValues({
+                        ...statPaneltyValues,
+                        size: +event.currentTarget.value,
+                        appeareance: panelyAppearance,
+                      });
+                      setRealoadStatBool(!realoadStatBool);
+                    }}
+                  />
+                </Stack>
+              </Container>
+            </Grid.Col>
+          )}
+          {!(statValues.age < 40) && (
+            <Grid.Col span={3}>
+              <Container>
+                <Stack
+                  sx={{
+                    border: '1px solid',
+                    borderRadius: '0.5em',
+                    paddingTop: '11.15px',
+                    paddingBottom: '11.25px',
+                  }}
+                  justify="center"
+                  spacing={0}
+                >
+                  <Text fz="sm">건강</Text>
+                  <TextInput
+                    sx={{ marginLeft: '5px', marginRight: '5px' }}
+                    value={statPaneltyValues.health}
+                    disabled={statValues.age < 40}
+                    onChange={(event) => {
+                      if (!isNumber(event.currentTarget.value)) return;
+                      setStatPaneltyValues({
+                        ...statPaneltyValues,
+                        health: +event.currentTarget.value,
+                        appeareance: panelyAppearance,
+                      });
+                      setRealoadStatBool(!realoadStatBool);
+                    }}
+                  />
+                </Stack>
+              </Container>
+            </Grid.Col>
+          )}
+          {!(statValues.age < 40) && (
+            <Grid.Col span={3}>
+              <Container>
+                <Stack
+                  sx={{
+                    border: '1px solid',
+                    borderRadius: '0.5em',
+                    paddingTop: '11.15px',
+                    paddingBottom: '11.25px',
+                  }}
+                  justify="center"
+                  spacing={0}
+                >
+                  <Text fz="sm">민첩성</Text>
+                  <TextInput
+                    sx={{ marginLeft: '5px', marginRight: '5px' }}
+                    value={statPaneltyValues.dex}
+                    disabled={statValues.age < 40}
+                    onChange={(event) => {
+                      if (!isNumber(event.currentTarget.value)) return;
+                      setStatPaneltyValues({
+                        ...statPaneltyValues,
+                        dex: +event.currentTarget.value,
+                        appeareance: panelyAppearance,
+                      });
+                      setRealoadStatBool(!realoadStatBool);
+                    }}
+                  />
+                </Stack>
+              </Container>
+            </Grid.Col>
+          )}
+          {educationBonusNum !== 0 && (
+            <Grid.Col span={3}>
+              <Container>
+                <Stack
+                  sx={{
+                    border: '1px solid',
+                    borderRadius: '0.5em',
+                    paddingTop: '11.15px',
+                    paddingBottom: '11.25px',
+                    height: '82.08px',
+                    width: '171.5px',
+                  }}
+                  justify="center"
+                  spacing={0}
+                >
+                  <Text fz="sm">교육 판정</Text>
+                  <Text fz="sm">
+                    {educationBonusText === '' ? (
+                      <UnstyledButton
+                        onClick={() => {
+                          getEducationBonus(educationBonusNum);
+                        }}
+                      >
+                        <img src={dice20} alt="roll" width="15px" />
+                      </UnstyledButton>
+                    ) : (
+                      <Text>{educationBonusText}</Text>
+                    )}
+                  </Text>
+                </Stack>
+              </Container>
+            </Grid.Col>
+          )}
+        </Grid>
+      </Container>
+    );
+  }, [statValues.age, statPaneltyValues, educationBonusText]);
+
+  useMemo(() => {
+    let panelyAppearance = 0;
+    let total = 0;
+    if (statValues.age <= 19) {
+      panelyAppearance = 0;
+      total = 5;
+    } else if (statValues.age <= 39) {
+      panelyAppearance = 0;
+    } else if (statValues.age <= 49) {
+      panelyAppearance = 5;
+      total = 5;
+    } else if (statValues.age <= 59) {
+      panelyAppearance = 10;
+      total = 10;
+    } else if (statValues.age <= 69) {
+      panelyAppearance = 15;
+      total = 20;
+    } else if (statValues.age <= 79) {
+      panelyAppearance = 20;
+      total = 40;
+    } else {
+      panelyAppearance = 25;
+      total = 80;
+    }
+    setStatPaneltyValues({
+      str: 0,
+      dex: 0,
+      size: 0,
+      health: 0,
+      education: 0,
+      appeareance: panelyAppearance,
+      total,
+    });
+    setEducationBonusText('');
+  }, [statValues.age]);
+
+  useEffect(() => {
+    setStatPaneltyValues({
+      ...statPaneltyValues,
+      education: 0,
+    });
+    setEducationBonusText('');
+  }, [statValues.education.value]);
 
   return (
     <Card>
       {import.meta.env.BASE_URL === '/' && (
         <Button
-          onClick={() => console.log({ skillValues, skillPoints, statValues, skillsParams })}
+          onClick={() =>
+            console.log({ skillValues, skillPoints, statValues, skillsParams, statPaneltyValues })
+          }
         />
       )}
       {/* Logo */}
       <Logo image={logo} />
       <Grid justify="center" align="center">
-        <Grid.Col span={4}>
+        <Grid.Col span={3}>
           {/* 탐사자 정보 */}
           {explorerInfos}
         </Grid.Col>
-        <Grid.Col span={8}>
+        <Grid.Col span={9}>
           {/* 특성치 */}
           {explorerTraits}
         </Grid.Col>
       </Grid>
+      {/* 나이에 따른 패널티 */}
+      {paneltyByAge}
       {/* 특성치2 */}
       {explorerTraits2}
       {/* 기술 */}
