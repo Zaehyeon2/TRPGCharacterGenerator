@@ -1213,7 +1213,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Container>
     );
-  }, [statValues.age, statPaneltyValues, educationBonusText]);
+  }, [statValues.age, statPaneltyValues]);
 
   useMemo(() => {
     let panelyAppearance = 0;
