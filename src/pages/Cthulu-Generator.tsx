@@ -213,14 +213,22 @@ export function CthulhuGenerator() {
     statPaneltyValues.size,
   ]);
 
-  const getCombatStats = useCallback(() => {
+  const getCombatStats = () => {
+    const message = '피해 보너스';
     if (statValues.str.value2 + statValues.size.value2 <= 64) return { damageBonus: -2, build: -2 };
     if (statValues.str.value2 + statValues.size.value2 <= 84) return { damageBonus: -1, build: -1 };
     if (statValues.str.value2 + statValues.size.value2 <= 124) return { damageBonus: 0, build: 0 };
-    if (statValues.str.value2 + statValues.size.value2 <= 164)
-      return { damageBonus: rollDice(1, 4), build: 1 };
-    return { damageBonus: rollDice(1, 6), build: 2 };
-  }, [statValues.str, statValues.size, statPaneltyValues.str, statPaneltyValues.size]);
+    let damageBonus = 0;
+    console.log(`[${message}] start`);
+    if (statValues.str.value2 + statValues.size.value2 <= 164) {
+      damageBonus = rollDice(1, 4, message);
+      console.log(`[${message}] end, 피해 보너스: ${damageBonus}`);
+      return { damageBonus, build: 1 };
+    }
+    damageBonus = rollDice(1, 6, message);
+    console.log(`[${message}] end, 피해 보너스: ${damageBonus}`);
+    return { damageBonus, build: 2 };
+  };
 
   const getCredit = useCallback(() => {
     if (skillValues.credit.valueAddedByBaseValue === 0)
@@ -570,6 +578,7 @@ export function CthulhuGenerator() {
   }, [statValues, statPaneltyValues]);
 
   const explorerCombat = useMemo(() => {
+    const combatStats = getCombatStats();
     return (
       <Stack
         justify="space-between"
@@ -591,7 +600,7 @@ export function CthulhuGenerator() {
                 spacing={0}
               >
                 <Text fz="sm">피해 보너스</Text>
-                <Text>{getCombatStats().damageBonus}</Text>
+                <Text>{combatStats.damageBonus}</Text>
               </Stack>
             </Container>
           </Grid.Col>
@@ -608,7 +617,7 @@ export function CthulhuGenerator() {
                 spacing={0}
               >
                 <Text fz="sm">체구</Text>
-                <Text>{getCombatStats().build}</Text>
+                <Text>{combatStats.build}</Text>
               </Stack>
             </Container>
           </Grid.Col>
@@ -649,7 +658,6 @@ export function CthulhuGenerator() {
     );
   }, [
     skillValues.dodge.valueAddedByBaseValue,
-    getCombatStats,
     statValues.dex,
     statValues.size,
     statValues.str,
@@ -988,22 +996,45 @@ export function CthulhuGenerator() {
       let education = educatioN.value;
       education += statPaneltyValues.education;
       education = Math.max(0, education);
-      console.log('???', education);
-      let bonus = 0;
+      console.log('[교육 판정] start: base education', education);
+      let totalBonus = 0;
       let result = '';
       for (let i = 0; i < num; i += 1) {
-        const roll = rollDice(1, 100);
+        const roll = rollDice(1, 100, '교육 판정');
+        console.log('[교육 판정] current education', education, ', roll', roll);
         if (roll > education) {
-          bonus += rollDice(1, 10);
+          const bonus = rollDice(1, 10, '교육 판정 (보너스)');
+          totalBonus += bonus;
           education += bonus;
           result += '🏆';
+          console.log(
+            '[교육 판정] success: current education',
+            education,
+            ', current bonus',
+            bonus,
+            ', total bonus',
+            totalBonus,
+          );
         } else {
           result += '❌';
+          console.log(
+            '[교육 판정] fail: current education',
+            education,
+            ', total bonus',
+            totalBonus,
+          );
         }
-        console.log(education, roll, bonus);
       }
+      console.log(
+        '[교육 판정] end: current education',
+        education,
+        ', total bonus',
+        totalBonus,
+        'result',
+        result,
+      );
       setEducationBonusText(result);
-      setStatPaneltyValues({ ...statPaneltyValues, education: -bonus });
+      setStatPaneltyValues({ ...statPaneltyValues, education: -totalBonus });
     };
     let text = '';
     let panelyAppearance = 0;
@@ -1263,7 +1294,13 @@ export function CthulhuGenerator() {
       {import.meta.env.BASE_URL === '/' && (
         <Button
           onClick={() =>
-            console.log({ skillValues, skillPoints, statValues, skillsParams, statPaneltyValues })
+            console.log({
+              skillValues,
+              skillPoints,
+              statValues,
+              skillsParams,
+              statPaneltyValues,
+            })
           }
         />
       )}

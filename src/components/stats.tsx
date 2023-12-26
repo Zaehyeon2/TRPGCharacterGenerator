@@ -62,9 +62,13 @@ export function Stats({
 
   function rollStat() {
     if (!nDices || !nSides) return;
-    const roll = rollDice(nDices, nSides);
-    console.log((roll + baseValue) * multiplyValue);
-    setStats((roll + baseValue) * multiplyValue);
+    const result = rollDice(nDices, nSides, label);
+    console.log(
+      `[${label}] (${result} + ${baseValue}) -> ${result + baseValue} * ${multiplyValue} = ${
+        (result + baseValue) * multiplyValue
+      }`,
+    );
+    setStats((result + baseValue) * multiplyValue);
   }
 
   useEffect(() => {
@@ -72,7 +76,6 @@ export function Stats({
   }, [paneltyByAge, reloadStat]);
 
   useEffect(() => {
-    console.log('rerender');
     setStats(statValues.value);
 
     getAndSetFunction(statKey, { value: statValues.value, value2: statValues.valueSubByPanelty });
