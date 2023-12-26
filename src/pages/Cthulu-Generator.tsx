@@ -982,30 +982,29 @@ export function CthulhuGenerator() {
     statPaneltyValues,
   ]);
 
-  function getEducationBonus(num: number) {
-    const { education: educatioN } = statValues;
-    let education = educatioN.value;
-    education += statPaneltyValues.education;
-    education = Math.max(0, education);
-    console.log('???', education);
-    let bonus = 0;
-    let result = '';
-    for (let i = 0; i < num; i += 1) {
-      const roll = rollDice(1, 100);
-      if (roll > education) {
-        bonus += rollDice(1, 10);
-        education += bonus;
-        result += '🏆';
-      } else {
-        result += '❌';
-      }
-      console.log(education, roll, bonus);
-    }
-    setEducationBonusText(result);
-    setStatPaneltyValues({ ...statPaneltyValues, education: -bonus });
-  }
-
   const paneltyByAge = useMemo(() => {
+    const getEducationBonus = (num: number) => {
+      const { education: educatioN } = statValues;
+      let education = educatioN.value;
+      education += statPaneltyValues.education;
+      education = Math.max(0, education);
+      console.log('???', education);
+      let bonus = 0;
+      let result = '';
+      for (let i = 0; i < num; i += 1) {
+        const roll = rollDice(1, 100);
+        if (roll > education) {
+          bonus += rollDice(1, 10);
+          education += bonus;
+          result += '🏆';
+        } else {
+          result += '❌';
+        }
+        console.log(education, roll, bonus);
+      }
+      setEducationBonusText(result);
+      setStatPaneltyValues({ ...statPaneltyValues, education: -bonus });
+    };
     let text = '';
     let panelyAppearance = 0;
     let educationBonusNum = 0;
