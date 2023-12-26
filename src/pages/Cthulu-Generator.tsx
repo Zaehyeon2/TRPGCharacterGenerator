@@ -1212,9 +1212,9 @@ export function CthulhuGenerator() {
         </Grid>
       </Container>
     );
-  }, [statValues.age, statPaneltyValues]);
+  }, [statValues.age, statPaneltyValues, statValues.education]);
 
-  useMemo(() => {
+  useEffect(() => {
     let panelyAppearance = 0;
     let total = 0;
     if (statValues.age <= 19) {
