@@ -295,7 +295,7 @@ export function CthulhuGenerator() {
     });
   }, [statValues.int]);
 
-  const explorerInfos = useMemo(() => {
+  const explorerInfos = () => {
     return (
       <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
         <Text sx={{ backgroundColor: 'black', width: '100%' }}>현대 탐사자</Text>
@@ -358,7 +358,7 @@ export function CthulhuGenerator() {
         </Group>
       </Stack>
     );
-  }, [statValues.job, statValues.age, statValues.mobility, statValues.luck]);
+  };
 
   const explorerTraits = useMemo(() => {
     return (
@@ -1272,7 +1272,7 @@ export function CthulhuGenerator() {
       <Grid justify="center" align="center">
         <Grid.Col span={3}>
           {/* 탐사자 정보 */}
-          {explorerInfos}
+          {explorerInfos()}
         </Grid.Col>
         <Grid.Col span={9}>
           {/* 특성치 */}
