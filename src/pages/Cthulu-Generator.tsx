@@ -996,7 +996,7 @@ export function CthulhuGenerator() {
       let education = educatioN.value;
       education += statPaneltyValues.education;
       education = Math.max(0, education);
-      console.log('[교육 판정] start: base education', education);
+      console.log('[교육 판정] start - base education', education);
       let totalBonus = 0;
       let result = '';
       for (let i = 0; i < num; i += 1) {
@@ -1008,7 +1008,7 @@ export function CthulhuGenerator() {
           education += bonus;
           result += '🏆';
           console.log(
-            '[교육 판정] success: current education',
+            '[교육 판정] success - current education',
             education,
             ', current bonus',
             bonus,
@@ -1018,7 +1018,7 @@ export function CthulhuGenerator() {
         } else {
           result += '❌';
           console.log(
-            '[교육 판정] fail: current education',
+            '[교육 판정] fail - current education',
             education,
             ', total bonus',
             totalBonus,
@@ -1026,7 +1026,7 @@ export function CthulhuGenerator() {
         }
       }
       console.log(
-        '[교육 판정] end: current education',
+        '[교육 판정] end - current education',
         education,
         ', total bonus',
         totalBonus,
