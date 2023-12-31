@@ -269,7 +269,7 @@ export function CthulhuGenerator() {
     const updatedSkillPoints = { ...skillPoints, job: 0, interest: 0 };
     skillValueKeys.forEach((skillKey) => {
       const skillValue = skillValues[skillKey];
-      if (skillValue.isChecked) {
+      if (skillValue.isChecked || skillKey === 'credit') {
         updatedSkillPoints.job += skillValue.value;
       } else {
         updatedSkillPoints.interest += skillValue.value;
