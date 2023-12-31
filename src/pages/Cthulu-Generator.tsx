@@ -214,20 +214,19 @@ export function CthulhuGenerator() {
   ]);
 
   const getCombatStats = () => {
-    const message = '피해 보너스';
-    if (statValues.str.value2 + statValues.size.value2 <= 64) return { damageBonus: -2, build: -2 };
-    if (statValues.str.value2 + statValues.size.value2 <= 84) return { damageBonus: -1, build: -1 };
-    if (statValues.str.value2 + statValues.size.value2 <= 124) return { damageBonus: 0, build: 0 };
-    let damageBonus = 0;
-    console.log(`[${message}] start`);
-    if (statValues.str.value2 + statValues.size.value2 <= 164) {
-      damageBonus = rollDice(1, 4, message);
-      console.log(`[${message}] end, 피해 보너스: ${damageBonus}`);
-      return { damageBonus, build: 1 };
+    let combatStats = { damageBonus: '', build: 0 };
+    if (statValues.str.value2 + statValues.size.value2 <= 64)
+      combatStats = { damageBonus: '-2', build: -2 };
+    else if (statValues.str.value2 + statValues.size.value2 <= 84)
+      combatStats = { damageBonus: '-1', build: -1 };
+    else if (statValues.str.value2 + statValues.size.value2 <= 124)
+      combatStats = { damageBonus: '0', build: 0 };
+    else if (statValues.str.value2 + statValues.size.value2 <= 164) {
+      combatStats = { damageBonus: '1D4', build: 1 };
+    } else {
+      combatStats = { damageBonus: '1D6', build: 2 };
     }
-    damageBonus = rollDice(1, 6, message);
-    console.log(`[${message}] end, 피해 보너스: ${damageBonus}`);
-    return { damageBonus, build: 2 };
+    return combatStats;
   };
 
   const getCredit = useCallback(() => {
