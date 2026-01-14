@@ -55,7 +55,7 @@ export const ExplorerInfo = React.memo(function ExplorerInfo({
   );
 
   return (
-    <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
+    <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', minHeight: '330px' }}>
       <Text sx={{ backgroundColor: 'black', width: '100%' }}>현대 탐사자</Text>
       <InfoField label="이름" labelClassName={classes.label} />
       <InfoField label="플레이어" labelClassName={classes.label} />

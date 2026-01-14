@@ -252,7 +252,7 @@ export function CthulhuGenerator() {
           <br />⚠ 중간에 전문 분야를 바꿀시 다른 관련 전문 분야 스탯도 다시 적어주세요.
         </Text>
         <Grid justify="center" align="center" sx={{ marginTop: '5px' }} columns={12}>
-          <Grid.Col span={4}>
+          <Grid.Col xs={12} sm={5}>
             <Container>
               <Stack
                 sx={{
@@ -290,8 +290,8 @@ export function CthulhuGenerator() {
               </Stack>
             </Container>
           </Grid.Col>
-          <Grid.Col span={2} />
-          <Grid.Col span={4}>
+          <Grid.Col span={2} sx={{ '@media (max-width: 768px)': { display: 'none' } }} />
+          <Grid.Col xs={12} sm={5}>
             <Container>
               <Stack
                 sx={{
@@ -341,7 +341,7 @@ export function CthulhuGenerator() {
               >
                 <Text>보너스 기능 점수</Text>
                 <Grid>
-                  <Grid.Col span={2}>
+                  <Grid.Col xs={4} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">과학</Text>
                       <Checkbox
@@ -360,7 +360,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col span={2}>
+                  <Grid.Col xs={4} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">근접전</Text>
                       <Checkbox
@@ -379,7 +379,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col span={2}>
+                  <Grid.Col xs={4} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">사격</Text>
                       <Checkbox
@@ -398,7 +398,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col span={2}>
+                  <Grid.Col xs={4} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">생존술</Text>
                       <Checkbox
@@ -417,7 +417,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col span={2}>
+                  <Grid.Col xs={4} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">언어(외국어)</Text>
                       <Checkbox
@@ -436,7 +436,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col span={2}>
+                  <Grid.Col xs={4} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">예술/공예</Text>
                       <Checkbox
@@ -574,7 +574,7 @@ export function CthulhuGenerator() {
             </Text>
           </Grid.Col>
           {!(statValues.age >= 20 && statValues.age <= 39) && (
-            <Grid.Col span={3}>
+            <Grid.Col xs={6} sm={3}>
               <Container>
                 <Stack
                   sx={{
@@ -605,7 +605,7 @@ export function CthulhuGenerator() {
             </Grid.Col>
           )}
           {!(statValues.age > 19) && (
-            <Grid.Col span={3}>
+            <Grid.Col xs={6} sm={3}>
               <Container>
                 <Stack
                   sx={{
@@ -637,7 +637,7 @@ export function CthulhuGenerator() {
             </Grid.Col>
           )}
           {!(statValues.age < 40) && (
-            <Grid.Col span={3}>
+            <Grid.Col xs={6} sm={3}>
               <Container>
                 <Stack
                   sx={{
@@ -669,7 +669,7 @@ export function CthulhuGenerator() {
             </Grid.Col>
           )}
           {!(statValues.age < 40) && (
-            <Grid.Col span={3}>
+            <Grid.Col xs={6} sm={3}>
               <Container>
                 <Stack
                   sx={{
@@ -701,7 +701,7 @@ export function CthulhuGenerator() {
             </Grid.Col>
           )}
           {educationBonusNum !== 0 && (
-            <Grid.Col span={3}>
+            <Grid.Col xs={6} sm={3}>
               <Container>
                 <Stack
                   sx={{
@@ -800,16 +800,14 @@ export function CthulhuGenerator() {
       {/* Logo */}
       <Logo image={logo} />
       <Grid justify="center" align="center">
-        <Grid.Col span={3}>
-          {/* 탐사자 정보 */}
+        <Grid.Col xs={12} md={3}>
           <ExplorerInfo
             statValues={statValues}
             onJobChange={handleJobChange}
             onAgeChange={handleAgeChange}
           />
         </Grid.Col>
-        <Grid.Col span={9}>
-          {/* 특성치 */}
+        <Grid.Col xs={12} md={9}>
           <ExplorerTraits
             statPenaltyValues={statPenaltyValues}
             mobility={statValues.mobility}
@@ -830,15 +828,13 @@ export function CthulhuGenerator() {
       {/* 기술 */}
       {explorerSkills}
       <Grid justify="center" align="center">
-        <Grid.Col span={6}>
-          {/* 전투 */}
+        <Grid.Col xs={12} sm={6}>
           <ExplorerCombat
             combatStats={getCombatStats()}
             dodgeValue={skillValues.dodge.valueAddedByBaseValue}
           />
         </Grid.Col>
-        <Grid.Col span={6}>
-          {/* 현금과 자산 */}
+        <Grid.Col xs={12} sm={6}>
           <ExplorerCredit creditInfo={getCredit()} />
         </Grid.Col>
       </Grid>

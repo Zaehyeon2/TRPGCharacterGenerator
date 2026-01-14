@@ -28,11 +28,11 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
     <Stack
       justify="space-between"
       spacing="xs"
-      sx={{ paddingBottom: '10px', border: 'solid', height: '330px' }}
+      sx={{ paddingBottom: '10px', border: 'solid', minHeight: '330px' }}
     >
       <Text sx={{ backgroundColor: 'brown' }}>특성치</Text>
       <Grid justify="center" align="center">
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="str"
             label="근력"
@@ -44,7 +44,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             reloadStat={reloadStatBool}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="dex"
             label="민첩성"
@@ -56,7 +56,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             reloadStat={reloadStatBool}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="int"
             label="지능"
@@ -70,7 +70,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
         </Grid.Col>
       </Grid>
       <Grid justify="center" align="center">
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="health"
             label="건강"
@@ -83,7 +83,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             reloadStat={reloadStatBool}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="appeareance"
             label="외모"
@@ -95,7 +95,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             reloadStat={reloadStatBool}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="mentality"
             label="정신력"
@@ -108,7 +108,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
         </Grid.Col>
       </Grid>
       <Grid justify="center" align="center">
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="size"
             label="크기"
@@ -121,7 +121,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             reloadStat={reloadStatBool}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Stats
             statKey="education"
             label="교육"
@@ -134,7 +134,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             reloadStat={reloadStatBool}
           />
         </Grid.Col>
-        <Grid.Col span={4}>
+        <Grid.Col xs={6} sm={4}>
           <Container>
             <Stack
               sx={{

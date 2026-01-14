@@ -24,7 +24,7 @@ export const ExplorerTraits2 = React.memo(function ExplorerTraits2({
     >
       <Text sx={{ backgroundColor: 'brown' }}>특성치2</Text>
       <Grid justify="center" align="center">
-        <Grid.Col span={3}>
+        <Grid.Col xs={6} sm={3}>
           <Container>
             <Stack
               sx={{
@@ -41,7 +41,7 @@ export const ExplorerTraits2 = React.memo(function ExplorerTraits2({
             </Stack>
           </Container>
         </Grid.Col>
-        <Grid.Col span={3}>
+        <Grid.Col xs={6} sm={3}>
           <Stats
             statKey="luck"
             label="운"
@@ -52,7 +52,7 @@ export const ExplorerTraits2 = React.memo(function ExplorerTraits2({
             reloadStat={false}
           />
         </Grid.Col>
-        <Grid.Col span={3}>
+        <Grid.Col xs={6} sm={3}>
           <Container>
             <Stack
               sx={{
@@ -69,7 +69,7 @@ export const ExplorerTraits2 = React.memo(function ExplorerTraits2({
             </Stack>
           </Container>
         </Grid.Col>
-        <Grid.Col span={3}>
+        <Grid.Col xs={6} sm={3}>
           <Container>
             <Stack
               sx={{
