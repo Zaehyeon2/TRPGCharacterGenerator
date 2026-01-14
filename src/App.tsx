@@ -1,4 +1,4 @@
-import { AppShell, Box, LoadingOverlay, MantineProvider } from '@mantine/core';
+import { AppShell, Card, Skeleton, Stack, MantineProvider } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import React, { Suspense } from 'react';
 import './App.css';
@@ -9,9 +9,25 @@ import { NavbarSimple } from './layouts/Navbar';
 const Cthulhu = React.lazy(() => import('./pages/Cthulhu').then((m) => ({ default: m.Cthulhu })));
 const Main = React.lazy(() => import('./pages/Main').then((m) => ({ default: m.Main })));
 
+function LoadingSkeleton() {
+  return (
+    <Card>
+      <Stack spacing="md">
+        <Skeleton height={50} width="60%" />
+        <Skeleton height={20} />
+        <Skeleton height={20} />
+        <Skeleton height={20} width="80%" />
+        <Skeleton height={200} mt="md" />
+        <Skeleton height={200} />
+        <Skeleton height={200} />
+      </Stack>
+    </Card>
+  );
+}
+
 function App() {
   const isDesktop = useMediaQuery('(min-width: 1280px)');
-  const loadingFallback = <LoadingOverlay visible overlayBlur={2} />;
+  const loadingFallback = <LoadingSkeleton />;
 
   return (
     <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
