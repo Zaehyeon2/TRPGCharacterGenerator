@@ -1,4 +1,4 @@
-import { AppShell, LoadingOverlay, MantineProvider } from '@mantine/core';
+import { AppShell, Box, LoadingOverlay, MantineProvider } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import React, { Suspense } from 'react';
 import './App.css';
@@ -14,25 +14,21 @@ function App() {
   const isMobile = useMediaQuery('(max-width: 1280px)');
   const loadingFallback = <LoadingOverlay visible overlayBlur={2} />;
 
-  if (isMobile) {
-    return (
-      <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
-        <AppShell padding="md" header={<HeaderSimple />}>
-          <Suspense fallback={loadingFallback}>
-            <Mobile />
-          </Suspense>
-        </AppShell>
-      </MantineProvider>
-    );
-  }
   return (
     <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
-      <AppShell padding="md" navbar={<NavbarSimple />} header={<HeaderSimple />}>
+      <AppShell
+        padding="md"
+        navbar={isMobile ? undefined : <NavbarSimple />}
+        header={<HeaderSimple />}
+      >
         <Suspense fallback={loadingFallback}>
-          <Routes>
-            <Route path="/" element={<Main />} />
-            <Route path="/coc" element={<Cthulhu />} />
-          </Routes>
+          {isMobile && <Mobile />}
+          <Box sx={{ display: isMobile ? 'none' : 'block' }}>
+            <Routes>
+              <Route path="/" element={<Main />} />
+              <Route path="/coc" element={<Cthulhu />} />
+            </Routes>
+          </Box>
         </Suspense>
       </AppShell>
     </MantineProvider>
