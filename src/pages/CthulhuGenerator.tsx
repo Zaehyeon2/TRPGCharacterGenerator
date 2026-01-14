@@ -340,8 +340,8 @@ export function CthulhuGenerator() {
                 spacing={0}
               >
                 <Text>보너스 기능 점수</Text>
-                <Grid>
-                  <Grid.Col xs={4} sm={2}>
+                <Grid columns={12}>
+                  <Grid.Col span={6} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">과학</Text>
                       <Checkbox
@@ -360,7 +360,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col xs={4} sm={2}>
+                  <Grid.Col span={6} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">근접전</Text>
                       <Checkbox
@@ -379,7 +379,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col xs={4} sm={2}>
+                  <Grid.Col span={6} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">사격</Text>
                       <Checkbox
@@ -398,7 +398,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col xs={4} sm={2}>
+                  <Grid.Col span={6} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">생존술</Text>
                       <Checkbox
@@ -417,7 +417,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col xs={4} sm={2}>
+                  <Grid.Col span={6} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">언어(외국어)</Text>
                       <Checkbox
@@ -436,7 +436,7 @@ export function CthulhuGenerator() {
                       />
                     </Stack>
                   </Grid.Col>
-                  <Grid.Col xs={4} sm={2}>
+                  <Grid.Col span={6} sm={2}>
                     <Stack spacing={0} align="center">
                       <Text fz="sm">예술/공예</Text>
                       <Checkbox
@@ -460,7 +460,14 @@ export function CthulhuGenerator() {
             </Container>
           </Grid.Col>
         </Grid>
-        <Grid justify="center" align="center" sx={{ marginTop: '5px' }}>
+        <Grid
+          justify="center"
+          align="center"
+          sx={{ marginTop: '5px' }}
+          gutter="xs"
+          gutterSm="md"
+          px="xs"
+        >
           {skillsParams.map((skillParams, idx) => (
             <SkillColumn
               key={idx}

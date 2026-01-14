@@ -1,4 +1,5 @@
 import { Flex, Grid } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import React from 'react';
 import { Skills } from './skills';
 import { ReloadStateParams, SkillParamsItem } from '../interfaces/interfaces';
@@ -19,9 +20,11 @@ export const SkillColumn = React.memo(function SkillColumn({
   getBonus,
   reloadState,
 }: SkillColumnProps) {
+  const isDesktop = useMediaQuery('(min-width: 769px)');
+
   return (
-    <Grid.Col xs={6} sm={3}>
-      <Flex direction="column" gap="md" justify="center" align="center">
+    <Grid.Col span={6} sm={3}>
+      <Flex direction="column" gap={isDesktop ? 'md' : 'xs'} justify="center" align="center">
         {skillParams.map((skill) => (
           <Skills
             value={skill.value}

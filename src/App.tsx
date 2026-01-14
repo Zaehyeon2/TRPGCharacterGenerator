@@ -10,7 +10,7 @@ const Cthulhu = React.lazy(() => import('./pages/Cthulhu').then((m) => ({ defaul
 const Main = React.lazy(() => import('./pages/Main').then((m) => ({ default: m.Main })));
 
 function App() {
-  const isDesktop = useMediaQuery('(min-width: 769px)');
+  const isDesktop = useMediaQuery('(min-width: 1280px)');
   const loadingFallback = <LoadingOverlay visible overlayBlur={2} />;
 
   return (

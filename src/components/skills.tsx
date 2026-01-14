@@ -318,7 +318,7 @@ export const Skills = React.memo(function Skills({
   const { classes } = componentStyles();
 
   return (
-    <Container>
+    <Container sx={{ padding: 0 }}>
       <Stack align="center" spacing={0} className={classes.statContainer}>
         {setLabel(skillKey)}
         <Grid justify="center" align="center" p={5} grow>
