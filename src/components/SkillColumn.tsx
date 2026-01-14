@@ -20,7 +20,7 @@ export const SkillColumn = React.memo(function SkillColumn({
   reloadState,
 }: SkillColumnProps) {
   return (
-    <Grid.Col span={3}>
+    <Grid.Col xs={6} sm={3}>
       <Flex direction="column" gap="md" justify="center" align="center">
         {skillParams.map((skill) => (
           <Skills
