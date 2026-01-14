@@ -5,6 +5,13 @@
   text-align: center;
 }
 
+@media (max-width: 768px) {
+  #root {
+    padding: 0;
+    max-width: 100%;
+  }
+}
+
 #ledger-table {
   text-align: left;
 }
@@ -44,4 +51,6 @@
   color: #888;
 }
 
-td { white-space:pre }
+td {
+  white-space: pre;
+}

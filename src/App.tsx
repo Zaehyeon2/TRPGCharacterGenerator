@@ -16,7 +16,7 @@ function App() {
   return (
     <MantineProvider theme={{ colorScheme: 'dark' }} withGlobalStyles withNormalizeCSS>
       <AppShell
-        padding="md"
+        padding={isDesktop ? 'md' : 0}
         navbar={isDesktop ? <NavbarSimple /> : undefined}
         header={<HeaderSimple />}
       >
