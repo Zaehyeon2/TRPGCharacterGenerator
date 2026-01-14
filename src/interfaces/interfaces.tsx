@@ -306,7 +306,7 @@ export interface Weapons {
   age: string;
 }
 
-export interface IExpcetedSkills {
+export interface IExpectedSkills {
   [index: string]: boolean;
   science50: boolean;
   science90: boolean;

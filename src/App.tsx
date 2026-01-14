@@ -6,7 +6,7 @@ import { Routes, Route } from 'react-router-dom';
 import { HeaderSimple } from './layouts/Header';
 import { NavbarSimple } from './layouts/Navbar';
 
-const Cthulhu = React.lazy(() => import('./pages/Cthulu').then((m) => ({ default: m.Cthulhu })));
+const Cthulhu = React.lazy(() => import('./pages/Cthulhu').then((m) => ({ default: m.Cthulhu })));
 const Main = React.lazy(() => import('./pages/Main').then((m) => ({ default: m.Main })));
 const Mobile = React.lazy(() => import('./pages/Mobile').then((m) => ({ default: m.Mobile })));
 

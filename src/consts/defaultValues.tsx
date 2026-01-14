@@ -1,4 +1,4 @@
-export const defalutSkills = (dex: number, education: number) => {
+export const defaultSkills = (dex: number, education: number) => {
   return {
     appraise: {
       value: 0,

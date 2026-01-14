@@ -16,14 +16,14 @@ import dice20 from '../assets/dice20.png';
 import { Logo } from '../components/logo';
 import { SkillColumn } from '../components/SkillColumn';
 import { Stats } from '../components/stats';
-import { defalutSkills } from '../consts/defaultValues';
-import { paneltyText } from '../consts/panelyByAge';
+import { defaultSkills } from '../consts/defaultValues';
+import { penaltyText } from '../consts/penaltyByAge';
 import { skillsParamsFunction } from '../consts/skills';
 import {
   IInnerSkills,
   ISkills,
   IStats,
-  IExpcetedSkills,
+  IExpectedSkills,
   ReloadStateParams,
 } from '../interfaces/interfaces';
 import { rollDice } from '../services/dice.service';
@@ -47,7 +47,7 @@ export function CthulhuGenerator() {
     luck: 0,
   } as IStats);
 
-  const [statPaneltyValues, setStatPaneltyValues] = useState({
+  const [statPenaltyValues, setStatPenaltyValues] = useState({
     str: 0,
     dex: 0,
     health: 0,
@@ -58,7 +58,7 @@ export function CthulhuGenerator() {
   });
 
   const [skillValues, setSkillValues] = useState(
-    defalutSkills(statValues.dex.value2, statValues.education.value2) as ISkills,
+    defaultSkills(statValues.dex.value2, statValues.education.value2) as ISkills,
   );
 
   const [educationBonusText, setEducationBonusText] = useState('');
@@ -78,7 +78,7 @@ export function CthulhuGenerator() {
     pilot90: false,
     survival50: false,
     survival90: false,
-  } as IExpcetedSkills);
+  } as IExpectedSkills);
 
   const [skillPoints, setSkillPoints] = useState({
     baseJob: 0,
@@ -97,7 +97,7 @@ export function CthulhuGenerator() {
     survival: false,
   } as ReloadStateParams);
 
-  const [realoadStatBool, setRealoadStatBool] = useState(false);
+  const [reloadStatBool, setReloadStatBool] = useState(false);
 
   const defaultSkillParams = skillsParamsFunction(0, 0);
 
@@ -272,9 +272,9 @@ export function CthulhuGenerator() {
     statValues.dex,
     statValues.size,
     statValues.age,
-    statPaneltyValues.str,
-    statPaneltyValues.dex,
-    statPaneltyValues.size,
+    statPenaltyValues.str,
+    statPenaltyValues.dex,
+    statPenaltyValues.size,
   ]);
 
   useEffect(() => {
@@ -364,10 +364,10 @@ export function CthulhuGenerator() {
               label="근력"
               nDices={3}
               nSides={6}
-              paneltyByAge={statPaneltyValues.str}
+              penaltyByAge={statPenaltyValues.str}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -376,10 +376,10 @@ export function CthulhuGenerator() {
               label="민첩성"
               nDices={3}
               nSides={6}
-              paneltyByAge={statPaneltyValues.dex}
+              penaltyByAge={statPenaltyValues.dex}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -391,7 +391,7 @@ export function CthulhuGenerator() {
               baseValue={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
         </Grid>
@@ -402,11 +402,11 @@ export function CthulhuGenerator() {
               label="건강"
               nDices={3}
               nSides={6}
-              paneltyByAge={statPaneltyValues.health}
+              penaltyByAge={statPenaltyValues.health}
               baseValue={0}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -415,10 +415,10 @@ export function CthulhuGenerator() {
               label="외모"
               nDices={3}
               nSides={6}
-              paneltyByAge={statPaneltyValues.appeareance}
+              penaltyByAge={statPenaltyValues.appeareance}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -429,7 +429,7 @@ export function CthulhuGenerator() {
               nSides={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
         </Grid>
@@ -440,11 +440,11 @@ export function CthulhuGenerator() {
               label="크기"
               nDices={2}
               nSides={6}
-              paneltyByAge={statPaneltyValues.size}
+              penaltyByAge={statPenaltyValues.size}
               baseValue={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -453,11 +453,11 @@ export function CthulhuGenerator() {
               label="교육"
               nDices={2}
               nSides={6}
-              paneltyByAge={statPaneltyValues.education}
+              penaltyByAge={statPenaltyValues.education}
               baseValue={6}
               multiplyValue={5}
               getAndSetFunction={getAndSetStats}
-              reloadStat={realoadStatBool}
+              reloadStat={reloadStatBool}
             />
           </Grid.Col>
           <Grid.Col span={4}>
@@ -480,7 +480,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Stack>
     );
-  }, [statValues, statPaneltyValues, getAndSetStats, realoadStatBool]);
+  }, [statValues, statPenaltyValues, getAndSetStats, reloadStatBool]);
 
   const explorerTraits2 = useMemo(() => {
     return (
@@ -556,7 +556,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Stack>
     );
-  }, [statValues, statPaneltyValues]);
+  }, [statValues, statPenaltyValues]);
 
   const explorerCombat = useMemo(() => {
     const combatStats = getCombatStats();
@@ -642,9 +642,9 @@ export function CthulhuGenerator() {
     statValues.dex,
     statValues.size,
     statValues.str,
-    statPaneltyValues.dex,
-    statPaneltyValues.size,
-    statPaneltyValues.str,
+    statPenaltyValues.dex,
+    statPenaltyValues.size,
+    statPenaltyValues.str,
   ]);
 
   const explorerCredit = useMemo(() => {
@@ -956,11 +956,11 @@ export function CthulhuGenerator() {
     reloadState,
   ]);
 
-  const paneltyByAge = useMemo(() => {
+  const penaltyByAge = useMemo(() => {
     const getEducationBonus = (num: number) => {
       const { education: educatioN } = statValues;
       let education = educatioN.value;
-      education += statPaneltyValues.education;
+      education += statPenaltyValues.education;
       education = Math.max(0, education);
       console.log('[교육 판정] start - base education', education);
       let totalBonus = 0;
@@ -1000,34 +1000,34 @@ export function CthulhuGenerator() {
         result,
       );
       setEducationBonusText(result);
-      setStatPaneltyValues({ ...statPaneltyValues, education: -totalBonus });
+      setStatPenaltyValues({ ...statPenaltyValues, education: -totalBonus });
     };
     let text = '';
     let panelyAppearance = 0;
     let educationBonusNum = 0;
     if (statValues.age <= 19) {
-      [text] = paneltyText;
+      [text] = penaltyText;
     } else if (statValues.age <= 39) {
-      [, text] = paneltyText;
+      [, text] = penaltyText;
       educationBonusNum = 1;
     } else if (statValues.age <= 49) {
-      [, , text] = paneltyText;
+      [, , text] = penaltyText;
       panelyAppearance = 5;
       educationBonusNum = 2;
     } else if (statValues.age <= 59) {
-      [, , , text] = paneltyText;
+      [, , , text] = penaltyText;
       panelyAppearance = 10;
       educationBonusNum = 3;
     } else if (statValues.age <= 69) {
-      [, , , , text] = paneltyText;
+      [, , , , text] = penaltyText;
       panelyAppearance = 20;
       educationBonusNum = 4;
     } else if (statValues.age <= 79) {
-      [, , , , , text] = paneltyText;
+      [, , , , , text] = penaltyText;
       panelyAppearance = 20;
       educationBonusNum = 4;
     } else {
-      [, , , , , , text] = paneltyText;
+      [, , , , , , text] = penaltyText;
       panelyAppearance = 25;
       educationBonusNum = 4;
     }
@@ -1039,11 +1039,11 @@ export function CthulhuGenerator() {
           <Grid.Col span={12}>
             <Text fz="sm">
               뺴야하는 스탯 -{' '}
-              {statPaneltyValues.total -
-                statPaneltyValues.str -
-                statPaneltyValues.dex -
-                statPaneltyValues.health -
-                statPaneltyValues.size}
+              {statPenaltyValues.total -
+                statPenaltyValues.str -
+                statPenaltyValues.dex -
+                statPenaltyValues.health -
+                statPenaltyValues.size}
             </Text>
           </Grid.Col>
           {!(statValues.age >= 20 && statValues.age <= 39) && (
@@ -1062,15 +1062,15 @@ export function CthulhuGenerator() {
                   <Text fz="sm">근력</Text>
                   <TextInput
                     sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPaneltyValues.str}
+                    value={statPenaltyValues.str}
                     onChange={(event) => {
                       if (!isNumber(event.currentTarget.value)) return;
-                      setStatPaneltyValues({
-                        ...statPaneltyValues,
+                      setStatPenaltyValues({
+                        ...statPenaltyValues,
                         str: +event.currentTarget.value,
                         appeareance: panelyAppearance,
                       });
-                      setRealoadStatBool(!realoadStatBool);
+                      setReloadStatBool(!reloadStatBool);
                     }}
                   />
                 </Stack>
@@ -1093,16 +1093,16 @@ export function CthulhuGenerator() {
                   <Text fz="sm">크기</Text>
                   <TextInput
                     sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPaneltyValues.size}
+                    value={statPenaltyValues.size}
                     disabled={statValues.age > 19}
                     onChange={(event) => {
                       if (!isNumber(event.currentTarget.value)) return;
-                      setStatPaneltyValues({
-                        ...statPaneltyValues,
+                      setStatPenaltyValues({
+                        ...statPenaltyValues,
                         size: +event.currentTarget.value,
                         appeareance: panelyAppearance,
                       });
-                      setRealoadStatBool(!realoadStatBool);
+                      setReloadStatBool(!reloadStatBool);
                     }}
                   />
                 </Stack>
@@ -1125,16 +1125,16 @@ export function CthulhuGenerator() {
                   <Text fz="sm">건강</Text>
                   <TextInput
                     sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPaneltyValues.health}
+                    value={statPenaltyValues.health}
                     disabled={statValues.age < 40}
                     onChange={(event) => {
                       if (!isNumber(event.currentTarget.value)) return;
-                      setStatPaneltyValues({
-                        ...statPaneltyValues,
+                      setStatPenaltyValues({
+                        ...statPenaltyValues,
                         health: +event.currentTarget.value,
                         appeareance: panelyAppearance,
                       });
-                      setRealoadStatBool(!realoadStatBool);
+                      setReloadStatBool(!reloadStatBool);
                     }}
                   />
                 </Stack>
@@ -1157,16 +1157,16 @@ export function CthulhuGenerator() {
                   <Text fz="sm">민첩성</Text>
                   <TextInput
                     sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPaneltyValues.dex}
+                    value={statPenaltyValues.dex}
                     disabled={statValues.age < 40}
                     onChange={(event) => {
                       if (!isNumber(event.currentTarget.value)) return;
-                      setStatPaneltyValues({
-                        ...statPaneltyValues,
+                      setStatPenaltyValues({
+                        ...statPenaltyValues,
                         dex: +event.currentTarget.value,
                         appeareance: panelyAppearance,
                       });
-                      setRealoadStatBool(!realoadStatBool);
+                      setReloadStatBool(!reloadStatBool);
                     }}
                   />
                 </Stack>
@@ -1209,7 +1209,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Container>
     );
-  }, [statValues.age, statPaneltyValues, statValues.education]);
+  }, [statValues.age, statPenaltyValues, statValues.education]);
 
   useEffect(() => {
     let panelyAppearance = 0;
@@ -1235,7 +1235,7 @@ export function CthulhuGenerator() {
       panelyAppearance = 25;
       total = 80;
     }
-    setStatPaneltyValues({
+    setStatPenaltyValues({
       str: 0,
       dex: 0,
       size: 0,
@@ -1248,8 +1248,8 @@ export function CthulhuGenerator() {
   }, [statValues.age]);
 
   useEffect(() => {
-    setStatPaneltyValues({
-      ...statPaneltyValues,
+    setStatPenaltyValues({
+      ...statPenaltyValues,
       education: 0,
     });
     setEducationBonusText('');
@@ -1265,7 +1265,7 @@ export function CthulhuGenerator() {
               skillPoints,
               statValues,
               skillsParams,
-              statPaneltyValues,
+              statPenaltyValues,
             })
           }
         />
@@ -1283,7 +1283,7 @@ export function CthulhuGenerator() {
         </Grid.Col>
       </Grid>
       {/* 나이에 따른 패널티 */}
-      {paneltyByAge}
+      {penaltyByAge}
       {/* 특성치2 */}
       {explorerTraits2}
       {/* 기술 */}

@@ -22,7 +22,7 @@ export interface StatsParams {
   baseValue?: number;
   multiplyValue?: number;
   isClass?: boolean;
-  paneltyByAge?: number;
+  penaltyByAge?: number;
   getAndSetFunction: (key: string, value: { value: number; value2: number }) => void;
   reloadStat: boolean;
 }
@@ -35,7 +35,7 @@ export const Stats = React.memo(function Stats({
   baseValue = 0,
   isClass = false,
   multiplyValue = 1,
-  paneltyByAge = 0,
+  penaltyByAge = 0,
   reloadStat = false,
   getAndSetFunction,
 }: StatsParams) {
@@ -47,7 +47,7 @@ export const Stats = React.memo(function Stats({
     isClassTraits: false,
   });
 
-  const prevPaneltyRef = useRef(paneltyByAge);
+  const prevPaneltyRef = useRef(penaltyByAge);
   const prevReloadStatRef = useRef(reloadStat);
 
   const calculateStats = useCallback((stat: number, penalty: number) => {
@@ -61,7 +61,7 @@ export const Stats = React.memo(function Stats({
 
   const setStats = useCallback(
     (stat: number, shouldNotify = true) => {
-      const calculated = calculateStats(stat, paneltyByAge);
+      const calculated = calculateStats(stat, penaltyByAge);
       setStatValues((prev) => ({
         ...prev,
         value: stat,
@@ -71,7 +71,7 @@ export const Stats = React.memo(function Stats({
         getAndSetFunction(statKey, { value: stat, value2: calculated.valueSubByPanelty });
       }
     },
-    [calculateStats, paneltyByAge, getAndSetFunction, statKey],
+    [calculateStats, penaltyByAge, getAndSetFunction, statKey],
   );
 
   const rollStat = useCallback(() => {
@@ -85,19 +85,19 @@ export const Stats = React.memo(function Stats({
     setStats((result + baseValue) * multiplyValue);
   }, [nDices, nSides, label, baseValue, multiplyValue, setStats]);
 
-  // Recalculate when paneltyByAge or reloadStat changes
+  // Recalculate when penaltyByAge or reloadStat changes
   useEffect(() => {
-    if (prevPaneltyRef.current !== paneltyByAge || prevReloadStatRef.current !== reloadStat) {
-      prevPaneltyRef.current = paneltyByAge;
+    if (prevPaneltyRef.current !== penaltyByAge || prevReloadStatRef.current !== reloadStat) {
+      prevPaneltyRef.current = penaltyByAge;
       prevReloadStatRef.current = reloadStat;
-      const calculated = calculateStats(statValues.value, paneltyByAge);
+      const calculated = calculateStats(statValues.value, penaltyByAge);
       setStatValues((prev) => ({
         ...prev,
         ...calculated,
       }));
       getAndSetFunction(statKey, { value: statValues.value, value2: calculated.valueSubByPanelty });
     }
-  }, [paneltyByAge, reloadStat, statValues.value, calculateStats, getAndSetFunction, statKey]);
+  }, [penaltyByAge, reloadStat, statValues.value, calculateStats, getAndSetFunction, statKey]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +122,7 @@ export const Stats = React.memo(function Stats({
           {baseValue !== 0 && `+${baseValue}`}
           {multiplyValue !== 1 && ')'}
           {multiplyValue !== 1 && `*${multiplyValue}`}
-          {paneltyByAge !== 0 && (paneltyByAge < 0 ? ` +${-paneltyByAge}` : ` -${paneltyByAge}`)}
+          {penaltyByAge !== 0 && (penaltyByAge < 0 ? ` +${-penaltyByAge}` : ` -${penaltyByAge}`)}
         </Text>
         <Grid justify="center" align="center" p={5} grow>
           {isClass && (

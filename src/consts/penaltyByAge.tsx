@@ -1,4 +1,4 @@
-export const paneltyText = [
+export const penaltyText = [
   '근력이나 크기에서 총 -5, 교육에서 -5',
   '교육 향상 판정 1',
   '근력, 건강, 민첩성에서 총 -5, 외모 -5, 교육 향상 판정 2',

@@ -1,8 +1,8 @@
 import { Card, Tabs } from '@mantine/core';
 import { IconUser, IconSwords } from '@tabler/icons-react';
 import React from 'react';
-import { CthulhuGenerator } from './Cthulu-Generator';
-import { CthulhuWeapons } from './Cthulu-Weapons';
+import { CthulhuGenerator } from './CthulhuGenerator';
+import { CthulhuWeapons } from './CthulhuWeapons';
 
 export function Cthulhu() {
   return (
