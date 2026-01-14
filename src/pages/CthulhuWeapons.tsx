@@ -1,4 +1,4 @@
-import { Tabs } from '@mantine/core';
+import { ScrollArea, Tabs } from '@mantine/core';
 import { IconSword, IconViewfinder, IconBomb } from '@tabler/icons-react';
 import React from 'react';
 import { WeaponsTable } from '../components/weapons';
@@ -15,29 +15,31 @@ import {
 export function CthulhuWeapons() {
   return (
     <Tabs defaultValue="melee">
-      <Tabs.List>
-        <Tabs.Tab value="melee" icon={<IconSword size={14} />}>
-          근거리
-        </Tabs.Tab>
-        <Tabs.Tab value="pistol" icon={<IconViewfinder size={14} />}>
-          권총⚠
-        </Tabs.Tab>
-        <Tabs.Tab value="rifle" icon={<IconViewfinder size={14} />}>
-          소총⚠/돌격 소총⚠
-        </Tabs.Tab>
-        <Tabs.Tab value="shotgun" icon={<IconViewfinder size={14} />}>
-          산탄총⚠
-        </Tabs.Tab>
-        <Tabs.Tab value="submachinegun" icon={<IconViewfinder size={14} />}>
-          기관단총
-        </Tabs.Tab>
-        <Tabs.Tab value="machinegun" icon={<IconViewfinder size={14} />}>
-          기관총
-        </Tabs.Tab>
-        <Tabs.Tab value="etc" icon={<IconBomb size={14} />}>
-          폭발물,중화기,기타⚠
-        </Tabs.Tab>
-      </Tabs.List>
+      <ScrollArea type="auto" offsetScrollbars>
+        <Tabs.List sx={{ flexWrap: 'nowrap' }}>
+          <Tabs.Tab value="melee" icon={<IconSword size={14} />}>
+            근거리
+          </Tabs.Tab>
+          <Tabs.Tab value="pistol" icon={<IconViewfinder size={14} />}>
+            권총⚠
+          </Tabs.Tab>
+          <Tabs.Tab value="rifle" icon={<IconViewfinder size={14} />}>
+            소총⚠/돌격 소총⚠
+          </Tabs.Tab>
+          <Tabs.Tab value="shotgun" icon={<IconViewfinder size={14} />}>
+            산탄총⚠
+          </Tabs.Tab>
+          <Tabs.Tab value="submachinegun" icon={<IconViewfinder size={14} />}>
+            기관단총
+          </Tabs.Tab>
+          <Tabs.Tab value="machinegun" icon={<IconViewfinder size={14} />}>
+            기관총
+          </Tabs.Tab>
+          <Tabs.Tab value="etc" icon={<IconBomb size={14} />}>
+            폭발물,중화기,기타⚠
+          </Tabs.Tab>
+        </Tabs.List>
+      </ScrollArea>
 
       <Tabs.Panel value="melee">
         <WeaponsTable weapons={meleeWeapons} />
