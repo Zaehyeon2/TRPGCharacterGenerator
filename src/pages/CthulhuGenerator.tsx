@@ -1,9 +1,12 @@
 import {
+  ActionIcon,
+  Box,
   Button,
   Card,
   Checkbox,
   Container,
   Grid,
+  Popover,
   Stack,
   Text,
   TextInput,
@@ -841,6 +844,76 @@ export function CthulhuGenerator() {
           <ExplorerCredit creditInfo={getCredit()} />
         </Grid.Col>
       </Grid>
+
+      <Box
+        sx={{
+          position: 'fixed',
+          bottom: 24,
+          right: 24,
+          zIndex: 1000,
+        }}
+      >
+        <Popover position="top-end" shadow="xl" withArrow arrowSize={12}>
+          <Popover.Target>
+            <ActionIcon
+              size={48}
+              radius="xl"
+              variant="gradient"
+              gradient={{ from: 'indigo', to: 'cyan', deg: 45 }}
+              sx={{
+                boxShadow: '0 4px 14px rgba(0, 0, 0, 0.4)',
+                transition: 'transform 0.2s ease, box-shadow 0.2s ease',
+                '&:hover': {
+                  transform: 'scale(1.1)',
+                  boxShadow: '0 6px 20px rgba(0, 0, 0, 0.5)',
+                },
+              }}
+            >
+              <Text fz={10} fw={700} sx={{ textAlign: 'center', lineHeight: 1.2 }}>
+                기능
+                <br />
+                점수
+              </Text>
+            </ActionIcon>
+          </Popover.Target>
+          <Popover.Dropdown
+            sx={{
+              background: 'linear-gradient(135deg, #1a1b1e 0%, #25262b 100%)',
+              border: '1px solid #373A40',
+              borderRadius: '12px',
+              padding: '16px',
+            }}
+          >
+            <Stack spacing="sm">
+              <Text
+                fz="md"
+                fw={600}
+                sx={{ borderBottom: '1px solid #373A40', paddingBottom: '8px' }}
+              >
+                남은 기능 점수
+              </Text>
+              <Grid>
+                <Grid.Col span={6}>
+                  <Text fz="sm" color="dimmed">
+                    직업
+                  </Text>
+                  <Text fz="lg" fw={700} color="cyan">
+                    {skillPoints.baseJob - skillPoints.job}
+                  </Text>
+                </Grid.Col>
+                <Grid.Col span={6}>
+                  <Text fz="sm" color="dimmed">
+                    관심
+                  </Text>
+                  <Text fz="lg" fw={700} color="grape">
+                    {skillPoints.baseInterest - skillPoints.interest}
+                  </Text>
+                </Grid.Col>
+              </Grid>
+            </Stack>
+          </Popover.Dropdown>
+        </Popover>
+      </Box>
     </Card>
   );
 }
