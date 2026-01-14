@@ -1,1 +1,0 @@
-import{j as e,a as r}from"./index-6fe1463e.js";import{C as n,T as i}from"./vendor-mantine-2af9f9d3.js";import"./vendor-react-282146bd.js";function a(){return e(n,{size:"xs",children:[r(i,{children:"⛔더 큰 화면에서 이용해주세요.⛔"}),r(i,{children:"(min 1280px)"})]})}export{a as Mobile};
