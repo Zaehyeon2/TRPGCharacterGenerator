@@ -11,18 +11,34 @@ import {
   Grid,
   Divider,
 } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import React from 'react';
 import gitIcon from '../assets/github-mark-white.svg';
 import mail from '../assets/mail.svg';
 
 export function Main() {
+  const isDesktop = useMediaQuery('(min-width: 1280px)');
+
   return (
-    <Card withBorder radius="md">
+    <Card
+      withBorder={isDesktop}
+      radius={isDesktop ? 'md' : 0}
+      sx={isDesktop ? {} : { border: 'none', backgroundColor: 'transparent' }}
+    >
       <Title size="h1">TRPG Charactor Generator</Title>
       <Space h="xs" />
       <Text>개인적으로 사용하기 위해 개발한 TRPG 캐릭터 생성 도구 입니다.</Text>
       <Text>언제든 사용하셔도 좋습니다.</Text>
       <Text>다만, 룰북이 없는 게임 진행은 지양해주세요.</Text>
+      <Space h="md" />
+      <Divider />
+      <Space h="md" />
+      <Title size="h2">업데이트 내역</Title>
+      <Space h="xs" />
+      <Title size="h4">2026년 1월 14일</Title>
+      <List size="sm">
+        <List.Item>모바일/태블릿 반응형 레이아웃 지원</List.Item>
+      </List>
       <Space h="md" />
       <Divider />
       <Space h="md" />
