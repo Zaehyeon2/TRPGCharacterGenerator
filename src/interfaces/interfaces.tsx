@@ -285,6 +285,14 @@ export interface SkillParams {
   reloadState?: ReloadStateParams;
 }
 
+export interface SkillParamsItem {
+  value: number;
+  skillKey: string;
+  label: string;
+  baseValue: number;
+  checkboxDisabled?: boolean;
+}
+
 export interface Weapons {
   name: string;
   function: string;

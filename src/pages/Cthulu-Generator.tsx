@@ -3,7 +3,6 @@ import {
   Card,
   Checkbox,
   Container,
-  Flex,
   Grid,
   Group,
   Stack,
@@ -15,7 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import logo from '../assets/coc-logo.png';
 import dice20 from '../assets/dice20.png';
 import { Logo } from '../components/logo';
-import { Skills } from '../components/skills';
+import { SkillColumn } from '../components/SkillColumn';
 import { Stats } from '../components/stats';
 import { defalutSkills } from '../consts/defaultValues';
 import { paneltyText } from '../consts/panelyByAge';
@@ -119,99 +118,82 @@ export function CthulhuGenerator() {
       }
       return expectedSkills[`${skillKey}90`];
     },
-    [expectedSkills, statValues],
-  );
-
-  const onChangeExpectedSkills = useCallback(
-    (key: string, value: boolean) => {
-      setExpectedSkills({ ...expectedSkills, [key]: value });
-    },
     [expectedSkills],
   );
 
-  const getAndSetSkills = useCallback(
-    (key: string, value: IInnerSkills | undefined) => {
-      if (!value) {
-        const keys = Object.keys(skillValues);
-        const updatedSkillValues: ISkills = { ...skillValues };
-        const updatedKeys: string[] = [];
-        keys.map((skillKey) => {
+  const onChangeExpectedSkills = useCallback((key: string, value: boolean) => {
+    setExpectedSkills((prev) => ({ ...prev, [key]: value }));
+  }, []);
+
+  const getAndSetSkills = useCallback((key: string, value: IInnerSkills | undefined) => {
+    if (!value) {
+      setSkillValues((prev) => {
+        const keys = Object.keys(prev);
+        const updatedSkillValues: ISkills = { ...prev };
+        keys.forEach((skillKey) => {
           if (skillKey.startsWith(key)) {
             updatedSkillValues[skillKey] = {
               value: 0,
-              valueAddedByBaseValue: skillValues[skillKey].valueAddedByBaseValue,
+              valueAddedByBaseValue: prev[skillKey].valueAddedByBaseValue,
               isChecked: false,
             };
-            updatedKeys.push(skillKey);
           }
-          return 0;
         });
-        setSkillValues(updatedSkillValues);
-        setReloadState({ ...reloadState, [key]: !reloadState[key] });
-        // setInnerSkillPoints(updatedKeys, { value: 0, valueAddedByBaseValue: 0, isChecked: false });
-      } else {
-        setSkillValues({ ...skillValues, [key]: value });
-        // setInnerSkillPoints([key], value);
-      }
-    },
-    [
-      skillValues,
-      reloadState,
-      statValues.dex,
-      statValues.education,
-      statPaneltyValues.dex,
-      statPaneltyValues.education,
-    ],
-  );
+        return updatedSkillValues;
+      });
+      setReloadState((prev) => ({ ...prev, [key]: !prev[key] }));
+    } else {
+      setSkillValues((prev) => ({ ...prev, [key]: value }));
+    }
+  }, []);
 
-  const getAndSetStats = useCallback(
-    (key: string, value: { value: number; value2: number }) => {
-      setStatsValue({ ...statValues, [key]: value });
-      if (key === 'int') {
-        setSkillPoints({ ...skillPoints, baseInterest: value.value2 * 2 });
-      }
-      if (key === 'dex') {
-        getAndSetSkills('dodge', {
-          ...skillValues.dodge,
-          valueAddedByBaseValue: skillValues.dodge.value + Math.floor(value.value2 / 2),
-        });
-        const updatedSkillParams = [...skillsParams];
-        updatedSkillParams[3][10].baseValue = Math.floor(value.value2 / 2);
-        setSkillsParams(updatedSkillParams);
-      }
-      if (key === 'education') {
-        const updatedSkillParams = [...skillsParams];
-        updatedSkillParams[1][9].baseValue = value.value2;
-        setSkillsParams(updatedSkillParams);
-      }
-    },
-    [skillPoints, statValues, statPaneltyValues],
-  );
+  const getAndSetStats = useCallback((key: string, value: { value: number; value2: number }) => {
+    setStatsValue((prev) => ({ ...prev, [key]: value }));
+    if (key === 'int') {
+      setSkillPoints((prev) => ({ ...prev, baseInterest: value.value2 * 2 }));
+    }
+    if (key === 'dex') {
+      setSkillValues((prev) => ({
+        ...prev,
+        dodge: {
+          ...prev.dodge,
+          valueAddedByBaseValue: prev.dodge.value + Math.floor(value.value2 / 2),
+        },
+      }));
+      setSkillsParams((prev) => {
+        const updated = [...prev];
+        updated[3] = [...updated[3]];
+        updated[3][10] = { ...updated[3][10], baseValue: Math.floor(value.value2 / 2) };
+        return updated;
+      });
+    }
+    if (key === 'education') {
+      setSkillsParams((prev) => {
+        const updated = [...prev];
+        updated[1] = [...updated[1]];
+        updated[1][9] = { ...updated[1][9], baseValue: value.value2 };
+        return updated;
+      });
+    }
+  }, []);
 
   const getMobility = useCallback(() => {
-    const { str, dex, size, age } = statValues;
+    setStatsValue((prev) => {
+      const { str, dex, size, age } = prev;
 
-    let mobility: number;
-    if (str.value2 < size.value2 && dex.value2 < size.value2) mobility = 7;
-    else if (str > size && dex > size) mobility = 9;
-    else mobility = 8;
-    if (age >= 80) mobility -= 5;
-    else if (age >= 70) mobility -= 4;
-    else if (age >= 60) mobility -= 3;
-    else if (age >= 50) mobility -= 2;
-    else if (age >= 40) mobility -= 1;
+      let mobility: number;
+      if (str.value2 < size.value2 && dex.value2 < size.value2) mobility = 7;
+      else if (str.value2 > size.value2 && dex.value2 > size.value2) mobility = 9;
+      else mobility = 8;
+      if (age >= 80) mobility -= 5;
+      else if (age >= 70) mobility -= 4;
+      else if (age >= 60) mobility -= 3;
+      else if (age >= 50) mobility -= 2;
+      else if (age >= 40) mobility -= 1;
 
-    setStatsValue({ ...statValues, mobility });
-  }, [
-    statValues.str,
-    statValues.dex,
-    statValues.size,
-    statValues.age,
-    statValues.mobility,
-    statPaneltyValues.str,
-    statPaneltyValues.dex,
-    statPaneltyValues.size,
-  ]);
+      return { ...prev, mobility };
+    });
+  }, []);
 
   const getCombatStats = () => {
     let combatStats = { damageBonus: '', build: 0 };
@@ -498,7 +480,7 @@ export function CthulhuGenerator() {
         </Grid>
       </Stack>
     );
-  }, [statValues, getAndSetStats, getMobility, statPaneltyValues]);
+  }, [statValues, statPaneltyValues, getAndSetStats, realoadStatBool]);
 
   const explorerTraits2 = useMemo(() => {
     return (
@@ -952,27 +934,14 @@ export function CthulhuGenerator() {
           </Grid.Col>
         </Grid>
         <Grid justify="center" align="center" sx={{ marginTop: '5px' }}>
-          {skillsParams.map((skillParams) => (
-            <Grid.Col span={3}>
-              <Flex direction="column" gap="md" justify="center" align="center">
-                {useMemo(() => {
-                  return skillParams.map((skill) => (
-                    <Skills
-                      value={skill.value}
-                      key={skill.label}
-                      skillKey={skill.skillKey}
-                      label={skill.label}
-                      baseValue={skill.baseValue}
-                      getAndSetFunction={getAndSetSkills}
-                      checkboxDisabled={skill.checkboxDisabled}
-                      bonus50={getBonus(skill.skillKey, '50')}
-                      bonus90={getBonus(skill.skillKey, '90')}
-                      reloadState={reloadState}
-                    />
-                  ));
-                }, [skillsParams, skillParams, expectedSkills, skillValues])}
-              </Flex>
-            </Grid.Col>
+          {skillsParams.map((skillParams, idx) => (
+            <SkillColumn
+              key={idx}
+              skillParams={skillParams}
+              getAndSetSkills={getAndSetSkills}
+              getBonus={getBonus}
+              reloadState={reloadState}
+            />
           ))}
         </Grid>
       </Container>
@@ -984,9 +953,7 @@ export function CthulhuGenerator() {
     getBonus,
     onChangeExpectedSkills,
     expectedSkills,
-    skillValues,
-    statValues,
-    statPaneltyValues,
+    reloadState,
   ]);
 
   const paneltyByAge = useMemo(() => {

@@ -1,6 +1,6 @@
 /* eslint-disable react/require-default-props */
 import { Text, Stack, Grid, TextInput, Checkbox, Container, Select } from '@mantine/core';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   detailedArtcraft,
   detailedFighting,
@@ -17,8 +17,17 @@ import {
   SkillProps,
 } from '../interfaces/interfaces';
 import { formStat, isNumber } from '../services/utils.service';
+import { componentStyles } from '../styles/styles';
 
-export function Skills({
+const scienceLabels = detailedScience.map((s) => s.label);
+const fightingLabels = detailedFighting.map((s) => s.label);
+const firearmLabels = detailedFirearm.map((s) => s.label);
+const surviveLabels = detailedSurvive.map((s) => s.label);
+const artcraftLabels = detailedArtcraft.map((s) => s.label);
+const pilotLabels = detailedPilot.map((s) => s.label);
+const rareLabels = rareSkills.map((s) => s.label);
+
+export const Skills = React.memo(function Skills({
   skillKey,
   label,
   reloadState = {} as ReloadStateParams,
@@ -122,15 +131,27 @@ export function Skills({
     });
   }, [baseValue]);
 
+  const prevSkillValuesRef = useRef(skillValues);
+
   useEffect(() => {
     if (getAndSetFunction === undefined) return;
     if (isDetailedSkill(skillValues.detailedKey)) return;
-    getAndSetFunction(skillValues.detailedKey, {
-      value: skillValues.value,
-      valueAddedByBaseValue: skillValues.valueAddedByBaseValue,
-      isChecked: skillValues.isClassTraits,
-    });
-  }, [skillValues]);
+
+    const prev = prevSkillValuesRef.current;
+    const hasChanged =
+      prev.value !== skillValues.value ||
+      prev.valueAddedByBaseValue !== skillValues.valueAddedByBaseValue ||
+      prev.isClassTraits !== skillValues.isClassTraits;
+
+    if (hasChanged) {
+      prevSkillValuesRef.current = skillValues;
+      getAndSetFunction(skillValues.detailedKey, {
+        value: skillValues.value,
+        valueAddedByBaseValue: skillValues.valueAddedByBaseValue,
+        isChecked: skillValues.isClassTraits,
+      });
+    }
+  }, [skillValues, getAndSetFunction]);
 
   function setInnerDetailedKey(detailedKey: DetailedSkillProps) {
     if (getAndSetFunction === undefined) return;
@@ -195,10 +216,17 @@ export function Skills({
     }
   }
 
+  const handleSelectChange = useCallback(
+    (value: string | null) => {
+      if (value) setDetailedKey(value);
+    },
+    [skillKey],
+  );
+
   function setLabel(key: string) {
     if (!isDetailedSkill(key)) {
       return (
-        <Text align="center" fz="sm" sx={{ height: '30px' }}>
+        <Text align="center" fz="sm" h={30}>
           {label} ({baseValue}%)
         </Text>
       );
@@ -208,13 +236,9 @@ export function Skills({
         <Select
           placeholder="과학"
           defaultValue={detailedScience[0].label}
-          data={detailedScience.map((science) => {
-            return science.label;
-          })}
+          data={scienceLabels}
           size="xs"
-          onChange={(value) => {
-            setDetailedKey(value as string);
-          }}
+          onChange={handleSelectChange}
         />
       );
     }
@@ -223,13 +247,9 @@ export function Skills({
         <Select
           placeholder="근접전"
           defaultValue={detailedFighting[0].label}
-          data={detailedFighting.map((fighting) => {
-            return fighting.label;
-          })}
+          data={fightingLabels}
           size="xs"
-          onChange={(value) => {
-            setDetailedKey(value as string);
-          }}
+          onChange={handleSelectChange}
         />
       );
     }
@@ -238,13 +258,9 @@ export function Skills({
         <Select
           placeholder="사격"
           defaultValue={detailedFirearm[0].label}
-          data={detailedFirearm.map((firearm) => {
-            return firearm.label;
-          })}
+          data={firearmLabels}
           size="xs"
-          onChange={(value) => {
-            setDetailedKey(value as string);
-          }}
+          onChange={handleSelectChange}
         />
       );
     }
@@ -253,13 +269,9 @@ export function Skills({
         <Select
           placeholder="생존술"
           defaultValue={detailedSurvive[0].label}
-          data={detailedSurvive.map((survival) => {
-            return survival.label;
-          })}
+          data={surviveLabels}
           size="xs"
-          onChange={(value) => {
-            setDetailedKey(value as string);
-          }}
+          onChange={handleSelectChange}
         />
       );
     }
@@ -268,13 +280,9 @@ export function Skills({
         <Select
           placeholder="예술/공예"
           defaultValue={detailedArtcraft[0].label}
-          data={detailedArtcraft.map((artcraft) => {
-            return artcraft.label;
-          })}
+          data={artcraftLabels}
           size="xs"
-          onChange={(value) => {
-            setDetailedKey(value as string);
-          }}
+          onChange={handleSelectChange}
         />
       );
     }
@@ -283,13 +291,9 @@ export function Skills({
         <Select
           placeholder="조종"
           defaultValue={detailedPilot[0].label}
-          data={detailedPilot.map((pilot) => {
-            return pilot.label;
-          })}
+          data={pilotLabels}
           size="xs"
-          onChange={(value) => {
-            setDetailedKey(value as string);
-          }}
+          onChange={handleSelectChange}
         />
       );
     }
@@ -298,13 +302,9 @@ export function Skills({
       <Select
         placeholder="기타"
         defaultValue={rareSkills[0].label}
-        data={rareSkills.map((rare) => {
-          return rare.label;
-        })}
+        data={rareLabels}
         size="xs"
-        onChange={(values) => {
-          setDetailedKey(values as string);
-        }}
+        onChange={handleSelectChange}
       />
     );
   }
@@ -315,11 +315,13 @@ export function Skills({
     return false;
   }
 
+  const { classes } = componentStyles();
+
   return (
     <Container>
-      <Stack align="center" spacing={0} sx={{ border: '1px solid', borderRadius: '0.5em' }}>
+      <Stack align="center" spacing={0} className={classes.statContainer}>
         {setLabel(skillKey)}
-        <Grid justify="center" align="center" sx={{ padding: '5px' }} grow>
+        <Grid justify="center" align="center" p={5} grow>
           <Grid.Col span="content">
             <Checkbox
               disabled={isCheckboxDisabled(skillValues.detailedKey)}
@@ -358,4 +360,4 @@ export function Skills({
       </Stack>
     </Container>
   );
-}
+});

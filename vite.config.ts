@@ -1,5 +1,5 @@
 import react from '@vitejs/plugin-react';
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://vitejs.dev/config/
@@ -22,12 +22,24 @@ export default defineConfig(({ command, mode }) => {
           });
         },
       },
-      splitVendorChunkPlugin(),
       nodePolyfills({
-        // Whether to polyfill `node:` protocol imports.
         protocolImports: true,
       }),
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks: {
+            'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+            'vendor-mantine': ['@mantine/core', '@mantine/hooks'],
+            'vendor-icons': ['@tabler/icons-react'],
+          },
+        },
+      },
+    },
+    optimizeDeps: {
+      include: ['@mantine/core', '@mantine/hooks', '@tabler/icons-react'],
+    },
   };
 
   if (command === 'build' || mode !== 'development') {
