@@ -4,7 +4,6 @@ import {
   Checkbox,
   Container,
   Grid,
-  Group,
   Stack,
   Text,
   TextInput,
@@ -13,90 +12,38 @@ import {
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import logo from '../assets/coc-logo.png';
 import dice20 from '../assets/dice20.png';
+import { ExplorerCombat } from '../components/cthulhu/ExplorerCombat';
+import { ExplorerCredit } from '../components/cthulhu/ExplorerCredit';
+import { ExplorerInfo } from '../components/cthulhu/ExplorerInfo';
+import { ExplorerTraits } from '../components/cthulhu/ExplorerTraits';
+import { ExplorerTraits2 } from '../components/cthulhu/ExplorerTraits2';
 import { Logo } from '../components/logo';
 import { SkillColumn } from '../components/SkillColumn';
-import { Stats } from '../components/stats';
+
 import { defaultSkills } from '../consts/defaultValues';
+import {
+  INITIAL_EXPECTED_SKILLS,
+  INITIAL_RELOAD_STATE,
+  INITIAL_SKILL_POINTS,
+  INITIAL_STATS,
+  INITIAL_STAT_PENALTY,
+} from '../consts/initialStates';
 import { penaltyText } from '../consts/penaltyByAge';
 import { skillsParamsFunction } from '../consts/skills';
-import {
-  IInnerSkills,
-  ISkills,
-  IStats,
-  IExpectedSkills,
-  ReloadStateParams,
-} from '../interfaces/interfaces';
+import { IInnerSkills, ISkills } from '../interfaces/interfaces';
 import { rollDice } from '../services/dice.service';
-import { formHp, formStat, isNumber } from '../services/utils.service';
-import { explorerStyles } from '../styles/styles';
+import { isNumber } from '../services/utils.service';
 
 export function CthulhuGenerator() {
-  const { classes } = explorerStyles();
-  const [statValues, setStatsValue] = useState({
-    job: '',
-    age: 0,
-    str: { value: 0, value2: 0 },
-    dex: { value: 0, value2: 0 },
-    int: { value: 0, value2: 0 },
-    health: { value: 0, value2: 0 },
-    appeareance: { value: 0, value2: 0 },
-    mentality: { value: 0, value2: 0 },
-    size: { value: 0, value2: 0 },
-    education: { value: 0, value2: 0 },
-    mobility: 0,
-    luck: 0,
-  } as IStats);
-
-  const [statPenaltyValues, setStatPenaltyValues] = useState({
-    str: 0,
-    dex: 0,
-    health: 0,
-    size: 0,
-    education: 0,
-    appeareance: 0,
-    total: 0,
-  });
-
+  const [statValues, setStatsValue] = useState(INITIAL_STATS);
+  const [statPenaltyValues, setStatPenaltyValues] = useState(INITIAL_STAT_PENALTY);
   const [skillValues, setSkillValues] = useState(
     defaultSkills(statValues.dex.value2, statValues.education.value2) as ISkills,
   );
-
   const [educationBonusText, setEducationBonusText] = useState('');
-
-  const [expectedSkills, setExpectedSkills] = useState({
-    science50: false,
-    science90: false,
-    fighting50: false,
-    fighting90: false,
-    firearms50: false,
-    firearms90: false,
-    language50: false,
-    language90: false,
-    artcraft50: false,
-    artcraft90: false,
-    pilot50: false,
-    pilot90: false,
-    survival50: false,
-    survival90: false,
-  } as IExpectedSkills);
-
-  const [skillPoints, setSkillPoints] = useState({
-    baseJob: 0,
-    job: 0,
-    baseInterest: 0,
-    interest: 0,
-  });
-
-  const [reloadState, setReloadState] = useState({
-    science: false,
-    fighting: false,
-    firearms: false,
-    language: false,
-    artcraft: false,
-    pilot: false,
-    survival: false,
-  } as ReloadStateParams);
-
+  const [expectedSkills, setExpectedSkills] = useState(INITIAL_EXPECTED_SKILLS);
+  const [skillPoints, setSkillPoints] = useState(INITIAL_SKILL_POINTS);
+  const [reloadState, setReloadState] = useState(INITIAL_RELOAD_STATE);
   const [reloadStatBool, setReloadStatBool] = useState(false);
 
   const defaultSkillParams = skillsParamsFunction(0, 0);
@@ -284,433 +231,13 @@ export function CthulhuGenerator() {
     });
   }, [statValues.int]);
 
-  const explorerInfos = () => {
-    return (
-      <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', height: '330px' }}>
-        <Text sx={{ backgroundColor: 'black', width: '100%' }}>현대 탐사자</Text>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            이름
-          </Text>
-          <TextInput size="xs" sx={{ width: '60%' }} />
-        </Group>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            플레이어
-          </Text>
-          <TextInput size="xs" sx={{ width: '60%' }} />
-        </Group>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            직업
-          </Text>
-          <TextInput
-            value={statValues.job}
-            size="xs"
-            sx={{ width: '60%' }}
-            onChange={(event) => {
-              setStatsValue({ ...statValues, job: event.currentTarget.value });
-            }}
-          />
-        </Group>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            나이
-          </Text>
-          <TextInput
-            value={statValues.age}
-            size="xs"
-            sx={{ width: '60%' }}
-            onChange={(event) => {
-              if (!isNumber(event.currentTarget.value)) return;
-              setStatsValue({ ...statValues, age: +event.currentTarget.value });
-            }}
-          />
-        </Group>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            성별
-          </Text>
-          <TextInput size="xs" sx={{ width: '60%' }} />
-        </Group>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            거주지
-          </Text>
-          <TextInput size="xs" sx={{ width: '60%' }} />
-        </Group>
-        <Group sx={{ margin: 'auto' }} spacing="xs">
-          <Text className={classes.label} fz="xs">
-            출생지
-          </Text>
-          <TextInput size="xs" sx={{ width: '60%' }} />
-        </Group>
-      </Stack>
-    );
-  };
+  const handleJobChange = useCallback((job: string) => {
+    setStatsValue((prev) => ({ ...prev, job }));
+  }, []);
 
-  const explorerTraits = useMemo(() => {
-    return (
-      <Stack
-        justify="space-between"
-        spacing="xs"
-        sx={{ paddingBottom: '10px', border: 'solid', height: '330px' }}
-      >
-        <Text sx={{ backgroundColor: 'brown' }}>특성치</Text>
-        <Grid justify="center" align="center">
-          <Grid.Col span={4}>
-            <Stats
-              statKey="str"
-              label="근력"
-              nDices={3}
-              nSides={6}
-              penaltyByAge={statPenaltyValues.str}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Stats
-              statKey="dex"
-              label="민첩성"
-              nDices={3}
-              nSides={6}
-              penaltyByAge={statPenaltyValues.dex}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Stats
-              statKey="int"
-              label="지능"
-              nDices={2}
-              nSides={6}
-              baseValue={6}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-        </Grid>
-        <Grid justify="center" align="center">
-          <Grid.Col span={4}>
-            <Stats
-              statKey="health"
-              label="건강"
-              nDices={3}
-              nSides={6}
-              penaltyByAge={statPenaltyValues.health}
-              baseValue={0}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Stats
-              statKey="appeareance"
-              label="외모"
-              nDices={3}
-              nSides={6}
-              penaltyByAge={statPenaltyValues.appeareance}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Stats
-              statKey="mentality"
-              label="정신력"
-              nDices={3}
-              nSides={6}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-        </Grid>
-        <Grid justify="center" align="center">
-          <Grid.Col span={4}>
-            <Stats
-              statKey="size"
-              label="크기"
-              nDices={2}
-              nSides={6}
-              penaltyByAge={statPenaltyValues.size}
-              baseValue={6}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Stats
-              statKey="education"
-              label="교육"
-              nDices={2}
-              nSides={6}
-              penaltyByAge={statPenaltyValues.education}
-              baseValue={6}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={reloadStatBool}
-            />
-          </Grid.Col>
-          <Grid.Col span={4}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">이동력</Text>
-                <Text>{statValues.mobility}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-        </Grid>
-      </Stack>
-    );
-  }, [statValues, statPenaltyValues, getAndSetStats, reloadStatBool]);
-
-  const explorerTraits2 = useMemo(() => {
-    return (
-      <Stack
-        justify="space-between"
-        spacing="xs"
-        sx={{ paddingBottom: '10px', border: 'solid', marginTop: '16px' }}
-      >
-        <Text sx={{ backgroundColor: 'brown' }}>특성치2</Text>
-        <Grid justify="center" align="center">
-          <Grid.Col span={3}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">체력</Text>
-                <Text>{formHp(statValues.size.value2, statValues.health.value2)}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={3}>
-            <Stats
-              statKey="luck"
-              label="운"
-              nDices={3}
-              nSides={6}
-              multiplyValue={5}
-              getAndSetFunction={getAndSetStats}
-              reloadStat={false}
-            />
-          </Grid.Col>
-          <Grid.Col span={3}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">이성</Text>
-                <Text>{formStat(statValues.mentality.value2, 1)}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={3}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">마력</Text>
-                <Text>{formStat(Math.floor(statValues.mentality.value2 / 5), 5)}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-        </Grid>
-      </Stack>
-    );
-  }, [statValues, statPenaltyValues]);
-
-  const explorerCombat = useMemo(() => {
-    const combatStats = getCombatStats();
-    return (
-      <Stack
-        justify="space-between"
-        spacing="xs"
-        sx={{ paddingBottom: '10px', border: 'solid', marginTop: '16px' }}
-      >
-        <Text sx={{ backgroundColor: 'teal' }}>전투</Text>
-        <Grid justify="center" align="center" columns={1}>
-          <Grid.Col span={1}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">피해 보너스</Text>
-                <Text>{combatStats.damageBonus}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={1}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">체구</Text>
-                <Text>{combatStats.build}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={1}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                  height: '70.88px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">회피</Text>
-                <Grid justify="center" align="center">
-                  <Grid.Col span={1}>
-                    <Text fz="xl">{formStat(skillValues.dodge.valueAddedByBaseValue, 1)}</Text>
-                  </Grid.Col>
-                  <Grid.Col span={1}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="xs">
-                        {formStat(Math.floor(skillValues.dodge.valueAddedByBaseValue / 2), 2)}
-                      </Text>
-                      <Text fz="xs">
-                        {formStat(Math.floor(skillValues.dodge.valueAddedByBaseValue / 5), 5)}
-                      </Text>
-                    </Stack>
-                  </Grid.Col>
-                </Grid>
-              </Stack>
-            </Container>
-          </Grid.Col>
-        </Grid>
-      </Stack>
-    );
-  }, [
-    skillValues.dodge.valueAddedByBaseValue,
-    statValues.dex,
-    statValues.size,
-    statValues.str,
-    statPenaltyValues.dex,
-    statPenaltyValues.size,
-    statPenaltyValues.str,
-  ]);
-
-  const explorerCredit = useMemo(() => {
-    return (
-      <Stack
-        justify="space-between"
-        spacing="xs"
-        sx={{ paddingBottom: '10px', border: 'solid', marginTop: '16px' }}
-      >
-        <Text sx={{ backgroundColor: 'gold', color: 'black' }}>현금과 자산</Text>
-        <Grid justify="center" align="center" columns={1}>
-          <Grid.Col span={1}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">소비 수준</Text>
-                <Text>💲{getCredit().spendingLevel}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={1}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">현금</Text>
-                <Text>💲{getCredit().cash}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={1}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text fz="sm">자산</Text>
-                <Text>💲{getCredit().assets}</Text>
-              </Stack>
-            </Container>
-          </Grid.Col>
-        </Grid>
-      </Stack>
-    );
-  }, [getCredit]);
+  const handleAgeChange = useCallback((age: number) => {
+    setStatsValue((prev) => ({ ...prev, age }));
+  }, []);
 
   const explorerSkills = useMemo(() => {
     return (
@@ -1275,27 +802,44 @@ export function CthulhuGenerator() {
       <Grid justify="center" align="center">
         <Grid.Col span={3}>
           {/* 탐사자 정보 */}
-          {explorerInfos()}
+          <ExplorerInfo
+            statValues={statValues}
+            onJobChange={handleJobChange}
+            onAgeChange={handleAgeChange}
+          />
         </Grid.Col>
         <Grid.Col span={9}>
           {/* 특성치 */}
-          {explorerTraits}
+          <ExplorerTraits
+            statPenaltyValues={statPenaltyValues}
+            mobility={statValues.mobility}
+            getAndSetStats={getAndSetStats}
+            reloadStatBool={reloadStatBool}
+          />
         </Grid.Col>
       </Grid>
       {/* 나이에 따른 패널티 */}
       {penaltyByAge}
       {/* 특성치2 */}
-      {explorerTraits2}
+      <ExplorerTraits2
+        sizeValue2={statValues.size.value2}
+        healthValue2={statValues.health.value2}
+        mentalityValue2={statValues.mentality.value2}
+        getAndSetStats={getAndSetStats}
+      />
       {/* 기술 */}
       {explorerSkills}
       <Grid justify="center" align="center">
         <Grid.Col span={6}>
-          {/* 탐사자 정보 */}
-          {explorerCombat}
+          {/* 전투 */}
+          <ExplorerCombat
+            combatStats={getCombatStats()}
+            dodgeValue={skillValues.dodge.valueAddedByBaseValue}
+          />
         </Grid.Col>
         <Grid.Col span={6}>
-          {/* 특성치 */}
-          {explorerCredit}
+          {/* 현금과 자산 */}
+          <ExplorerCredit creditInfo={getCredit()} />
         </Grid.Col>
       </Grid>
     </Card>
