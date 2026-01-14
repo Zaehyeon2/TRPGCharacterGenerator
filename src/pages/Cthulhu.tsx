@@ -1,12 +1,20 @@
 import { Card, Tabs } from '@mantine/core';
+import { useMediaQuery } from '@mantine/hooks';
 import { IconUser, IconSwords } from '@tabler/icons-react';
 import React from 'react';
 import { CthulhuGenerator } from './CthulhuGenerator';
 import { CthulhuWeapons } from './CthulhuWeapons';
 
 export function Cthulhu() {
+  const isDesktop = useMediaQuery('(min-width: 769px)');
+
   return (
-    <Card withBorder radius="md">
+    <Card
+      withBorder={isDesktop}
+      radius={isDesktop ? 'md' : 0}
+      p={isDesktop ? 'md' : 0}
+      sx={isDesktop ? undefined : { margin: 0 }}
+    >
       <Tabs defaultValue="generator">
         <Tabs.List>
           <Tabs.Tab value="generator" icon={<IconUser size={14} />}>

@@ -797,7 +797,6 @@ export function CthulhuGenerator() {
           }
         />
       )}
-      {/* Logo */}
       <Logo image={logo} />
       <Grid justify="center" align="center">
         <Grid.Col xs={12} md={3}>
@@ -816,16 +815,13 @@ export function CthulhuGenerator() {
           />
         </Grid.Col>
       </Grid>
-      {/* 나이에 따른 패널티 */}
       {penaltyByAge}
-      {/* 특성치2 */}
       <ExplorerTraits2
         sizeValue2={statValues.size.value2}
         healthValue2={statValues.health.value2}
         mentalityValue2={statValues.mentality.value2}
         getAndSetStats={getAndSetStats}
       />
-      {/* 기술 */}
       {explorerSkills}
       <Grid justify="center" align="center">
         <Grid.Col xs={12} sm={6}>
