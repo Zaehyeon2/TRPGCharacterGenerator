@@ -25,6 +25,7 @@ export interface StatsParams {
   penaltyByAge?: number;
   getAndSetFunction: (key: string, value: { value: number; value2: number }) => void;
   reloadStat: boolean;
+  initialValue?: number;
 }
 
 export const Stats = React.memo(function Stats({
@@ -38,14 +39,22 @@ export const Stats = React.memo(function Stats({
   penaltyByAge = 0,
   reloadStat = false,
   getAndSetFunction,
+  initialValue,
 }: StatsParams) {
-  const [statValues, setStatValues] = useState<StatsProps>({
-    value: 0,
-    valueSubByPanelty: 0,
-    valueDividedBy2: 0,
-    valueDividedBy5: 0,
-    isClassTraits: false,
+  const [statValues, setStatValues] = useState<StatsProps>(() => {
+    const value = initialValue ?? 0;
+    const valueSubByPanelty = value - penaltyByAge;
+    return {
+      value,
+      valueSubByPanelty,
+      valueDividedBy2: Math.floor(valueSubByPanelty / 2),
+      valueDividedBy5: Math.floor(valueSubByPanelty / 5),
+      isClassTraits: false,
+    };
   });
+
+  const prevInitialValueRef = useRef(initialValue);
+  const prevInitialPenaltyRef = useRef(penaltyByAge);
 
   const prevPaneltyRef = useRef(penaltyByAge);
   const prevReloadStatRef = useRef(reloadStat);
@@ -85,11 +94,9 @@ export const Stats = React.memo(function Stats({
     setStats((result + baseValue) * multiplyValue);
   }, [nDices, nSides, label, baseValue, multiplyValue, setStats]);
 
-  // Recalculate when penaltyByAge or reloadStat changes
   useEffect(() => {
-    if (prevPaneltyRef.current !== penaltyByAge || prevReloadStatRef.current !== reloadStat) {
+    if (prevPaneltyRef.current !== penaltyByAge) {
       prevPaneltyRef.current = penaltyByAge;
-      prevReloadStatRef.current = reloadStat;
       const calculated = calculateStats(statValues.value, penaltyByAge);
       setStatValues((prev) => ({
         ...prev,
@@ -97,7 +104,38 @@ export const Stats = React.memo(function Stats({
       }));
       getAndSetFunction(statKey, { value: statValues.value, value2: calculated.valueSubByPanelty });
     }
-  }, [penaltyByAge, reloadStat, statValues.value, calculateStats, getAndSetFunction, statKey]);
+  }, [penaltyByAge, statValues.value, calculateStats, getAndSetFunction, statKey]);
+
+  useEffect(() => {
+    console.log(
+      `[Stats ${statKey}] useEffect - initialValue: ${initialValue}, penaltyByAge: ${penaltyByAge}, prevInitial: ${prevInitialValueRef.current}, prevPenalty: ${prevInitialPenaltyRef.current}`,
+    );
+    const initialValueChanged =
+      initialValue !== undefined &&
+      initialValue !== 0 &&
+      prevInitialValueRef.current !== initialValue;
+    const initialPenaltyChanged =
+      initialValue !== undefined &&
+      initialValue !== 0 &&
+      prevInitialPenaltyRef.current !== penaltyByAge;
+
+    console.log(
+      `[Stats ${statKey}] initialValueChanged: ${initialValueChanged}, initialPenaltyChanged: ${initialPenaltyChanged}`,
+    );
+
+    if (initialValueChanged || initialPenaltyChanged) {
+      prevInitialValueRef.current = initialValue;
+      prevInitialPenaltyRef.current = penaltyByAge;
+      const calculated = calculateStats(initialValue, penaltyByAge);
+      console.log(`[Stats ${statKey}] calculated:`, calculated);
+      setStatValues((prev) => ({
+        ...prev,
+        value: initialValue,
+        ...calculated,
+      }));
+      getAndSetFunction(statKey, { value: initialValue, value2: calculated.valueSubByPanelty });
+    }
+  }, [initialValue, penaltyByAge, calculateStats, getAndSetFunction, statKey]);
 
   const handleInputChange = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {

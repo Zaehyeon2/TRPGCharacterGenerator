@@ -1,8 +1,13 @@
 import { IStats, IExpectedSkills, ReloadStateParams } from '../interfaces/interfaces';
 
 export const INITIAL_STATS: IStats = {
+  name: '',
+  player: '',
   job: '',
   age: 0,
+  gender: '',
+  residence: '',
+  birthplace: '',
   str: { value: 0, value2: 0 },
   dex: { value: 0, value2: 0 },
   int: { value: 0, value2: 0 },

@@ -5,14 +5,16 @@ import {
   Card,
   Checkbox,
   Container,
+  FileButton,
   Grid,
+  Group,
   Popover,
   Stack,
   Text,
   TextInput,
   UnstyledButton,
 } from '@mantine/core';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import logo from '../assets/coc-logo.png';
 import dice20 from '../assets/dice20.png';
 import { ExplorerCombat } from '../components/cthulhu/ExplorerCombat';
@@ -33,11 +35,18 @@ import {
 } from '../consts/initialStates';
 import { penaltyText } from '../consts/penaltyByAge';
 import { skillsParamsFunction } from '../consts/skills';
-import { IInnerSkills, ISkills } from '../interfaces/interfaces';
+import {
+  IExplorerData,
+  IInnerSkills,
+  ISelectedDetailedSkills,
+  ISimplifiedExplorerData,
+  ISkills,
+} from '../interfaces/interfaces';
 import { rollDice } from '../services/dice.service';
-import { isNumber } from '../services/utils.service';
+import { downloadAsJson, isNumber, loadFromJsonFile } from '../services/utils.service';
 
 export function CthulhuGenerator() {
+  const isLoadingRef = useRef(false);
   const [statValues, setStatsValue] = useState(INITIAL_STATS);
   const [statPenaltyValues, setStatPenaltyValues] = useState(INITIAL_STAT_PENALTY);
   const [skillValues, setSkillValues] = useState(
@@ -48,6 +57,199 @@ export function CthulhuGenerator() {
   const [skillPoints, setSkillPoints] = useState(INITIAL_SKILL_POINTS);
   const [reloadState, setReloadState] = useState(INITIAL_RELOAD_STATE);
   const [reloadStatBool, setReloadStatBool] = useState(false);
+  const [selectedDetailedSkills, setSelectedDetailedSkills] = useState<ISelectedDetailedSkills>({
+    science: '',
+    science1: '',
+    science2: '',
+    science3: '',
+    fighting: '',
+    fighting1: '',
+    fighting2: '',
+    fighting3: '',
+    firearms: '',
+    firearms1: '',
+    firearms2: '',
+    firearms3: '',
+    survival: '',
+    survival1: '',
+    artcraft: '',
+    artcraft1: '',
+    artcraft2: '',
+    artcraft3: '',
+    pilot: '',
+    pilot1: '',
+    rare: '',
+    rare1: '',
+    rare2: '',
+    rare3: '',
+    rare4: '',
+  });
+  const resetFileRef = useRef<() => void>(null);
+
+  const handleExportJson = useCallback(() => {
+    const explorerData: IExplorerData = {
+      version: '1.0.0',
+      exportedAt: new Date().toISOString(),
+      statValues,
+      statPenaltyValues,
+      skillValues,
+      skillPoints,
+      expectedSkills,
+      selectedDetailedSkills,
+      educationBonusText,
+    };
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    const filename = statValues.name
+      ? `${statValues.name}_${timestamp}.json`
+      : `탐사자_${timestamp}.json`;
+    downloadAsJson(explorerData, filename);
+  }, [
+    statValues,
+    statPenaltyValues,
+    skillValues,
+    skillPoints,
+    expectedSkills,
+    selectedDetailedSkills,
+    educationBonusText,
+  ]);
+
+  const handleExportSimplifiedJson = useCallback(() => {
+    const hp = Math.floor((statValues.size.value2 + statValues.health.value2) / 10);
+    const combatStats = (() => {
+      const sum = statValues.str.value2 + statValues.size.value2;
+      if (sum <= 64) return { damageBonus: '-2', build: -2 };
+      if (sum <= 84) return { damageBonus: '-1', build: -1 };
+      if (sum <= 124) return { damageBonus: '0', build: 0 };
+      if (sum <= 164) return { damageBonus: '1D4', build: 1 };
+      return { damageBonus: '1D6', build: 2 };
+    })();
+
+    const creditValue = skillValues.credit.valueAddedByBaseValue;
+    const creditInfo = (() => {
+      if (creditValue === 0) return { cash: '0.5', assets: '0', spendingLevel: '0.5' };
+      if (creditValue <= 9)
+        return {
+          cash: creditValue.toString(),
+          assets: (creditValue * 10).toString(),
+          spendingLevel: '2',
+        };
+      if (creditValue <= 49)
+        return {
+          cash: (creditValue * 2).toString(),
+          assets: (creditValue * 50).toString(),
+          spendingLevel: '10',
+        };
+      if (creditValue <= 89)
+        return {
+          cash: (creditValue * 5).toString(),
+          assets: (creditValue * 500).toString(),
+          spendingLevel: '50',
+        };
+      if (creditValue <= 98)
+        return {
+          cash: (creditValue * 20).toString(),
+          assets: (creditValue * 2000).toString(),
+          spendingLevel: '250',
+        };
+      return { cash: '50000', assets: '5000000+', spendingLevel: '5000' };
+    })();
+
+    const skills: { [key: string]: number } = {};
+    Object.keys(skillValues).forEach((key) => {
+      if (key !== 'credit') {
+        skills[key] = skillValues[key].valueAddedByBaseValue;
+      }
+    });
+
+    const simplifiedData: ISimplifiedExplorerData = {
+      info: {
+        name: statValues.name,
+        player: statValues.player,
+        job: statValues.job,
+        age: statValues.age,
+        gender: statValues.gender,
+        residence: statValues.residence,
+        birthplace: statValues.birthplace,
+      },
+      stats: {
+        str: statValues.str.value2,
+        dex: statValues.dex.value2,
+        int: statValues.int.value2,
+        health: statValues.health.value2,
+        appeareance: statValues.appeareance.value2,
+        mentality: statValues.mentality.value2,
+        size: statValues.size.value2,
+        education: statValues.education.value2,
+        mobility: statValues.mobility,
+        luck:
+          typeof statValues.luck === 'number'
+            ? statValues.luck
+            : (statValues.luck as { value: number; value2: number }).value2,
+        hp,
+        sanity: statValues.mentality.value2,
+        magicPoints: Math.floor(statValues.mentality.value2 / 5),
+      },
+      combat: {
+        damageBonus: combatStats.damageBonus,
+        build: combatStats.build,
+        dodge: skillValues.dodge.valueAddedByBaseValue,
+      },
+      credit: creditInfo,
+      skills,
+    };
+
+    const timestamp = new Date().toISOString().slice(0, 19).replace(/[T:]/g, '-');
+    const filename = statValues.name
+      ? `${statValues.name}_simplified_${timestamp}.json`
+      : `탐사자_simplified_${timestamp}.json`;
+    downloadAsJson(simplifiedData, filename);
+  }, [statValues, skillValues]);
+
+  const handleImportJson = useCallback(async (file: File | null) => {
+    if (!file) return;
+    try {
+      isLoadingRef.current = true;
+      const data = await loadFromJsonFile<IExplorerData>(file);
+      if (!data.version || !data.statValues || !data.skillValues) {
+        alert('유효하지 않은 탐사자 데이터 파일입니다.');
+        isLoadingRef.current = false;
+        return;
+      }
+      setStatsValue(data.statValues);
+      setStatPenaltyValues(data.statPenaltyValues);
+      setSkillValues(data.skillValues);
+      setSkillPoints(data.skillPoints);
+      setExpectedSkills(data.expectedSkills);
+
+      if (data.selectedDetailedSkills) {
+        setSelectedDetailedSkills(data.selectedDetailedSkills);
+      }
+
+      if (data.educationBonusText) {
+        setEducationBonusText(data.educationBonusText);
+      }
+
+      const dex = data.statValues.dex?.value2 ?? 0;
+      const education = data.statValues.education?.value2 ?? 0;
+      setSkillsParams(() => {
+        const updated = skillsParamsFunction(dex, education);
+        updated[3] = [...updated[3]];
+        updated[3][10] = { ...updated[3][10], baseValue: Math.floor(dex / 2) };
+        updated[1] = [...updated[1]];
+        updated[1][9] = { ...updated[1][9], baseValue: education };
+        return updated;
+      });
+
+      setReloadStatBool((prev) => !prev);
+      alert('탐사자 데이터를 불러왔습니다.');
+      setTimeout(() => {
+        isLoadingRef.current = false;
+      }, 100);
+    } catch (error) {
+      isLoadingRef.current = false;
+      alert(error instanceof Error ? error.message : '파일을 불러오는 중 오류가 발생했습니다.');
+    }
+  }, []);
 
   const defaultSkillParams = skillsParamsFunction(0, 0);
 
@@ -85,7 +287,7 @@ export function CthulhuGenerator() {
             updatedSkillValues[skillKey] = {
               value: 0,
               valueAddedByBaseValue: prev[skillKey].valueAddedByBaseValue,
-              isChecked: false,
+              isJobSkill: false,
             };
           }
         });
@@ -200,7 +402,7 @@ export function CthulhuGenerator() {
     const updatedSkillPoints = { ...skillPoints, job: 0, interest: 0 };
     skillValueKeys.forEach((skillKey) => {
       const skillValue = skillValues[skillKey];
-      if (skillValue.isChecked || skillKey === 'credit') {
+      if (skillValue.isJobSkill || skillKey === 'credit') {
         updatedSkillPoints.job += skillValue.value;
       } else {
         updatedSkillPoints.interest += skillValue.value;
@@ -234,12 +436,36 @@ export function CthulhuGenerator() {
     });
   }, [statValues.int]);
 
+  const handleDetailedKeyChange = useCallback((skillKey: string, detailedKey: string) => {
+    setSelectedDetailedSkills((prev) => ({ ...prev, [skillKey]: detailedKey }));
+  }, []);
+
   const handleJobChange = useCallback((job: string) => {
     setStatsValue((prev) => ({ ...prev, job }));
   }, []);
 
   const handleAgeChange = useCallback((age: number) => {
     setStatsValue((prev) => ({ ...prev, age }));
+  }, []);
+
+  const handleNameChange = useCallback((name: string) => {
+    setStatsValue((prev) => ({ ...prev, name }));
+  }, []);
+
+  const handlePlayerChange = useCallback((player: string) => {
+    setStatsValue((prev) => ({ ...prev, player }));
+  }, []);
+
+  const handleGenderChange = useCallback((gender: string) => {
+    setStatsValue((prev) => ({ ...prev, gender }));
+  }, []);
+
+  const handleResidenceChange = useCallback((residence: string) => {
+    setStatsValue((prev) => ({ ...prev, residence }));
+  }, []);
+
+  const handleBirthplaceChange = useCallback((birthplace: string) => {
+    setStatsValue((prev) => ({ ...prev, birthplace }));
   }, []);
 
   const explorerSkills = useMemo(() => {
@@ -478,6 +704,9 @@ export function CthulhuGenerator() {
               getAndSetSkills={getAndSetSkills}
               getBonus={getBonus}
               reloadState={reloadState}
+              skillValues={skillValues}
+              selectedDetailedSkills={selectedDetailedSkills}
+              onDetailedKeyChange={handleDetailedKeyChange}
             />
           ))}
         </Grid>
@@ -491,6 +720,9 @@ export function CthulhuGenerator() {
     onChangeExpectedSkills,
     expectedSkills,
     reloadState,
+    skillValues,
+    selectedDetailedSkills,
+    handleDetailedKeyChange,
   ]);
 
   const penaltyByAge = useMemo(() => {
@@ -746,9 +978,10 @@ export function CthulhuGenerator() {
         </Grid>
       </Container>
     );
-  }, [statValues.age, statPenaltyValues, statValues.education]);
+  }, [statValues.age, statPenaltyValues, statValues.education, educationBonusText]);
 
   useEffect(() => {
+    if (isLoadingRef.current) return;
     let panelyAppearance = 0;
     let total = 0;
     if (statValues.age <= 19) {
@@ -785,6 +1018,8 @@ export function CthulhuGenerator() {
   }, [statValues.age]);
 
   useEffect(() => {
+    console.log('[education reset useEffect] isLoadingRef:', isLoadingRef.current);
+    if (isLoadingRef.current) return;
     setStatPenaltyValues({
       ...statPenaltyValues,
       education: 0,
@@ -794,19 +1029,21 @@ export function CthulhuGenerator() {
 
   return (
     <Card>
-      {import.meta.env.BASE_URL === '/' && (
-        <Button
-          onClick={() =>
-            console.log({
-              skillValues,
-              skillPoints,
-              statValues,
-              skillsParams,
-              statPenaltyValues,
-            })
-          }
-        />
-      )}
+      <Group position="right" mb="md" spacing="xs">
+        <Button variant="outline" color="blue" size="xs" onClick={handleExportJson}>
+          JSON 내보내기
+        </Button>
+        <Button variant="outline" color="cyan" size="xs" onClick={handleExportSimplifiedJson}>
+          간략화 내보내기
+        </Button>
+        <FileButton resetRef={resetFileRef} onChange={handleImportJson} accept="application/json">
+          {(props) => (
+            <Button variant="outline" color="green" size="xs" {...props}>
+              JSON 불러오기
+            </Button>
+          )}
+        </FileButton>
+      </Group>
       <Logo image={logo} />
       <Grid justify="center" align="center">
         <Grid.Col xs={12} md={3}>
@@ -814,6 +1051,11 @@ export function CthulhuGenerator() {
             statValues={statValues}
             onJobChange={handleJobChange}
             onAgeChange={handleAgeChange}
+            onNameChange={handleNameChange}
+            onPlayerChange={handlePlayerChange}
+            onGenderChange={handleGenderChange}
+            onResidenceChange={handleResidenceChange}
+            onBirthplaceChange={handleBirthplaceChange}
           />
         </Grid.Col>
         <Grid.Col xs={12} md={9}>
@@ -822,6 +1064,7 @@ export function CthulhuGenerator() {
             mobility={statValues.mobility}
             getAndSetStats={getAndSetStats}
             reloadStatBool={reloadStatBool}
+            statValues={statValues}
           />
         </Grid.Col>
       </Grid>

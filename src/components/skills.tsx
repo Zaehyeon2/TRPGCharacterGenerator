@@ -36,32 +36,53 @@ export const Skills = React.memo(function Skills({
   getAndSetFunction,
   bonus50,
   bonus90,
+  initialSkillValue,
+  initialDetailedKey,
+  onDetailedKeyChange,
 }: SkillParams) {
   let innerBonus = 0;
   if (bonus50) innerBonus += 10;
   if (bonus90) innerBonus += 10;
 
-  const [skillValues, setSkillValues] = useState<SkillProps>({
-    value: 0,
-    valueAddedByBaseValue: baseValue + innerBonus,
-    valueDividedBy2: Math.floor((baseValue + innerBonus) / 2),
-    valueDividedBy5: Math.floor((baseValue + innerBonus) / 5),
-    isClassTraits: false,
-    detailedKey: skillKey,
-    baseValue,
+  const [skillValues, setSkillValues] = useState<SkillProps>(() => {
+    const initValue = initialSkillValue?.value ?? 0;
+    const initValueAdded = initialSkillValue?.valueAddedByBaseValue ?? baseValue + innerBonus;
+    return {
+      value: initValue,
+      valueAddedByBaseValue: initValueAdded,
+      valueDividedBy2: Math.floor(initValueAdded / 2),
+      valueDividedBy5: Math.floor(initValueAdded / 5),
+      isClassTraits: initialSkillValue?.isJobSkill ?? false,
+      detailedKey: initialDetailedKey || skillKey,
+      baseValue,
+    };
   });
+
+  const prevInitialSkillValueRef = useRef(initialSkillValue);
+  const prevInitialDetailedKeyRef = useRef(initialDetailedKey);
 
   function isDetailedSkill(key: string) {
     return (
-      key === 'science' ||
-      key === 'fighting' ||
-      key === 'firearms' ||
-      key === 'language' ||
-      key === 'artcraft' ||
-      key === 'pilot' ||
-      key === 'survival' ||
-      key === 'rare'
+      key.startsWith('science') ||
+      key.startsWith('fighting') ||
+      key.startsWith('firearms') ||
+      key.startsWith('language') ||
+      key.startsWith('artcraft') ||
+      key.startsWith('pilot') ||
+      key.startsWith('survival') ||
+      key.startsWith('rare')
     );
+  }
+
+  function getBaseSkillType(key: string) {
+    if (key.startsWith('science')) return 'science';
+    if (key.startsWith('fighting')) return 'fighting';
+    if (key.startsWith('firearms')) return 'firearms';
+    if (key.startsWith('artcraft')) return 'artcraft';
+    if (key.startsWith('pilot')) return 'pilot';
+    if (key.startsWith('survival')) return 'survival';
+    if (key.startsWith('rare')) return 'rare';
+    return key;
   }
 
   function getValuesByAddedBonus(value: number) {
@@ -131,81 +152,137 @@ export const Skills = React.memo(function Skills({
     });
   }, [baseValue]);
 
+  useEffect(() => {
+    const hasNewSkillValue =
+      initialSkillValue && prevInitialSkillValueRef.current !== initialSkillValue;
+    const hasNewDetailedKey =
+      initialDetailedKey && prevInitialDetailedKeyRef.current !== initialDetailedKey;
+
+    if (hasNewSkillValue || hasNewDetailedKey) {
+      if (hasNewSkillValue) {
+        prevInitialSkillValueRef.current = initialSkillValue;
+      }
+      if (hasNewDetailedKey) {
+        prevInitialDetailedKeyRef.current = initialDetailedKey;
+      }
+
+      const allDetailedSkills = [
+        ...detailedScience,
+        ...detailedFighting,
+        ...detailedFirearm,
+        ...detailedSurvive,
+        ...detailedArtcraft,
+        ...detailedPilot,
+        ...rareSkills,
+      ];
+      const foundDetailedSkill = initialDetailedKey
+        ? allDetailedSkills.find((s) => s.key === initialDetailedKey)
+        : null;
+
+      const skillValue = initialSkillValue?.value ?? 0;
+      const skillBaseValue = foundDetailedSkill?.baseValue ?? baseValue;
+      const valueAddedByBaseValue = getValuesByAddedBonus(skillBaseValue + skillValue);
+
+      setSkillValues({
+        value: skillValue,
+        valueAddedByBaseValue,
+        valueDividedBy2: Math.floor(valueAddedByBaseValue / 2),
+        valueDividedBy5: Math.floor(valueAddedByBaseValue / 5),
+        isClassTraits: initialSkillValue?.isJobSkill ?? false,
+        detailedKey: initialDetailedKey || skillKey,
+        baseValue: skillBaseValue,
+      });
+    }
+  }, [initialSkillValue, initialDetailedKey, baseValue, skillKey]);
+
   const prevSkillValuesRef = useRef(skillValues);
 
   useEffect(() => {
     if (getAndSetFunction === undefined) return;
-    if (isDetailedSkill(skillValues.detailedKey)) return;
+    if (skillValues.detailedKey === skillKey && isDetailedSkill(skillKey)) return;
 
     const prev = prevSkillValuesRef.current;
     const hasChanged =
       prev.value !== skillValues.value ||
       prev.valueAddedByBaseValue !== skillValues.valueAddedByBaseValue ||
-      prev.isClassTraits !== skillValues.isClassTraits;
+      prev.isClassTraits !== skillValues.isClassTraits ||
+      prev.detailedKey !== skillValues.detailedKey;
 
     if (hasChanged) {
       prevSkillValuesRef.current = skillValues;
       getAndSetFunction(skillValues.detailedKey, {
         value: skillValues.value,
         valueAddedByBaseValue: skillValues.valueAddedByBaseValue,
-        isChecked: skillValues.isClassTraits,
+        isJobSkill: skillValues.isClassTraits,
       });
     }
-  }, [skillValues, getAndSetFunction]);
+  }, [skillValues, getAndSetFunction, skillKey]);
 
-  function setInnerDetailedKey(detailedKey: DetailedSkillProps) {
+  function setInnerDetailedKey(detailedKey: DetailedSkillProps, preserveValue = false) {
     if (getAndSetFunction === undefined) return;
-    getAndSetFunction(skillKey, undefined);
+    if (!preserveValue) {
+      getAndSetFunction(skillKey, undefined);
+    }
     setSkillValues({
       ...skillValues,
-      value: 0,
+      value: preserveValue ? skillValues.value : 0,
       detailedKey: detailedKey.key,
-      valueAddedByBaseValue: getValuesByAddedBonus(detailedKey.baseValue),
-      valueDividedBy2: Math.floor(getValuesByAddedBonus(detailedKey.baseValue) / 2),
-      valueDividedBy5: Math.floor(getValuesByAddedBonus(detailedKey.baseValue) / 5),
+      valueAddedByBaseValue: getValuesByAddedBonus(
+        detailedKey.baseValue + (preserveValue ? skillValues.value : 0),
+      ),
+      valueDividedBy2: Math.floor(
+        getValuesByAddedBonus(detailedKey.baseValue + (preserveValue ? skillValues.value : 0)) / 2,
+      ),
+      valueDividedBy5: Math.floor(
+        getValuesByAddedBonus(detailedKey.baseValue + (preserveValue ? skillValues.value : 0)) / 5,
+      ),
       baseValue: detailedKey.baseValue,
-      isClassTraits: false,
+      isClassTraits: preserveValue ? skillValues.isClassTraits : false,
     });
+    if (onDetailedKeyChange) {
+      onDetailedKeyChange(skillKey, detailedKey.key);
+    }
   }
 
   function setDetailedKey(key: string) {
-    if (skillKey === 'science') {
+    const baseType = getBaseSkillType(skillKey);
+    if (baseType === 'science') {
       const detailedKey = detailedScience.find((science) => {
         return science.label === key;
       });
       if (detailedKey === undefined) return;
       setInnerDetailedKey(detailedKey);
-    } else if (skillKey === 'fighting') {
+    } else if (baseType === 'fighting') {
       const detailedKey = detailedFighting.find((fighting) => {
         return fighting.label === key;
       });
       if (detailedKey === undefined) return;
       setInnerDetailedKey(detailedKey);
-    } else if (skillKey === 'firearms') {
+    } else if (baseType === 'firearms') {
       const detailedKey = detailedFirearm.find((firearm) => {
         return firearm.label === key;
       });
       if (detailedKey === undefined) return;
       setInnerDetailedKey(detailedKey);
-    } else if (skillKey === 'survival') {
+    } else if (baseType === 'survival') {
       const detailedKey = detailedSurvive.find((survival) => {
         return survival.label === key;
       });
       if (detailedKey === undefined) return;
       setInnerDetailedKey(detailedKey);
-    } else if (skillKey === 'artcraft') {
+    } else if (baseType === 'artcraft') {
       const detailedKey = detailedArtcraft.find((artcraft) => {
         return artcraft.label === key;
       });
       if (detailedKey === undefined) return;
       setInnerDetailedKey(detailedKey);
-    } else if (skillKey === 'pilot') {
+    } else if (baseType === 'pilot') {
       const detailedKey = detailedPilot.find((pilot) => {
         return pilot.label === key;
       });
       if (detailedKey === undefined) return;
       setInnerDetailedKey(detailedKey);
-    } else if (skillKey === 'rare') {
+    } else if (baseType === 'rare') {
       const detailedKey = rareSkills.find((rare) => {
         return rare.label === key;
       });
@@ -223,6 +300,20 @@ export const Skills = React.memo(function Skills({
     [skillKey],
   );
 
+  const getSelectedLabel = useCallback(() => {
+    const allDetailedSkills = [
+      ...detailedScience,
+      ...detailedFighting,
+      ...detailedFirearm,
+      ...detailedSurvive,
+      ...detailedArtcraft,
+      ...detailedPilot,
+      ...rareSkills,
+    ];
+    const found = allDetailedSkills.find((s) => s.key === skillValues.detailedKey);
+    return found?.label;
+  }, [skillValues.detailedKey]);
+
   function setLabel(key: string) {
     if (!isDetailedSkill(key)) {
       return (
@@ -231,66 +322,68 @@ export const Skills = React.memo(function Skills({
         </Text>
       );
     }
-    if (key === 'science') {
+    const selectedLabel = getSelectedLabel();
+    const baseType = getBaseSkillType(key);
+    if (baseType === 'science') {
       return (
         <Select
           placeholder="과학"
-          defaultValue={detailedScience[0].label}
+          value={selectedLabel ?? detailedScience[0].label}
           data={scienceLabels}
           size="xs"
           onChange={handleSelectChange}
         />
       );
     }
-    if (key === 'fighting') {
+    if (baseType === 'fighting') {
       return (
         <Select
           placeholder="근접전"
-          defaultValue={detailedFighting[0].label}
+          value={selectedLabel ?? detailedFighting[0].label}
           data={fightingLabels}
           size="xs"
           onChange={handleSelectChange}
         />
       );
     }
-    if (key === 'firearms') {
+    if (baseType === 'firearms') {
       return (
         <Select
           placeholder="사격"
-          defaultValue={detailedFirearm[0].label}
+          value={selectedLabel ?? detailedFirearm[0].label}
           data={firearmLabels}
           size="xs"
           onChange={handleSelectChange}
         />
       );
     }
-    if (key === 'survival') {
+    if (baseType === 'survival') {
       return (
         <Select
           placeholder="생존술"
-          defaultValue={detailedSurvive[0].label}
+          value={selectedLabel ?? detailedSurvive[0].label}
           data={surviveLabels}
           size="xs"
           onChange={handleSelectChange}
         />
       );
     }
-    if (key === 'artcraft') {
+    if (baseType === 'artcraft') {
       return (
         <Select
           placeholder="예술/공예"
-          defaultValue={detailedArtcraft[0].label}
+          value={selectedLabel ?? detailedArtcraft[0].label}
           data={artcraftLabels}
           size="xs"
           onChange={handleSelectChange}
         />
       );
     }
-    if (key === 'pilot') {
+    if (baseType === 'pilot') {
       return (
         <Select
           placeholder="조종"
-          defaultValue={detailedPilot[0].label}
+          value={selectedLabel ?? detailedPilot[0].label}
           data={pilotLabels}
           size="xs"
           onChange={handleSelectChange}
@@ -301,7 +394,7 @@ export const Skills = React.memo(function Skills({
     return (
       <Select
         placeholder="기타"
-        defaultValue={rareSkills[0].label}
+        value={selectedLabel ?? rareSkills[0].label}
         data={rareLabels}
         size="xs"
         onChange={handleSelectChange}
@@ -310,7 +403,7 @@ export const Skills = React.memo(function Skills({
   }
 
   function isCheckboxDisabled(key: string) {
-    if (isDetailedSkill(key)) return true;
+    if (key === skillKey && isDetailedSkill(skillKey)) return true;
     if (checkboxDisabled) return true;
     return false;
   }

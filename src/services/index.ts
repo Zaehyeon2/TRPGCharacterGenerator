@@ -1,2 +1,2 @@
 export { rollDice } from './dice.service';
-export { formHp, formStat, isNumber } from './utils.service';
+export { formHp, formStat, isNumber, downloadAsJson, loadFromJsonFile } from './utils.service';

@@ -36,12 +36,22 @@ interface ExplorerInfoProps {
   statValues: IStats;
   onJobChange: (job: string) => void;
   onAgeChange: (age: number) => void;
+  onNameChange: (name: string) => void;
+  onPlayerChange: (player: string) => void;
+  onGenderChange: (gender: string) => void;
+  onResidenceChange: (residence: string) => void;
+  onBirthplaceChange: (birthplace: string) => void;
 }
 
 export const ExplorerInfo = React.memo(function ExplorerInfo({
   statValues,
   onJobChange,
   onAgeChange,
+  onNameChange,
+  onPlayerChange,
+  onGenderChange,
+  onResidenceChange,
+  onBirthplaceChange,
 }: ExplorerInfoProps) {
   const { classes } = explorerStyles();
 
@@ -57,8 +67,18 @@ export const ExplorerInfo = React.memo(function ExplorerInfo({
   return (
     <Stack spacing="xs" sx={{ border: 'solid', paddingBottom: '10px', minHeight: '330px' }}>
       <Text sx={{ backgroundColor: 'black', width: '100%' }}>현대 탐사자</Text>
-      <InfoField label="이름" labelClassName={classes.label} />
-      <InfoField label="플레이어" labelClassName={classes.label} />
+      <InfoField
+        label="이름"
+        value={statValues.name}
+        onChange={onNameChange}
+        labelClassName={classes.label}
+      />
+      <InfoField
+        label="플레이어"
+        value={statValues.player}
+        onChange={onPlayerChange}
+        labelClassName={classes.label}
+      />
       <InfoField
         label="직업"
         value={statValues.job}
@@ -71,9 +91,24 @@ export const ExplorerInfo = React.memo(function ExplorerInfo({
         onChange={handleAgeChange}
         labelClassName={classes.label}
       />
-      <InfoField label="성별" labelClassName={classes.label} />
-      <InfoField label="거주지" labelClassName={classes.label} />
-      <InfoField label="출생지" labelClassName={classes.label} />
+      <InfoField
+        label="성별"
+        value={statValues.gender}
+        onChange={onGenderChange}
+        labelClassName={classes.label}
+      />
+      <InfoField
+        label="거주지"
+        value={statValues.residence}
+        onChange={onResidenceChange}
+        labelClassName={classes.label}
+      />
+      <InfoField
+        label="출생지"
+        value={statValues.birthplace}
+        onChange={onBirthplaceChange}
+        labelClassName={classes.label}
+      />
     </Stack>
   );
 });

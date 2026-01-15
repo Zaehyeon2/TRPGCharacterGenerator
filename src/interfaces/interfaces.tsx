@@ -1,6 +1,11 @@
 export interface IStats {
+  name: string;
+  player: string;
   job: string;
   age: number;
+  gender: string;
+  residence: string;
+  birthplace: string;
   str: IInnerStats;
   dex: IInnerStats;
   int: IInnerStats;
@@ -21,7 +26,7 @@ export interface IInnerStats {
 export interface IInnerSkills {
   value: number;
   valueAddedByBaseValue: number;
-  isChecked: boolean;
+  isJobSkill: boolean;
 }
 
 export interface ISkills {
@@ -283,6 +288,9 @@ export interface SkillParams {
   bonus50?: boolean;
   bonus90?: boolean;
   reloadState?: ReloadStateParams;
+  initialSkillValue?: IInnerSkills;
+  initialDetailedKey?: string;
+  onDetailedKeyChange?: (skillKey: string, detailedKey: string) => void;
 }
 
 export interface SkillParamsItem {
@@ -291,6 +299,7 @@ export interface SkillParamsItem {
   label: string;
   baseValue: number;
   checkboxDisabled?: boolean;
+  initialSkillValue?: IInnerSkills;
 }
 
 export interface Weapons {
@@ -322,4 +331,82 @@ export interface IExpectedSkills {
   pilot90: boolean;
   survival50: boolean;
   survival90: boolean;
+}
+
+export interface IStatPenalty {
+  str: number;
+  dex: number;
+  health: number;
+  size: number;
+  education: number;
+  appeareance: number;
+  total: number;
+}
+
+export interface ISkillPoints {
+  baseJob: number;
+  job: number;
+  baseInterest: number;
+  interest: number;
+}
+
+export interface ISelectedDetailedSkills {
+  [index: string]: string;
+  science: string;
+  fighting: string;
+  firearms: string;
+  survival: string;
+  artcraft: string;
+  pilot: string;
+  rare: string;
+}
+
+export interface IExplorerData {
+  version: string;
+  exportedAt: string;
+  statValues: IStats;
+  statPenaltyValues: IStatPenalty;
+  skillValues: ISkills;
+  skillPoints: ISkillPoints;
+  expectedSkills: IExpectedSkills;
+  selectedDetailedSkills?: ISelectedDetailedSkills;
+  educationBonusText?: string;
+}
+
+export interface ISimplifiedExplorerData {
+  info: {
+    name: string;
+    player: string;
+    job: string;
+    age: number;
+    gender: string;
+    residence: string;
+    birthplace: string;
+  };
+  stats: {
+    str: number;
+    dex: number;
+    int: number;
+    health: number;
+    appeareance: number;
+    mentality: number;
+    size: number;
+    education: number;
+    mobility: number;
+    luck: number;
+    hp: number;
+    sanity: number;
+    magicPoints: number;
+  };
+  combat: {
+    damageBonus: string;
+    build: number;
+    dodge: number;
+  };
+  credit: {
+    spendingLevel: string;
+    cash: string;
+    assets: string;
+  };
+  skills: { [key: string]: number };
 }

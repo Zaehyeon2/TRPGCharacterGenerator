@@ -35,6 +35,12 @@ export function Main() {
       <Space h="md" />
       <Title size="h2">업데이트 내역</Title>
       <Space h="xs" />
+      <Title size="h4">2026년 1월 15일</Title>
+      <List size="sm">
+        <List.Item>JSON 내보내기/불러오기 기능 추가</List.Item>
+        <List.Item>간략화 내보내기 기능 추가 (AI 롤플레잉용)</List.Item>
+      </List>
+      <Space h="xs" />
       <Title size="h4">2026년 1월 14일</Title>
       <List size="sm">
         <List.Item>모바일/태블릿 반응형 레이아웃 지원</List.Item>

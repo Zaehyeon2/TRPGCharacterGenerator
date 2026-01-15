@@ -1,5 +1,6 @@
 import { Container, Grid, Stack, Text } from '@mantine/core';
 import React from 'react';
+import { IStats } from '../../interfaces/interfaces';
 import { Stats } from '../stats';
 
 interface StatPenaltyValues {
@@ -16,6 +17,7 @@ interface ExplorerTraitsProps {
   mobility: number;
   getAndSetStats: (key: string, value: { value: number; value2: number }) => void;
   reloadStatBool: boolean;
+  statValues: IStats;
 }
 
 export const ExplorerTraits = React.memo(function ExplorerTraits({
@@ -23,6 +25,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
   mobility,
   getAndSetStats,
   reloadStatBool,
+  statValues,
 }: ExplorerTraitsProps) {
   return (
     <Stack
@@ -42,6 +45,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.str.value}
           />
         </Grid.Col>
         <Grid.Col xs={6} sm={4}>
@@ -54,6 +58,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.dex.value}
           />
         </Grid.Col>
         <Grid.Col xs={6} sm={4}>
@@ -66,6 +71,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.int.value}
           />
         </Grid.Col>
       </Grid>
@@ -81,6 +87,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.health.value}
           />
         </Grid.Col>
         <Grid.Col xs={6} sm={4}>
@@ -93,6 +100,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.appeareance.value}
           />
         </Grid.Col>
         <Grid.Col xs={6} sm={4}>
@@ -104,6 +112,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.mentality.value}
           />
         </Grid.Col>
       </Grid>
@@ -119,6 +128,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.size.value}
           />
         </Grid.Col>
         <Grid.Col xs={6} sm={4}>
@@ -132,6 +142,7 @@ export const ExplorerTraits = React.memo(function ExplorerTraits({
             multiplyValue={5}
             getAndSetFunction={getAndSetStats}
             reloadStat={reloadStatBool}
+            initialValue={statValues.education.value}
           />
         </Grid.Col>
         <Grid.Col xs={6} sm={4}>

@@ -3,290 +3,290 @@ export const defaultSkills = (dex: number, education: number) => {
     appraise: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (공학)
     scienceEngineering: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (기상학)
     scienceMeteorology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (동물학)
     scienceZoology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (물리학)
     sciencePhysics: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (생물학)
     scienceBiology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (수사과학)
     scienceForensicScience: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (수학)
     scienceMathematics: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (식물학)
     scienceBotany: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (암호학)
     scienceCryptology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (약학)
     sciencePharmacy: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (지질학)
     scienceGeology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (천문학)
     scienceAstronomy: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     // 과학 (화학)
     scienceChemistry: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     archaeology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     spotHidden: {
       value: 0,
       valueAddedByBaseValue: 25,
-      isChecked: false,
+      isJobSkill: false,
     },
     mechanicalRepair: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     jump: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     listen: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     fastTalk: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     charm: {
       value: 0,
       valueAddedByBaseValue: 15,
-      isChecked: false,
+      isJobSkill: false,
     },
     law: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     disguise: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     persuade: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     sleightOfHand: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     swim: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     psychology: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     languageOwn: {
       value: 0,
       valueAddedByBaseValue: education,
-      isChecked: false,
+      isJobSkill: false,
     },
     languageOther1: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     languageOther2: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     languageOther3: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     history: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     locksmith: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     climb: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     occult: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     intimidate: {
       value: 0,
       valueAddedByBaseValue: 15,
-      isChecked: false,
+      isJobSkill: false,
     },
     stealth: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     firstAid: {
       value: 0,
       valueAddedByBaseValue: 30,
-      isChecked: false,
+      isJobSkill: false,
     },
     medicine: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     anthropology: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     driveAuto: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     libraryUse: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     naturalWorld: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     electricalRepair: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     operateElectronics: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     psychoanalysis: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     operateHeavyMachine: {
       value: 0,
       valueAddedByBaseValue: 1,
-      isChecked: false,
+      isJobSkill: false,
     },
     track: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     operateComputer: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     cthulhuMythos: {
       value: 0,
       valueAddedByBaseValue: 0,
-      isChecked: false,
+      isJobSkill: false,
     },
     throw: {
       value: 0,
       valueAddedByBaseValue: 20,
-      isChecked: false,
+      isJobSkill: false,
     },
     navigate: {
       value: 0,
       valueAddedByBaseValue: 10,
-      isChecked: false,
+      isJobSkill: false,
     },
     accounting: {
       value: 0,
       valueAddedByBaseValue: 5,
-      isChecked: false,
+      isJobSkill: false,
     },
     dodge: {
       value: 0,
       valueAddedByBaseValue: Math.floor(dex / 2),
-      isChecked: false,
+      isJobSkill: false,
     },
     credit: {
       value: 0,
       valueAddedByBaseValue: 0,
-      isChecked: false,
+      isJobSkill: false,
     },
   };
 };

@@ -410,19 +410,19 @@ export const skillsParamsFunction = (dex: number, education: number): SkillParam
       {
         value: 0,
         label: '과학 (1)',
-        skillKey: 'science',
+        skillKey: 'science1',
         baseValue: 1,
       },
       {
         value: 0,
         label: '과학 (2)',
-        skillKey: 'science',
+        skillKey: 'science2',
         baseValue: 1,
       },
       {
         value: 0,
         label: '과학 (3)',
-        skillKey: 'science',
+        skillKey: 'science3',
         baseValue: 1,
       },
       {
@@ -434,19 +434,19 @@ export const skillsParamsFunction = (dex: number, education: number): SkillParam
       {
         value: 0,
         label: '근접전 (1)',
-        skillKey: 'fighting',
+        skillKey: 'fighting1',
         baseValue: 25,
       },
       {
         value: 0,
         label: '근접전 (2)',
-        skillKey: 'fighting',
+        skillKey: 'fighting2',
         baseValue: 25,
       },
       {
         value: 0,
         label: '근접전 (3)',
-        skillKey: 'fighting',
+        skillKey: 'fighting3',
         baseValue: 25,
       },
       {
@@ -497,25 +497,25 @@ export const skillsParamsFunction = (dex: number, education: number): SkillParam
       {
         value: 0,
         label: '사격 (1)',
-        skillKey: 'firearms',
+        skillKey: 'firearms1',
         baseValue: 20,
       },
       {
         value: 0,
         label: '사격 (2)',
-        skillKey: 'firearms',
+        skillKey: 'firearms2',
         baseValue: 25,
       },
       {
         value: 0,
         label: '사격 (3)',
-        skillKey: 'firearms',
+        skillKey: 'firearms3',
         baseValue: 1,
       },
       {
         value: 0,
         label: '생존술 (??)',
-        skillKey: 'survival',
+        skillKey: 'survival1',
         baseValue: 10,
       },
       {
@@ -584,19 +584,19 @@ export const skillsParamsFunction = (dex: number, education: number): SkillParam
       {
         value: 0,
         label: '예술/공예 (1)',
-        skillKey: 'artcraft',
+        skillKey: 'artcraft1',
         baseValue: 5,
       },
       {
         value: 0,
         label: '예술/공예 (2)',
-        skillKey: 'artcraft',
+        skillKey: 'artcraft2',
         baseValue: 5,
       },
       {
         value: 0,
         label: '예술/공예 (3)',
-        skillKey: 'artcraft',
+        skillKey: 'artcraft3',
         baseValue: 5,
       },
       {
@@ -690,7 +690,7 @@ export const skillsParamsFunction = (dex: number, education: number): SkillParam
       {
         value: 0,
         label: '조종 (1)',
-        skillKey: 'pilot',
+        skillKey: 'pilot1',
         baseValue: 1,
       },
       {
@@ -745,25 +745,25 @@ export const skillsParamsFunction = (dex: number, education: number): SkillParam
       {
         value: 0,
         label: 'something1',
-        skillKey: 'rare',
+        skillKey: 'rare1',
         baseValue: 20,
       },
       {
         value: 0,
         label: 'something2',
-        skillKey: 'rare',
+        skillKey: 'rare2',
         baseValue: 20,
       },
       {
         value: 0,
         label: 'something3',
-        skillKey: 'rare',
+        skillKey: 'rare3',
         baseValue: 20,
       },
       {
         value: 0,
         label: 'something4',
-        skillKey: 'rare',
+        skillKey: 'rare4',
         baseValue: 20,
       },
     ],
