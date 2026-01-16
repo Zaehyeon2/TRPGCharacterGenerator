@@ -193,43 +193,43 @@ export const ExplorerSkills = React.memo(function ExplorerSkills({
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">과학</Text>
-                    <Checkbox label="50%" size="xs" onChange={handleScience50} />
-                    <Checkbox label="90%" size="xs" onChange={handleScience90} />
+                    <Checkbox label="50%" size="xs" checked={expectedSkills.science50} onChange={handleScience50} />
+                    <Checkbox label="90%" size="xs" checked={expectedSkills.science90} onChange={handleScience90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">근접전</Text>
-                    <Checkbox label="50%" size="xs" onChange={handleFighting50} />
-                    <Checkbox label="90%" size="xs" onChange={handleFighting90} />
+                    <Checkbox label="50%" size="xs" checked={expectedSkills.fighting50} onChange={handleFighting50} />
+                    <Checkbox label="90%" size="xs" checked={expectedSkills.fighting90} onChange={handleFighting90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">사격</Text>
-                    <Checkbox label="50%" size="xs" onChange={handleFirearms50} />
-                    <Checkbox label="90%" size="xs" onChange={handleFirearms90} />
+                    <Checkbox label="50%" size="xs" checked={expectedSkills.firearms50} onChange={handleFirearms50} />
+                    <Checkbox label="90%" size="xs" checked={expectedSkills.firearms90} onChange={handleFirearms90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">생존술</Text>
-                    <Checkbox label="50%" size="xs" onChange={handleSurvival50} />
-                    <Checkbox label="90%" size="xs" onChange={handleSurvival90} />
+                    <Checkbox label="50%" size="xs" checked={expectedSkills.survival50} onChange={handleSurvival50} />
+                    <Checkbox label="90%" size="xs" checked={expectedSkills.survival90} onChange={handleSurvival90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">언어(외국어)</Text>
-                    <Checkbox label="50%" size="xs" onChange={handleLanguageOther50} />
-                    <Checkbox label="90%" size="xs" onChange={handleLanguageOther90} />
+                    <Checkbox label="50%" size="xs" checked={expectedSkills.languageOther50} onChange={handleLanguageOther50} />
+                    <Checkbox label="90%" size="xs" checked={expectedSkills.languageOther90} onChange={handleLanguageOther90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">예술/공예</Text>
-                    <Checkbox label="50%" size="xs" onChange={handleArtcraft50} />
-                    <Checkbox label="90%" size="xs" onChange={handleArtcraft90} />
+                    <Checkbox label="50%" size="xs" checked={expectedSkills.artcraft50} onChange={handleArtcraft50} />
+                    <Checkbox label="90%" size="xs" checked={expectedSkills.artcraft90} onChange={handleArtcraft90} />
                   </Stack>
                 </Grid.Col>
               </Grid>

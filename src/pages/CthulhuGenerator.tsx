@@ -226,14 +226,19 @@ export function CthulhuGenerator() {
 
   const getBonus = useCallback(
     (key: string, num: string) => {
+      // Extract base skill type from keys like 'science1', 'fighting2', etc.
+      const BONUS_SKILL_PREFIXES = ['science', 'fighting', 'firearms', 'survival', 'languageOther', 'artcraft'];
       let skillKey = key;
-      if (key.startsWith('languageOther')) {
-        skillKey = 'languageOther';
+      for (const prefix of BONUS_SKILL_PREFIXES) {
+        if (key.startsWith(prefix)) {
+          skillKey = prefix;
+          break;
+        }
       }
       if (num === '50') {
-        return expectedSkills[`${skillKey}50`];
+        return expectedSkills[`${skillKey}50`] ?? false;
       }
-      return expectedSkills[`${skillKey}90`];
+      return expectedSkills[`${skillKey}90`] ?? false;
     },
     [expectedSkills],
   );
