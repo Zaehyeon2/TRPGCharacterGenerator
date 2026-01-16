@@ -2,9 +2,9 @@ import { Header, UnstyledButton, Group, Text, Burger, Drawer, ScrollArea } from 
 import { useDisclosure, useMediaQuery } from '@mantine/hooks';
 import React from 'react';
 import { Link } from 'react-router-dom';
-import dice20 from '../assets/dice20.png';
 import { MainLinks } from './_NavLinks';
 import { FooterSimple } from './Footer';
+import dice20 from '../assets/dice20.png';
 
 export function HeaderSimple() {
   const [opened, { toggle, close }] = useDisclosure(false);

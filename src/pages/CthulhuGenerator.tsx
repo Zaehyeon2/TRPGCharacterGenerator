@@ -3,28 +3,23 @@ import {
   Box,
   Button,
   Card,
-  Checkbox,
-  Container,
   FileButton,
   Grid,
   Group,
   Popover,
   Stack,
   Text,
-  TextInput,
-  UnstyledButton,
 } from '@mantine/core';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import logo from '../assets/coc-logo.png';
-import dice20 from '../assets/dice20.png';
+import { AgePenaltySection } from '../components/cthulhu/AgePenaltySection';
 import { ExplorerCombat } from '../components/cthulhu/ExplorerCombat';
 import { ExplorerCredit } from '../components/cthulhu/ExplorerCredit';
 import { ExplorerInfo } from '../components/cthulhu/ExplorerInfo';
+import { ExplorerSkills } from '../components/cthulhu/ExplorerSkills';
 import { ExplorerTraits } from '../components/cthulhu/ExplorerTraits';
 import { ExplorerTraits2 } from '../components/cthulhu/ExplorerTraits2';
 import { Logo } from '../components/logo';
-import { SkillColumn } from '../components/SkillColumn';
-
 import { defaultSkills } from '../consts/defaultValues';
 import {
   INITIAL_EXPECTED_SKILLS,
@@ -33,8 +28,10 @@ import {
   INITIAL_STATS,
   INITIAL_STAT_PENALTY,
 } from '../consts/initialStates';
-import { penaltyText } from '../consts/penaltyByAge';
 import { skillsParamsFunction } from '../consts/skills';
+import { calculateMobility, calculateHP } from '../domain/character.service';
+import { calculateCombatStats } from '../domain/combat.service';
+import { calculateCredit } from '../domain/credit.service';
 import {
   IExplorerData,
   IInnerSkills,
@@ -42,8 +39,7 @@ import {
   ISimplifiedExplorerData,
   ISkills,
 } from '../interfaces/interfaces';
-import { rollDice } from '../services/dice.service';
-import { downloadAsJson, isNumber, loadFromJsonFile } from '../services/utils.service';
+import { downloadAsJson, loadFromJsonFile } from '../services/utils.service';
 
 export function CthulhuGenerator() {
   const isLoadingRef = useRef(false);
@@ -114,45 +110,16 @@ export function CthulhuGenerator() {
   ]);
 
   const handleExportSimplifiedJson = useCallback(() => {
-    const hp = Math.floor((statValues.size.value2 + statValues.health.value2) / 10);
-    const combatStats = (() => {
-      const sum = statValues.str.value2 + statValues.size.value2;
-      if (sum <= 64) return { damageBonus: '-2', build: -2 };
-      if (sum <= 84) return { damageBonus: '-1', build: -1 };
-      if (sum <= 124) return { damageBonus: '0', build: 0 };
-      if (sum <= 164) return { damageBonus: '1D4', build: 1 };
-      return { damageBonus: '1D6', build: 2 };
-    })();
+    const hp = calculateHP(statValues.size.value2, statValues.health.value2);
+    const combatStats = calculateCombatStats(statValues.str.value2, statValues.size.value2);
 
     const creditValue = skillValues.credit.valueAddedByBaseValue;
-    const creditInfo = (() => {
-      if (creditValue === 0) return { cash: '0.5', assets: '0', spendingLevel: '0.5' };
-      if (creditValue <= 9)
-        return {
-          cash: creditValue.toString(),
-          assets: (creditValue * 10).toString(),
-          spendingLevel: '2',
-        };
-      if (creditValue <= 49)
-        return {
-          cash: (creditValue * 2).toString(),
-          assets: (creditValue * 50).toString(),
-          spendingLevel: '10',
-        };
-      if (creditValue <= 89)
-        return {
-          cash: (creditValue * 5).toString(),
-          assets: (creditValue * 500).toString(),
-          spendingLevel: '50',
-        };
-      if (creditValue <= 98)
-        return {
-          cash: (creditValue * 20).toString(),
-          assets: (creditValue * 2000).toString(),
-          spendingLevel: '250',
-        };
-      return { cash: '50000', assets: '5000000+', spendingLevel: '5000' };
-    })();
+    const creditResult = calculateCredit(creditValue);
+    const creditInfo = {
+      cash: creditResult.cash.toString(),
+      assets: creditResult.assets,
+      spendingLevel: creditResult.spendingLevel.toString(),
+    };
 
     const skills: { [key: string]: number } = {};
     Object.keys(skillValues).forEach((key) => {
@@ -331,69 +298,26 @@ export function CthulhuGenerator() {
 
   const getMobility = useCallback(() => {
     setStatsValue((prev) => {
-      const { str, dex, size, age } = prev;
-
-      let mobility: number;
-      if (str.value2 < size.value2 && dex.value2 < size.value2) mobility = 7;
-      else if (str.value2 > size.value2 && dex.value2 > size.value2) mobility = 9;
-      else mobility = 8;
-      if (age >= 80) mobility -= 5;
-      else if (age >= 70) mobility -= 4;
-      else if (age >= 60) mobility -= 3;
-      else if (age >= 50) mobility -= 2;
-      else if (age >= 40) mobility -= 1;
-
+      const mobility = calculateMobility(
+        prev.str.value2,
+        prev.dex.value2,
+        prev.size.value2,
+        prev.age,
+      );
       return { ...prev, mobility };
     });
   }, []);
 
-  const getCombatStats = () => {
-    let combatStats = { damageBonus: '', build: 0 };
-    if (statValues.str.value2 + statValues.size.value2 <= 64)
-      combatStats = { damageBonus: '-2', build: -2 };
-    else if (statValues.str.value2 + statValues.size.value2 <= 84)
-      combatStats = { damageBonus: '-1', build: -1 };
-    else if (statValues.str.value2 + statValues.size.value2 <= 124)
-      combatStats = { damageBonus: '0', build: 0 };
-    else if (statValues.str.value2 + statValues.size.value2 <= 164) {
-      combatStats = { damageBonus: '1D4', build: 1 };
-    } else {
-      combatStats = { damageBonus: '1D6', build: 2 };
-    }
-    return combatStats;
-  };
+  const getCombatStats = useCallback(() => {
+    return calculateCombatStats(statValues.str.value2, statValues.size.value2);
+  }, [statValues.str.value2, statValues.size.value2]);
 
   const getCredit = useCallback(() => {
-    if (skillValues.credit.valueAddedByBaseValue === 0)
-      return { cash: '0.5', assets: '0', spendingLevel: '0.5' };
-    if (skillValues.credit.valueAddedByBaseValue <= 9)
-      return {
-        cash: skillValues.credit.valueAddedByBaseValue.toLocaleString(),
-        assets: (skillValues.credit.valueAddedByBaseValue * 10).toLocaleString(),
-        spendingLevel: '2',
-      };
-    if (skillValues.credit.valueAddedByBaseValue <= 49)
-      return {
-        cash: (skillValues.credit.valueAddedByBaseValue * 2).toLocaleString(),
-        assets: (skillValues.credit.valueAddedByBaseValue * 50).toLocaleString(),
-        spendingLevel: '10',
-      };
-    if (skillValues.credit.valueAddedByBaseValue <= 89)
-      return {
-        cash: (skillValues.credit.valueAddedByBaseValue * 5).toLocaleString(),
-        assets: (skillValues.credit.valueAddedByBaseValue * 500).toLocaleString(),
-        spendingLevel: '50',
-      };
-    if (skillValues.credit.valueAddedByBaseValue <= 98)
-      return {
-        cash: (skillValues.credit.valueAddedByBaseValue * 20).toLocaleString(),
-        assets: (skillValues.credit.valueAddedByBaseValue * 2000).toLocaleString(),
-        spendingLevel: '250',
-      };
+    const result = calculateCredit(skillValues.credit.valueAddedByBaseValue);
     return {
-      cash: '50,000',
-      assets: '5,000,000+',
-      spendingLevel: '5,000',
+      cash: result.cash.toLocaleString(),
+      assets: result.assets,
+      spendingLevel: result.spendingLevel.toLocaleString(),
     };
   }, [skillValues.credit.valueAddedByBaseValue]);
 
@@ -468,517 +392,12 @@ export function CthulhuGenerator() {
     setStatsValue((prev) => ({ ...prev, birthplace }));
   }, []);
 
-  const explorerSkills = useMemo(() => {
-    return (
-      <Container sx={{ padding: '0', paddingBottom: '10px', border: 'solid', marginTop: '16px' }}>
-        <Text sx={{ backgroundColor: 'purple' }}>기능</Text>
-        <Text sx={{ backgroundColor: 'lightgray', color: 'black' }}>
-          ✔ 직업 기능에 체크표시 하세요.
-          <br />✔ 직업 기능 점수는 탐사자 핸드북 또는 수호자 룰북을 참고해주세요.
-        </Text>
-        <Text sx={{ backgroundColor: 'yellow', color: 'black' }}>
-          ⚠ 전문 분야를 모두 고르고 스탯 배분을 시작해주세요.
-          <br />⚠ 중간에 전문 분야를 바꿀시 다른 관련 전문 분야 스탯도 다시 적어주세요.
-        </Text>
-        <Grid justify="center" align="center" sx={{ marginTop: '5px' }} columns={12}>
-          <Grid.Col xs={12} sm={5}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Grid>
-                  <Grid.Col span={6}>
-                    <Text fz="sm">직업 기능 점수</Text>
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <Text fz="sm">남은 점수</Text>
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <TextInput
-                      value={skillPoints.baseJob}
-                      sx={{ marginLeft: '5px', marginRight: '5px' }}
-                      onChange={(event) => {
-                        if (!isNumber(event.currentTarget.value)) return;
-                        setSkillPoints({ ...skillPoints, baseJob: +event.currentTarget.value });
-                      }}
-                    />
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <Text sx={{ marginLeft: '5px', marginRight: '5px' }}>
-                      {skillPoints.baseJob - skillPoints.job}
-                    </Text>
-                  </Grid.Col>
-                </Grid>
-              </Stack>
-            </Container>
-          </Grid.Col>
-          <Grid.Col span={2} sx={{ '@media (max-width: 768px)': { display: 'none' } }} />
-          <Grid.Col xs={12} sm={5}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                  height: '98.08px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Grid>
-                  <Grid.Col span={6}>
-                    <Text fz="sm">관심 기능 점수</Text>
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <Text fz="sm">남은 점수</Text>
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <Text sx={{ marginLeft: '5px', marginRight: '5px' }}>
-                      {skillPoints.baseInterest}
-                    </Text>
-                  </Grid.Col>
-                  <Grid.Col span={6}>
-                    <Text sx={{ marginLeft: '5px', marginRight: '5px' }}>
-                      {skillPoints.baseInterest - skillPoints.interest}
-                    </Text>
-                  </Grid.Col>
-                </Grid>
-              </Stack>
-            </Container>
-          </Grid.Col>
-        </Grid>
-        <Grid justify="center" align="center" sx={{ marginTop: '5px' }} columns={10}>
-          <Grid.Col span={10}>
-            <Container>
-              <Stack
-                sx={{
-                  border: '1px solid',
-                  borderRadius: '0.5em',
-                  paddingTop: '11.15px',
-                  paddingBottom: '11.25px',
-                }}
-                justify="center"
-                spacing={0}
-              >
-                <Text>보너스 기능 점수</Text>
-                <Grid columns={12}>
-                  <Grid.Col span={6} sm={2}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="sm">과학</Text>
-                      <Checkbox
-                        label="50%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('science50', event.currentTarget.checked);
-                        }}
-                      />
-                      <Checkbox
-                        label="90%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('science90', event.currentTarget.checked);
-                        }}
-                      />
-                    </Stack>
-                  </Grid.Col>
-                  <Grid.Col span={6} sm={2}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="sm">근접전</Text>
-                      <Checkbox
-                        label="50%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('fighting50', event.currentTarget.checked);
-                        }}
-                      />
-                      <Checkbox
-                        label="90%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('fighting90', event.currentTarget.checked);
-                        }}
-                      />
-                    </Stack>
-                  </Grid.Col>
-                  <Grid.Col span={6} sm={2}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="sm">사격</Text>
-                      <Checkbox
-                        label="50%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('firearms50', event.currentTarget.checked);
-                        }}
-                      />
-                      <Checkbox
-                        label="90%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('firearms90', event.currentTarget.checked);
-                        }}
-                      />
-                    </Stack>
-                  </Grid.Col>
-                  <Grid.Col span={6} sm={2}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="sm">생존술</Text>
-                      <Checkbox
-                        label="50%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('survival50', event.currentTarget.checked);
-                        }}
-                      />
-                      <Checkbox
-                        label="90%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('survival90', event.currentTarget.checked);
-                        }}
-                      />
-                    </Stack>
-                  </Grid.Col>
-                  <Grid.Col span={6} sm={2}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="sm">언어(외국어)</Text>
-                      <Checkbox
-                        label="50%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('languageOther50', event.currentTarget.checked);
-                        }}
-                      />
-                      <Checkbox
-                        label="90%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('languageOther90', event.currentTarget.checked);
-                        }}
-                      />
-                    </Stack>
-                  </Grid.Col>
-                  <Grid.Col span={6} sm={2}>
-                    <Stack spacing={0} align="center">
-                      <Text fz="sm">예술/공예</Text>
-                      <Checkbox
-                        label="50%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('artcraft50', event.currentTarget.checked);
-                        }}
-                      />
-                      <Checkbox
-                        label="90%"
-                        size="xs"
-                        onChange={(event) => {
-                          onChangeExpectedSkills('artcraft90', event.currentTarget.checked);
-                        }}
-                      />
-                    </Stack>
-                  </Grid.Col>
-                </Grid>
-              </Stack>
-            </Container>
-          </Grid.Col>
-        </Grid>
-        <Grid
-          justify="center"
-          align="center"
-          sx={{ marginTop: '5px' }}
-          gutter="xs"
-          gutterSm="md"
-          px="xs"
-        >
-          {skillsParams.map((skillParams, idx) => (
-            <SkillColumn
-              key={idx}
-              skillParams={skillParams}
-              getAndSetSkills={getAndSetSkills}
-              getBonus={getBonus}
-              reloadState={reloadState}
-              skillValues={skillValues}
-              selectedDetailedSkills={selectedDetailedSkills}
-              onDetailedKeyChange={handleDetailedKeyChange}
-            />
-          ))}
-        </Grid>
-      </Container>
-    );
-  }, [
-    skillPoints,
-    skillsParams,
-    getAndSetSkills,
-    getBonus,
-    onChangeExpectedSkills,
-    expectedSkills,
-    reloadState,
-    skillValues,
-    selectedDetailedSkills,
-    handleDetailedKeyChange,
-  ]);
-
-  const penaltyByAge = useMemo(() => {
-    const getEducationBonus = (num: number) => {
-      const { education: educatioN } = statValues;
-      let education = educatioN.value;
-      education += statPenaltyValues.education;
-      education = Math.max(0, education);
-      console.log('[교육 판정] start - base education', education);
-      let totalBonus = 0;
-      let result = '';
-      for (let i = 0; i < num; i += 1) {
-        const roll = rollDice(1, 100, '교육 판정');
-        console.log('[교육 판정] current education', education, ', roll', roll);
-        if (roll > education) {
-          const bonus = rollDice(1, 10, '교육 판정 (보너스)');
-          totalBonus += bonus;
-          education += bonus;
-          result += '🏆';
-          console.log(
-            '[교육 판정] success - current education',
-            education,
-            ', current bonus',
-            bonus,
-            ', total bonus',
-            totalBonus,
-          );
-        } else {
-          result += '❌';
-          console.log(
-            '[교육 판정] fail - current education',
-            education,
-            ', total bonus',
-            totalBonus,
-          );
-        }
-      }
-      console.log(
-        '[교육 판정] end - current education',
-        education,
-        ', total bonus',
-        totalBonus,
-        'result',
-        result,
-      );
-      setEducationBonusText(result);
-      setStatPenaltyValues({ ...statPenaltyValues, education: -totalBonus });
-    };
-    let text = '';
-    let panelyAppearance = 0;
-    let educationBonusNum = 0;
-    if (statValues.age <= 19) {
-      [text] = penaltyText;
-    } else if (statValues.age <= 39) {
-      [, text] = penaltyText;
-      educationBonusNum = 1;
-    } else if (statValues.age <= 49) {
-      [, , text] = penaltyText;
-      panelyAppearance = 5;
-      educationBonusNum = 2;
-    } else if (statValues.age <= 59) {
-      [, , , text] = penaltyText;
-      panelyAppearance = 10;
-      educationBonusNum = 3;
-    } else if (statValues.age <= 69) {
-      [, , , , text] = penaltyText;
-      panelyAppearance = 20;
-      educationBonusNum = 4;
-    } else if (statValues.age <= 79) {
-      [, , , , , text] = penaltyText;
-      panelyAppearance = 20;
-      educationBonusNum = 4;
-    } else {
-      [, , , , , , text] = penaltyText;
-      panelyAppearance = 25;
-      educationBonusNum = 4;
-    }
-    return (
-      <Container sx={{ padding: '0', paddingBottom: '10px', border: 'solid', marginTop: '16px' }}>
-        <Text sx={{ backgroundColor: 'red', color: 'white' }}>나이에 따른 조정 사항</Text>
-        <Text sx={{ backgroundColor: 'lightgray', color: 'black' }}>{text}</Text>
-        <Grid justify="center" align="center" sx={{ marginTop: '5px' }}>
-          <Grid.Col span={12}>
-            <Text fz="sm">
-              뺴야하는 스탯 -{' '}
-              {statPenaltyValues.total -
-                statPenaltyValues.str -
-                statPenaltyValues.dex -
-                statPenaltyValues.health -
-                statPenaltyValues.size}
-            </Text>
-          </Grid.Col>
-          {!(statValues.age >= 20 && statValues.age <= 39) && (
-            <Grid.Col xs={6} sm={3}>
-              <Container>
-                <Stack
-                  sx={{
-                    border: '1px solid',
-                    borderRadius: '0.5em',
-                    paddingTop: '11.15px',
-                    paddingBottom: '11.25px',
-                  }}
-                  justify="center"
-                  spacing={0}
-                >
-                  <Text fz="sm">근력</Text>
-                  <TextInput
-                    sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPenaltyValues.str}
-                    onChange={(event) => {
-                      if (!isNumber(event.currentTarget.value)) return;
-                      setStatPenaltyValues({
-                        ...statPenaltyValues,
-                        str: +event.currentTarget.value,
-                        appeareance: panelyAppearance,
-                      });
-                      setReloadStatBool(!reloadStatBool);
-                    }}
-                  />
-                </Stack>
-              </Container>
-            </Grid.Col>
-          )}
-          {!(statValues.age > 19) && (
-            <Grid.Col xs={6} sm={3}>
-              <Container>
-                <Stack
-                  sx={{
-                    border: '1px solid',
-                    borderRadius: '0.5em',
-                    paddingTop: '11.15px',
-                    paddingBottom: '11.25px',
-                  }}
-                  justify="center"
-                  spacing={0}
-                >
-                  <Text fz="sm">크기</Text>
-                  <TextInput
-                    sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPenaltyValues.size}
-                    disabled={statValues.age > 19}
-                    onChange={(event) => {
-                      if (!isNumber(event.currentTarget.value)) return;
-                      setStatPenaltyValues({
-                        ...statPenaltyValues,
-                        size: +event.currentTarget.value,
-                        appeareance: panelyAppearance,
-                      });
-                      setReloadStatBool(!reloadStatBool);
-                    }}
-                  />
-                </Stack>
-              </Container>
-            </Grid.Col>
-          )}
-          {!(statValues.age < 40) && (
-            <Grid.Col xs={6} sm={3}>
-              <Container>
-                <Stack
-                  sx={{
-                    border: '1px solid',
-                    borderRadius: '0.5em',
-                    paddingTop: '11.15px',
-                    paddingBottom: '11.25px',
-                  }}
-                  justify="center"
-                  spacing={0}
-                >
-                  <Text fz="sm">건강</Text>
-                  <TextInput
-                    sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPenaltyValues.health}
-                    disabled={statValues.age < 40}
-                    onChange={(event) => {
-                      if (!isNumber(event.currentTarget.value)) return;
-                      setStatPenaltyValues({
-                        ...statPenaltyValues,
-                        health: +event.currentTarget.value,
-                        appeareance: panelyAppearance,
-                      });
-                      setReloadStatBool(!reloadStatBool);
-                    }}
-                  />
-                </Stack>
-              </Container>
-            </Grid.Col>
-          )}
-          {!(statValues.age < 40) && (
-            <Grid.Col xs={6} sm={3}>
-              <Container>
-                <Stack
-                  sx={{
-                    border: '1px solid',
-                    borderRadius: '0.5em',
-                    paddingTop: '11.15px',
-                    paddingBottom: '11.25px',
-                  }}
-                  justify="center"
-                  spacing={0}
-                >
-                  <Text fz="sm">민첩성</Text>
-                  <TextInput
-                    sx={{ marginLeft: '5px', marginRight: '5px' }}
-                    value={statPenaltyValues.dex}
-                    disabled={statValues.age < 40}
-                    onChange={(event) => {
-                      if (!isNumber(event.currentTarget.value)) return;
-                      setStatPenaltyValues({
-                        ...statPenaltyValues,
-                        dex: +event.currentTarget.value,
-                        appeareance: panelyAppearance,
-                      });
-                      setReloadStatBool(!reloadStatBool);
-                    }}
-                  />
-                </Stack>
-              </Container>
-            </Grid.Col>
-          )}
-          {educationBonusNum !== 0 && (
-            <Grid.Col xs={6} sm={3}>
-              <Container>
-                <Stack
-                  sx={{
-                    border: '1px solid',
-                    borderRadius: '0.5em',
-                    paddingTop: '11.15px',
-                    paddingBottom: '11.25px',
-                    height: '82.08px',
-                    width: '171.5px',
-                  }}
-                  justify="center"
-                  spacing={0}
-                >
-                  <Text fz="sm">교육 판정</Text>
-                  <Text fz="sm">
-                    {educationBonusText === '' ? (
-                      <UnstyledButton
-                        onClick={() => {
-                          getEducationBonus(educationBonusNum);
-                        }}
-                      >
-                        <img src={dice20} alt="roll" width="15px" />
-                      </UnstyledButton>
-                    ) : (
-                      <Text>{educationBonusText}</Text>
-                    )}
-                  </Text>
-                </Stack>
-              </Container>
-            </Grid.Col>
-          )}
-        </Grid>
-      </Container>
-    );
-  }, [statValues.age, statPenaltyValues, statValues.education, educationBonusText]);
+  const handleSkillPointsChange = useCallback(
+    (value: number) => {
+      setSkillPoints({ ...skillPoints, baseJob: value });
+    },
+    [skillPoints],
+  );
 
   useEffect(() => {
     if (isLoadingRef.current) return;
@@ -1068,14 +487,34 @@ export function CthulhuGenerator() {
           />
         </Grid.Col>
       </Grid>
-      {penaltyByAge}
+      <AgePenaltySection
+        statValues={statValues}
+        statPenaltyValues={statPenaltyValues}
+        setStatPenaltyValues={setStatPenaltyValues}
+        educationBonusText={educationBonusText}
+        setEducationBonusText={setEducationBonusText}
+        reloadStatBool={reloadStatBool}
+        setReloadStatBool={setReloadStatBool}
+      />
       <ExplorerTraits2
         sizeValue2={statValues.size.value2}
         healthValue2={statValues.health.value2}
         mentalityValue2={statValues.mentality.value2}
         getAndSetStats={getAndSetStats}
       />
-      {explorerSkills}
+      <ExplorerSkills
+        skillPoints={skillPoints}
+        skillsParams={skillsParams}
+        getAndSetSkills={getAndSetSkills}
+        getBonus={getBonus}
+        onChangeExpectedSkills={onChangeExpectedSkills}
+        expectedSkills={expectedSkills}
+        reloadState={reloadState}
+        skillValues={skillValues}
+        selectedDetailedSkills={selectedDetailedSkills}
+        onDetailedKeyChange={handleDetailedKeyChange}
+        onSkillPointsChange={handleSkillPointsChange}
+      />
       <Grid justify="center" align="center">
         <Grid.Col xs={12} sm={6}>
           <ExplorerCombat

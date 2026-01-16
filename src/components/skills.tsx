@@ -27,6 +27,29 @@ const artcraftLabels = detailedArtcraft.map((s) => s.label);
 const pilotLabels = detailedPilot.map((s) => s.label);
 const rareLabels = rareSkills.map((s) => s.label);
 
+const DETAILED_SKILL_MAPS: Record<string, DetailedSkillProps[]> = {
+  science: detailedScience,
+  fighting: detailedFighting,
+  firearms: detailedFirearm,
+  survival: detailedSurvive,
+  artcraft: detailedArtcraft,
+  pilot: detailedPilot,
+  rare: rareSkills,
+};
+
+const SKILL_SELECT_CONFIG: Record<
+  string,
+  { placeholder: string; data: string[]; defaultSkills: DetailedSkillProps[] }
+> = {
+  science: { placeholder: '과학', data: scienceLabels, defaultSkills: detailedScience },
+  fighting: { placeholder: '근접전', data: fightingLabels, defaultSkills: detailedFighting },
+  firearms: { placeholder: '사격', data: firearmLabels, defaultSkills: detailedFirearm },
+  survival: { placeholder: '생존술', data: surviveLabels, defaultSkills: detailedSurvive },
+  artcraft: { placeholder: '예술/공예', data: artcraftLabels, defaultSkills: detailedArtcraft },
+  pilot: { placeholder: '조종', data: pilotLabels, defaultSkills: detailedPilot },
+  rare: { placeholder: '기타', data: rareLabels, defaultSkills: rareSkills },
+};
+
 export const Skills = React.memo(function Skills({
   skillKey,
   label,
@@ -246,48 +269,13 @@ export const Skills = React.memo(function Skills({
 
   function setDetailedKey(key: string) {
     const baseType = getBaseSkillType(skillKey);
-    if (baseType === 'science') {
-      const detailedKey = detailedScience.find((science) => {
-        return science.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
-    } else if (baseType === 'fighting') {
-      const detailedKey = detailedFighting.find((fighting) => {
-        return fighting.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
-    } else if (baseType === 'firearms') {
-      const detailedKey = detailedFirearm.find((firearm) => {
-        return firearm.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
-    } else if (baseType === 'survival') {
-      const detailedKey = detailedSurvive.find((survival) => {
-        return survival.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
-    } else if (baseType === 'artcraft') {
-      const detailedKey = detailedArtcraft.find((artcraft) => {
-        return artcraft.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
-    } else if (baseType === 'pilot') {
-      const detailedKey = detailedPilot.find((pilot) => {
-        return pilot.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
-    } else if (baseType === 'rare') {
-      const detailedKey = rareSkills.find((rare) => {
-        return rare.label === key;
-      });
-      if (detailedKey === undefined) return;
-      setInnerDetailedKey(detailedKey);
+    const skillArray = DETAILED_SKILL_MAPS[baseType];
+
+    if (skillArray) {
+      const detailedKey = skillArray.find((skill) => skill.label === key);
+      if (detailedKey) {
+        setInnerDetailedKey(detailedKey);
+      }
     } else {
       setSkillValues({ ...skillValues, detailedKey: skillKey });
     }
@@ -322,69 +310,17 @@ export const Skills = React.memo(function Skills({
         </Text>
       );
     }
+
     const selectedLabel = getSelectedLabel();
     const baseType = getBaseSkillType(key);
-    if (baseType === 'science') {
+    const config = SKILL_SELECT_CONFIG[baseType];
+
+    if (config) {
       return (
         <Select
-          placeholder="과학"
-          value={selectedLabel ?? detailedScience[0].label}
-          data={scienceLabels}
-          size="xs"
-          onChange={handleSelectChange}
-        />
-      );
-    }
-    if (baseType === 'fighting') {
-      return (
-        <Select
-          placeholder="근접전"
-          value={selectedLabel ?? detailedFighting[0].label}
-          data={fightingLabels}
-          size="xs"
-          onChange={handleSelectChange}
-        />
-      );
-    }
-    if (baseType === 'firearms') {
-      return (
-        <Select
-          placeholder="사격"
-          value={selectedLabel ?? detailedFirearm[0].label}
-          data={firearmLabels}
-          size="xs"
-          onChange={handleSelectChange}
-        />
-      );
-    }
-    if (baseType === 'survival') {
-      return (
-        <Select
-          placeholder="생존술"
-          value={selectedLabel ?? detailedSurvive[0].label}
-          data={surviveLabels}
-          size="xs"
-          onChange={handleSelectChange}
-        />
-      );
-    }
-    if (baseType === 'artcraft') {
-      return (
-        <Select
-          placeholder="예술/공예"
-          value={selectedLabel ?? detailedArtcraft[0].label}
-          data={artcraftLabels}
-          size="xs"
-          onChange={handleSelectChange}
-        />
-      );
-    }
-    if (baseType === 'pilot') {
-      return (
-        <Select
-          placeholder="조종"
-          value={selectedLabel ?? detailedPilot[0].label}
-          data={pilotLabels}
+          placeholder={config.placeholder}
+          value={selectedLabel ?? config.defaultSkills[0].label}
+          data={config.data}
           size="xs"
           onChange={handleSelectChange}
         />
@@ -392,13 +328,9 @@ export const Skills = React.memo(function Skills({
     }
 
     return (
-      <Select
-        placeholder="기타"
-        value={selectedLabel ?? rareSkills[0].label}
-        data={rareLabels}
-        size="xs"
-        onChange={handleSelectChange}
-      />
+      <Text align="center" fz="sm" h={30}>
+        {label} ({baseValue}%)
+      </Text>
     );
   }
 
