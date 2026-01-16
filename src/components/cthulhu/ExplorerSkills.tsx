@@ -1,5 +1,5 @@
 import { Container, Text, Grid, Stack, TextInput, Checkbox } from '@mantine/core';
-import React from 'react';
+import React, { useCallback } from 'react';
 import {
   ISkillPoints,
   IExpectedSkills,
@@ -39,6 +39,56 @@ export const ExplorerSkills = React.memo(function ExplorerSkills({
   onDetailedKeyChange,
   onSkillPointsChange,
 }: ExplorerSkillsProps) {
+  // Memoized checkbox handlers to prevent unnecessary re-renders
+  const handleScience50 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('science50', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleScience90 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('science90', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleFighting50 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('fighting50', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleFighting90 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('fighting90', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleFirearms50 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('firearms50', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleFirearms90 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('firearms90', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleSurvival50 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('survival50', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleSurvival90 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('survival90', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleLanguageOther50 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('languageOther50', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleLanguageOther90 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('languageOther90', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleArtcraft50 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('artcraft50', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+  const handleArtcraft90 = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) => onChangeExpectedSkills('artcraft90', event.currentTarget.checked),
+    [onChangeExpectedSkills],
+  );
+
   return (
     <Container sx={{ padding: '0', paddingBottom: '10px', border: 'solid', marginTop: '16px' }}>
       <Text sx={{ backgroundColor: 'purple' }}>기능</Text>
@@ -143,115 +193,43 @@ export const ExplorerSkills = React.memo(function ExplorerSkills({
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">과학</Text>
-                    <Checkbox
-                      label="50%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('science50', event.currentTarget.checked);
-                      }}
-                    />
-                    <Checkbox
-                      label="90%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('science90', event.currentTarget.checked);
-                      }}
-                    />
+                    <Checkbox label="50%" size="xs" onChange={handleScience50} />
+                    <Checkbox label="90%" size="xs" onChange={handleScience90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">근접전</Text>
-                    <Checkbox
-                      label="50%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('fighting50', event.currentTarget.checked);
-                      }}
-                    />
-                    <Checkbox
-                      label="90%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('fighting90', event.currentTarget.checked);
-                      }}
-                    />
+                    <Checkbox label="50%" size="xs" onChange={handleFighting50} />
+                    <Checkbox label="90%" size="xs" onChange={handleFighting90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">사격</Text>
-                    <Checkbox
-                      label="50%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('firearms50', event.currentTarget.checked);
-                      }}
-                    />
-                    <Checkbox
-                      label="90%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('firearms90', event.currentTarget.checked);
-                      }}
-                    />
+                    <Checkbox label="50%" size="xs" onChange={handleFirearms50} />
+                    <Checkbox label="90%" size="xs" onChange={handleFirearms90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">생존술</Text>
-                    <Checkbox
-                      label="50%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('survival50', event.currentTarget.checked);
-                      }}
-                    />
-                    <Checkbox
-                      label="90%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('survival90', event.currentTarget.checked);
-                      }}
-                    />
+                    <Checkbox label="50%" size="xs" onChange={handleSurvival50} />
+                    <Checkbox label="90%" size="xs" onChange={handleSurvival90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">언어(외국어)</Text>
-                    <Checkbox
-                      label="50%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('languageOther50', event.currentTarget.checked);
-                      }}
-                    />
-                    <Checkbox
-                      label="90%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('languageOther90', event.currentTarget.checked);
-                      }}
-                    />
+                    <Checkbox label="50%" size="xs" onChange={handleLanguageOther50} />
+                    <Checkbox label="90%" size="xs" onChange={handleLanguageOther90} />
                   </Stack>
                 </Grid.Col>
                 <Grid.Col span={6} sm={2}>
                   <Stack spacing={0} align="center">
                     <Text fz="sm">예술/공예</Text>
-                    <Checkbox
-                      label="50%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('artcraft50', event.currentTarget.checked);
-                      }}
-                    />
-                    <Checkbox
-                      label="90%"
-                      size="xs"
-                      onChange={(event) => {
-                        onChangeExpectedSkills('artcraft90', event.currentTarget.checked);
-                      }}
-                    />
+                    <Checkbox label="50%" size="xs" onChange={handleArtcraft50} />
+                    <Checkbox label="90%" size="xs" onChange={handleArtcraft90} />
                   </Stack>
                 </Grid.Col>
               </Grid>
@@ -269,7 +247,7 @@ export const ExplorerSkills = React.memo(function ExplorerSkills({
       >
         {skillsParams.map((skillParams, idx) => (
           <SkillColumn
-            key={idx}
+            key={`skill-column-${idx}`}
             skillParams={skillParams}
             getAndSetSkills={getAndSetSkills}
             getBonus={getBonus}

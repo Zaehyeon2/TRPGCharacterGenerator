@@ -50,6 +50,29 @@ const SKILL_SELECT_CONFIG: Record<
   rare: { placeholder: '기타', data: rareLabels, defaultSkills: rareSkills },
 };
 
+// Pre-computed array for performance - avoid recreating on every render
+const ALL_DETAILED_SKILLS = [
+  ...detailedScience,
+  ...detailedFighting,
+  ...detailedFirearm,
+  ...detailedSurvive,
+  ...detailedArtcraft,
+  ...detailedPilot,
+  ...rareSkills,
+];
+
+// Module-level helper functions to avoid recreation on every render
+const DETAILED_SKILL_PREFIXES = ['science', 'fighting', 'firearms', 'language', 'artcraft', 'pilot', 'survival', 'rare'];
+
+function isDetailedSkill(key: string): boolean {
+  return DETAILED_SKILL_PREFIXES.some(prefix => key.startsWith(prefix));
+}
+
+function getBaseSkillType(key: string): string {
+  const found = DETAILED_SKILL_PREFIXES.find(prefix => key.startsWith(prefix));
+  return found || key;
+}
+
 export const Skills = React.memo(function Skills({
   skillKey,
   label,
@@ -83,30 +106,6 @@ export const Skills = React.memo(function Skills({
 
   const prevInitialSkillValueRef = useRef(initialSkillValue);
   const prevInitialDetailedKeyRef = useRef(initialDetailedKey);
-
-  function isDetailedSkill(key: string) {
-    return (
-      key.startsWith('science') ||
-      key.startsWith('fighting') ||
-      key.startsWith('firearms') ||
-      key.startsWith('language') ||
-      key.startsWith('artcraft') ||
-      key.startsWith('pilot') ||
-      key.startsWith('survival') ||
-      key.startsWith('rare')
-    );
-  }
-
-  function getBaseSkillType(key: string) {
-    if (key.startsWith('science')) return 'science';
-    if (key.startsWith('fighting')) return 'fighting';
-    if (key.startsWith('firearms')) return 'firearms';
-    if (key.startsWith('artcraft')) return 'artcraft';
-    if (key.startsWith('pilot')) return 'pilot';
-    if (key.startsWith('survival')) return 'survival';
-    if (key.startsWith('rare')) return 'rare';
-    return key;
-  }
 
   function getValuesByAddedBonus(value: number) {
     let values = value;
@@ -189,17 +188,8 @@ export const Skills = React.memo(function Skills({
         prevInitialDetailedKeyRef.current = initialDetailedKey;
       }
 
-      const allDetailedSkills = [
-        ...detailedScience,
-        ...detailedFighting,
-        ...detailedFirearm,
-        ...detailedSurvive,
-        ...detailedArtcraft,
-        ...detailedPilot,
-        ...rareSkills,
-      ];
       const foundDetailedSkill = initialDetailedKey
-        ? allDetailedSkills.find((s) => s.key === initialDetailedKey)
+        ? ALL_DETAILED_SKILLS.find((s) => s.key === initialDetailedKey)
         : null;
 
       const skillValue = initialSkillValue?.value ?? 0;
@@ -288,17 +278,8 @@ export const Skills = React.memo(function Skills({
     [skillKey],
   );
 
-  const getSelectedLabel = useCallback(() => {
-    const allDetailedSkills = [
-      ...detailedScience,
-      ...detailedFighting,
-      ...detailedFirearm,
-      ...detailedSurvive,
-      ...detailedArtcraft,
-      ...detailedPilot,
-      ...rareSkills,
-    ];
-    const found = allDetailedSkills.find((s) => s.key === skillValues.detailedKey);
+  const selectedLabel = useMemo(() => {
+    const found = ALL_DETAILED_SKILLS.find((s) => s.key === skillValues.detailedKey);
     return found?.label;
   }, [skillValues.detailedKey]);
 
@@ -311,7 +292,6 @@ export const Skills = React.memo(function Skills({
       );
     }
 
-    const selectedLabel = getSelectedLabel();
     const baseType = getBaseSkillType(key);
     const config = SKILL_SELECT_CONFIG[baseType];
 
