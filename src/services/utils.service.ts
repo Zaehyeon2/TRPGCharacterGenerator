@@ -1,6 +1,6 @@
 export function isNumber(value: string) {
   const numberedValue = Number(value);
-  return !Number.isNaN(numberedValue) || numberedValue >= 0;
+  return !Number.isNaN(numberedValue) && numberedValue >= 0;
 }
 
 export function formStat(value: number, divider: number) {

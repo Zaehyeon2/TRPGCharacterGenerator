@@ -1,6 +1,5 @@
 import react from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import { nodePolyfills } from 'vite-plugin-node-polyfills';
 
 // https://vitejs.dev/config/
 export default defineConfig(({ command, mode }) => {
@@ -22,9 +21,6 @@ export default defineConfig(({ command, mode }) => {
           });
         },
       },
-      nodePolyfills({
-        protocolImports: true,
-      }),
     ],
     build: {
       rollupOptions: {
@@ -36,6 +32,9 @@ export default defineConfig(({ command, mode }) => {
           },
         },
       },
+    },
+    esbuild: {
+      drop: mode === 'production' ? ['console', 'debugger'] : [],
     },
     optimizeDeps: {
       include: ['@mantine/core', '@mantine/hooks', '@tabler/icons-react'],

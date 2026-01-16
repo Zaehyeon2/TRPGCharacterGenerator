@@ -10,7 +10,7 @@ import {
   Stack,
   Text,
 } from '@mantine/core';
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import logo from '../assets/coc-logo.png';
 import { AgePenaltySection } from '../components/cthulhu/AgePenaltySection';
 import { ExplorerCombat } from '../components/cthulhu/ExplorerCombat';
@@ -29,6 +29,7 @@ import {
   INITIAL_STAT_PENALTY,
 } from '../consts/initialStates';
 import { skillsParamsFunction } from '../consts/skills';
+import { getAgePenalty } from '../config/gameRules.config';
 import { calculateMobility, calculateHP } from '../domain/character.service';
 import { calculateCombatStats } from '../domain/combat.service';
 import { calculateCredit } from '../domain/credit.service';
@@ -222,9 +223,6 @@ export function CthulhuGenerator() {
 
   const [skillsParams, setSkillsParams] = useState(defaultSkillParams);
 
-  // useMemo(() => {
-  //   return skillsParamsFunction(statValues.dex, statValues.education);
-  // }, [statValues.dex, statValues.education]);
 
   const getBonus = useCallback(
     (key: string, num: string) => {
@@ -308,11 +306,12 @@ export function CthulhuGenerator() {
     });
   }, []);
 
-  const getCombatStats = useCallback(() => {
-    return calculateCombatStats(statValues.str.value2, statValues.size.value2);
-  }, [statValues.str.value2, statValues.size.value2]);
+  const combatStats = useMemo(
+    () => calculateCombatStats(statValues.str.value2, statValues.size.value2),
+    [statValues.str.value2, statValues.size.value2],
+  );
 
-  const getCredit = useCallback(() => {
+  const creditInfo = useMemo(() => {
     const result = calculateCredit(skillValues.credit.valueAddedByBaseValue);
     return {
       cash: result.cash.toLocaleString(),
@@ -401,43 +400,20 @@ export function CthulhuGenerator() {
 
   useEffect(() => {
     if (isLoadingRef.current) return;
-    let panelyAppearance = 0;
-    let total = 0;
-    if (statValues.age <= 19) {
-      panelyAppearance = 0;
-      total = 5;
-    } else if (statValues.age <= 39) {
-      panelyAppearance = 0;
-    } else if (statValues.age <= 49) {
-      panelyAppearance = 5;
-      total = 5;
-    } else if (statValues.age <= 59) {
-      panelyAppearance = 10;
-      total = 10;
-    } else if (statValues.age <= 69) {
-      panelyAppearance = 15;
-      total = 20;
-    } else if (statValues.age <= 79) {
-      panelyAppearance = 20;
-      total = 40;
-    } else {
-      panelyAppearance = 25;
-      total = 80;
-    }
+    const penalty = getAgePenalty(statValues.age);
     setStatPenaltyValues({
       str: 0,
       dex: 0,
       size: 0,
       health: 0,
       education: 0,
-      appeareance: panelyAppearance,
-      total,
+      appeareance: penalty.appearancePenalty,
+      total: penalty.totalPenalty,
     });
     setEducationBonusText('');
   }, [statValues.age]);
 
   useEffect(() => {
-    console.log('[education reset useEffect] isLoadingRef:', isLoadingRef.current);
     if (isLoadingRef.current) return;
     setStatPenaltyValues({
       ...statPenaltyValues,
@@ -518,12 +494,12 @@ export function CthulhuGenerator() {
       <Grid justify="center" align="center">
         <Grid.Col xs={12} sm={6}>
           <ExplorerCombat
-            combatStats={getCombatStats()}
+            combatStats={combatStats}
             dodgeValue={skillValues.dodge.valueAddedByBaseValue}
           />
         </Grid.Col>
         <Grid.Col xs={12} sm={6}>
-          <ExplorerCredit creditInfo={getCredit()} />
+          <ExplorerCredit creditInfo={creditInfo} />
         </Grid.Col>
       </Grid>
 
