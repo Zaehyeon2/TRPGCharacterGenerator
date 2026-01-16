@@ -85,6 +85,7 @@ export const Skills = React.memo(function Skills({
   initialSkillValue,
   initialDetailedKey,
   onDetailedKeyChange,
+  selectedDetailedSkills,
 }: SkillParams) {
   let innerBonus = 0;
   if (bonus50) innerBonus += 10;
@@ -283,6 +284,27 @@ export const Skills = React.memo(function Skills({
     return found?.label;
   }, [skillValues.detailedKey]);
 
+  // Filter out options already selected by other skills of the same type
+  const filteredSelectData = useMemo(() => {
+    const baseType = getBaseSkillType(skillKey);
+    const config = SKILL_SELECT_CONFIG[baseType];
+    if (!config) return [];
+    if (!selectedDetailedSkills) return config.data;
+
+    // Get keys of other skills with same base type that have selections
+    const otherSelectedKeys = Object.entries(selectedDetailedSkills)
+      .filter(([key, value]) => key !== skillKey && key.startsWith(baseType) && value)
+      .map(([, value]) => value);
+
+    // Get labels of those selected skills
+    const otherSelectedLabels = otherSelectedKeys
+      .map((key) => ALL_DETAILED_SKILLS.find((s) => s.key === key)?.label)
+      .filter(Boolean);
+
+    // Filter out already selected labels
+    return config.data.filter((label) => !otherSelectedLabels.includes(label));
+  }, [skillKey, selectedDetailedSkills]);
+
   function setLabel(key: string) {
     if (!isDetailedSkill(key)) {
       return (
@@ -300,7 +322,7 @@ export const Skills = React.memo(function Skills({
         <Select
           placeholder={config.placeholder}
           value={selectedLabel ?? config.defaultSkills[0].label}
-          data={config.data}
+          data={filteredSelectData}
           size="xs"
           onChange={handleSelectChange}
         />

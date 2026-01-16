@@ -291,6 +291,7 @@ export interface SkillParams {
   initialSkillValue?: IInnerSkills;
   initialDetailedKey?: string;
   onDetailedKeyChange?: (skillKey: string, detailedKey: string) => void;
+  selectedDetailedSkills?: ISelectedDetailedSkills;
 }
 
 export interface SkillParamsItem {

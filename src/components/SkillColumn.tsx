@@ -54,6 +54,7 @@ export const SkillColumn = React.memo(function SkillColumn({
               initialSkillValue={initialValue}
               initialDetailedKey={selectedDetailedSkills[skill.skillKey]}
               onDetailedKeyChange={onDetailedKeyChange}
+              selectedDetailedSkills={selectedDetailedSkills}
             />
           );
         })}
